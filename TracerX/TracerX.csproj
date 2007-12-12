@@ -1,0 +1,231 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{54A86033-AACB-4A87-AD47-355548E42936}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BBS.TracerX</RootNamespace>
+    <AssemblyName>TracerX</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <StartupObject>
+    </StartupObject>
+    <ApplicationIcon>Resources\scroll_view.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\TracerX.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\TracerX.XML</DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enumerations.cs" />
+    <Compile Include="Logger\ConsoleLogging.cs" />
+    <Compile Include="Logger\DebugLogging.cs" />
+    <Compile Include="Logger\EventLogging.cs" />
+    <Compile Include="Logger\FileLogging.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\Object Rendering\DefaultRenderer.cs" />
+    <Compile Include="Logger\Object Rendering\ExceptionRenderer.cs" />
+    <Compile Include="Logger\Object Rendering\IObjectRenderer.cs" />
+    <Compile Include="Logger\Object Rendering\RendererMap.cs" />
+    <Compile Include="Logger\ObsoleteStuff.cs" />
+    <Compile Include="Logger\ThreadData.cs" />
+    <Compile Include="Logger\Xml.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\CallStack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\CallStack.Designer.cs">
+      <DependentUpon>CallStack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\ColumnsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\ColumnsDlg.Designer.cs">
+      <DependentUpon>ColumnsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\FileProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\FileProperties.Designer.cs">
+      <DependentUpon>FileProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\FilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\FilterDialog.Designer.cs">
+      <DependentUpon>FilterDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\FindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\FindDialog.Designer.cs">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\FullText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\FullText.Designer.cs">
+      <DependentUpon>FullText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\ListViewItemSorter.cs" />
+    <Compile Include="Viewer\LoggerObject.cs" />
+    <Compile Include="Viewer\NativeMethods.cs" />
+    <Compile Include="Viewer\OptionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\OptionsDialog.Designer.cs">
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\Record.cs" />
+    <Compile Include="Viewer\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Viewer\Reader.cs" />
+    <Compile Include="Logger\Config\XmlConfigSectionHandler.cs" />
+    <Compile Include="Viewer\Row.cs" />
+    <Compile Include="Viewer\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings1.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\ThreadName.cs" />
+    <Compile Include="Viewer\ThreadObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="History.txt" />
+    <EmbeddedResource Include="Apache_License.txt" />
+    <Content Include="Logger\Config\SampleConfig.xml" />
+    <None Include="Resources\Filter.ico" />
+    <None Include="Resources\FilterNot.ico" />
+    <EmbeddedResource Include="MIT_License.txt" />
+    <Content Include="Resources\ArrowDown.ico" />
+    <Content Include="Resources\ArrowUp.ico" />
+    <Content Include="Resources\BookmarkArrowDown.ico" />
+    <Content Include="Resources\BookmarkArrowUp.ico" />
+    <Content Include="Resources\BookmarkLastSubline.ico" />
+    <Content Include="Resources\BookmarkSubline.ico" />
+    <Content Include="Resources\LastSubline.ico" />
+    <Content Include="Resources\Stop.bmp" />
+    <Content Include="Resources\Play.bmp" />
+    <Content Include="Resources\scroll_view.ico" />
+    <Content Include="Resources\Subline.ico" />
+    <Content Include="Resources\Transparent.ico" />
+    <Content Include="Viewer\Bookmark.ico" />
+    <Content Include="Viewer\BookmarkMinus.ico" />
+    <Content Include="Viewer\BookmarkPlus.ico" />
+    <Content Include="Viewer\Minus.ico" />
+    <Content Include="Viewer\Notes.txt" />
+    <Content Include="Viewer\Plus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\About.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\CallStack.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CallStack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\ColumnsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ColumnsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\FileProperties.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FileProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\FilterDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\FindDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\FullText.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FullText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\OptionsDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Viewer\Settings1.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
