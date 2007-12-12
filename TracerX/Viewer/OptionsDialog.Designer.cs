@@ -1,4 +1,4 @@
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     partial class OptionsDialog {
         /// <summary>
         /// Required designer variable.

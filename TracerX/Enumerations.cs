@@ -1,7 +1,7 @@
 // The only file shared by the viewer and the logger.
 using System;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// Each Logger has a TracerX.TraceLevel property for each logging destination that specifies
     /// the highest Level of output allowed by that Logger for each destination. If the TraceLevel

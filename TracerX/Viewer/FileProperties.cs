@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     internal partial class FileProperties : Form {
         public FileProperties() {
             InitializeComponent();

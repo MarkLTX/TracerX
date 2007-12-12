@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// Renders an Exception object and its inner exceptions.  
     /// This includes the key:value pairs in Exception.Data, which

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Text;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
         /// <summary>
         /// Methods and configuration for logging to an event log.

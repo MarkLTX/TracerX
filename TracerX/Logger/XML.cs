@@ -26,7 +26,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
         /// <summary>
         /// Use this class to initialize the TracerX environment using an Xml tree.
@@ -62,7 +62,7 @@ namespace BBS.TracerX {
                     XmlElement configElement = o as XmlElement;
                     if (configElement == null) {
                         // Failed to load the TracerX element.
-                        EventLogging.Log("XmlConfig: Failed to find configuration section 'TracerX' in the application's .config file. Check your .config file for the <TracerX> and <configSections> elements. The configuration section should look like: <section name=\"TracerX\" type=\"BBS.TracerX.XmlConfigSectionHandler, TracerX\" />", EventLogging.XmlConfigError);
+                        EventLogging.Log("XmlConfig: Failed to find configuration section 'TracerX' in the application's .config file. Check your .config file for the <TracerX> and <configSections> elements. The configuration section should look like: <section name=\"TracerX\" type=\"TracerX.XmlConfigSectionHandler, TracerX\" />", EventLogging.XmlConfigError);
                     } else {
                         // Configure using the xml loaded from the config file
                         ret = ConfigureFromXml(configElement);
@@ -73,7 +73,7 @@ namespace BBS.TracerX {
                         EventLogging.Log("XmlConfig: Failed to parse config file. Check your .config file is well formed XML." + confEx.ToString(), EventLogging.XmlConfigError);
                     } else {
                         // This exception is typically due to the assembly name not being correctly specified in the section type.
-                        string configSectionStr = "<section name=\"TracerX\" type=\"BBS.TracerX.XmlConfigSectionHandler, TracerX\" />\n\n";
+                        string configSectionStr = "<section name=\"TracerX\" type=\"TracerX.XmlConfigSectionHandler, TracerX\" />\n\n";
                         EventLogging.Log("XmlConfig: Failed to parse config file. Is the <configSections> specified as: " + configSectionStr + confEx.ToString(), EventLogging.XmlConfigError);
                     }
                 }

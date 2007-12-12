@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
         [Obsolete("Use FileTraceLevel instead.")]
         public TraceLevel MaxTraceLevel {

@@ -1,4 +1,4 @@
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     partial class FileProperties {
         /// <summary>
         /// Required designer variable.

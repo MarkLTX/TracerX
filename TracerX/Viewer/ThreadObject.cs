@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     // One of these exists for every unique thread id found in the file.
     internal class ThreadObject {
         // The thread's ID number (not the ManagedThreadId).

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     // This class reads the log file into Record objects.
     internal class Reader {
         // The minimum and maximum file format versions supported
@@ -280,7 +280,7 @@ namespace BBS.TracerX.Viewer {
                 }
 
                 if ((flags & DataFlags.TraceLevel) != DataFlags.None) {
-                    _curThread.Level = (BBS.TracerX.TraceLevel)_fileReader.ReadByte();
+                    _curThread.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
                     LevelsFound |= _curThread.Level;
                 } 
 

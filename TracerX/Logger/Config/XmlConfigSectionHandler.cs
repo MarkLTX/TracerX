@@ -22,7 +22,7 @@
 using System.Configuration;
 using System.Xml;
 
-namespace BBS.TracerX {
+namespace TracerX {
 	/// <summary>
 	/// Class to register for the TracerX section of the app.config file
 	/// </summary>
@@ -36,7 +36,7 @@ namespace BBS.TracerX {
 	/// <code lang="XML" escaped="true">
 	/// <configuration>
 	///		<configSections>
-	///			<section name="TracerX" type="BBS.TracerX.XmlConfigSectionHandler, TracerX" />
+	///			<section name="TracerX" type="TracerX.XmlConfigSectionHandler, TracerX" />
 	///		</configSections>
 	///		<TracerX>
 	///			TracerX configuration XML goes here

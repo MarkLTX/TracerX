@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     class LoggerObject {
         public string Name;
         protected bool _visible = true;

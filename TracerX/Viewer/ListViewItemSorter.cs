@@ -4,7 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Diagnostics;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     /// <summary>
     /// Implements the sorting of a ListView by any column.
     /// By default, it sorts by the text property of the column 

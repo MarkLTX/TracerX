@@ -23,7 +23,7 @@ using System;
 using System.IO;
 using System.Collections;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// This is the default object Renderer.  It currently has special formatting 
     /// for arrays, collections, and DictionaryEntry objects.  

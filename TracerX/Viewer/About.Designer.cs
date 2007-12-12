@@ -1,4 +1,4 @@
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     partial class About {
         /// <summary>
         /// Required designer variable.
@@ -33,7 +33,6 @@ namespace BBS.TracerX.Viewer {
             this.ok = new System.Windows.Forms.Button();
             this.loadDir = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // label1
@@ -108,7 +107,7 @@ namespace BBS.TracerX.Viewer {
             // 
             this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(352, 231);
+            this.ok.Location = new System.Drawing.Point(352, 185);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 7;
@@ -134,26 +133,11 @@ namespace BBS.TracerX.Viewer {
             this.label5.TabIndex = 8;
             this.label5.Text = "Loaded from directory:";
             // 
-            // linkLabel1
-            // 
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(136, 5);
-            this.linkLabel1.Location = new System.Drawing.Point(13, 186);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(414, 42);
-            this.linkLabel1.TabIndex = 10;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "This product (the TracerX logger/viewer) includes software developed by the Apach" +
-                "e Software Foundation (http://www.apache.org/).  Click here to view the Apache l" +
-                "icense.";
-            this.linkLabel1.UseCompatibleTextRendering = true;
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
             // About
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 272);
-            this.Controls.Add(this.linkLabel1);
+            this.ClientSize = new System.Drawing.Size(443, 226);
             this.Controls.Add(this.loadDir);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.ok);
@@ -165,7 +149,7 @@ namespace BBS.TracerX.Viewer {
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1298, 560);
+            this.MaximumSize = new System.Drawing.Size(1298, 260);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(298, 260);
             this.Name = "About";
@@ -188,6 +172,5 @@ namespace BBS.TracerX.Viewer {
         private System.Windows.Forms.Button ok;
         private System.Windows.Forms.TextBox loadDir;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

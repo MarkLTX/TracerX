@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
         /// <summary>
         /// Methods and configuration for logging via Trace.WriteLine.

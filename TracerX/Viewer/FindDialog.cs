@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     internal partial class FindDialog : Form {
         public FindDialog() {
             InitializeComponent();

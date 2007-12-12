@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// The Logger class is the user's primary interface to TracerX.  It manages a hierarchy
     /// of Logger instances that the user creates by calling the static GetLogger() method or
@@ -952,7 +952,7 @@ namespace BBS.TracerX {
                 System.Reflection.MethodBase method = frame.GetMethod();
                 Type type = method.DeclaringType;
 
-                if (type != typeof(BBS.TracerX.Logger)) {
+                if (type != typeof(TracerX.Logger)) {
                     return type.Name + '.' + method.Name;
                 }
             }
