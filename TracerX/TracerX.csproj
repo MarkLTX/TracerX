@@ -7,7 +7,7 @@
     <ProjectGuid>{54A86033-AACB-4A87-AD47-355548E42936}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BBS.TracerX</RootNamespace>
+    <RootNamespace>TracerX</RootNamespace>
     <AssemblyName>TracerX</AssemblyName>
     <SccProjectName>
     </SccProjectName>
@@ -111,6 +111,12 @@
     <Compile Include="Viewer\FullText.Designer.cs">
       <DependentUpon>FullText.cs</DependentUpon>
     </Compile>
+    <Compile Include="Viewer\License.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\License.Designer.cs">
+      <DependentUpon>License.cs</DependentUpon>
+    </Compile>
     <Compile Include="Viewer\ListViewItemSorter.cs" />
     <Compile Include="Viewer\LoggerObject.cs" />
     <Compile Include="Viewer\NativeMethods.cs" />
@@ -146,7 +152,6 @@
     <Content Include="Logger\Config\SampleConfig.xml" />
     <None Include="Resources\Filter.ico" />
     <None Include="Resources\FilterNot.ico" />
-    <EmbeddedResource Include="MIT_License.txt" />
     <Content Include="Resources\ArrowDown.ico" />
     <Content Include="Resources\ArrowUp.ico" />
     <Content Include="Resources\BookmarkArrowDown.ico" />
@@ -199,6 +204,10 @@
     <EmbeddedResource Include="Viewer\FullText.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FullText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\License.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>License.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Viewer\MainForm.resx">
       <SubType>Designer</SubType>

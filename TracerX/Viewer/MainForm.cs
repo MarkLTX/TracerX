@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 // See http://blogs.msdn.com/cumgranosalis/archive/2006/03/06/VirtualListViewUsage.aspx
 // for a good article on using ListView in virtual mode.
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     // This is the main form for the TracerX log viewer.
     internal partial class MainForm : Form {
         // This gives other classes access to the MainForm instance.
@@ -1469,6 +1469,12 @@ namespace BBS.TracerX.Viewer {
             startAutoRefresh.Enabled = true;
             stopAutoRefresh.Enabled = false;
             _refreshTimer.Stop();
+        }
+
+        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            License dlg = new License();
+            dlg.ShowDialog(this);
         }
     }
 }

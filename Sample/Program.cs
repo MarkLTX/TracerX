@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.IO;
-using BBS.TracerX;
+using TracerX;
 
 namespace Sample 
 {

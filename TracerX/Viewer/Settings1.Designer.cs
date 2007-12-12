@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

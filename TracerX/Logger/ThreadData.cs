@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Threading;
 using System.Text;
 using System;
-using FileLogging = BBS.TracerX.Logger.FileLogging;
-using ConsoleLogging = BBS.TracerX.Logger.ConsoleLogging;
-using DebugLogging = BBS.TracerX.Logger.DebugLogging;
+using FileLogging = TracerX.Logger.FileLogging;
+using ConsoleLogging = TracerX.Logger.ConsoleLogging;
+using DebugLogging = TracerX.Logger.DebugLogging;
 
-namespace BBS.TracerX {
+namespace TracerX {
     [Flags]
     internal enum Destination {
         None = 0,

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using BBS.TracerX.Viewer;
+using TracerX.Viewer;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     class Program {
         [STAThread()]
         static void Main(string[] args) {

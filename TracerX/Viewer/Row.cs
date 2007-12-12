@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     // Represents one row of data in the viewer.  Several contiguous rows can map to
     // a single Record object if the Record contains newlines and has been expanded.
     internal class Row {

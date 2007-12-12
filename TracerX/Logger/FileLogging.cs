@@ -4,7 +4,7 @@ using System.Threading;
 using System.IO;
 using System.Reflection;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
         /// <summary>
         /// Methods and configuration for logging to a file.

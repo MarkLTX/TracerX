@@ -20,7 +20,7 @@
 #endregion
 using System.IO;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// Implement this interface and add the new class to the
     /// RendererMap in order to render objects as strings.

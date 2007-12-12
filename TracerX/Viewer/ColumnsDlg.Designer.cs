@@ -1,4 +1,4 @@
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     partial class ColumnsDlg {
         /// <summary>
         /// Required designer variable.

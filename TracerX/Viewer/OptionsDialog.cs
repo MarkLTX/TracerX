@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     public partial class OptionsDialog : Form {
         public OptionsDialog() {
             InitializeComponent();

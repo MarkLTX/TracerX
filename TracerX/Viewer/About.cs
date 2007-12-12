@@ -8,8 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 
-namespace BBS.TracerX.Viewer {
-    public partial class About : Form {
+namespace TracerX.Viewer {
+    internal partial class About : Form {
         public About() {
             InitializeComponent();
             Assembly thisAsm = Assembly.GetExecutingAssembly();
@@ -21,16 +21,6 @@ namespace BBS.TracerX.Viewer {
             this.curFileVer.Text = Logger.FileLogging.FormatVersion.ToString();
 
 
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Stream licStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BBS.TracerX.Apache_License.txt");
-            StreamReader reader = new StreamReader(licStream);
-            string lic = reader.ReadToEnd();
-            reader.Close();
-
-            FullText dlg = new FullText(lic);
-            dlg.ShowDialog();
         }
     }
 }

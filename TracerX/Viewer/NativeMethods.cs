@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     internal static class NativeMethods {
         public delegate bool EnumWinCallBack(IntPtr hwnd, IntPtr lParam);
 

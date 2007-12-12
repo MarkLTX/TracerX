@@ -5,12 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BBS.TracerX")]
+[assembly: AssemblyTitle("TracerX")]
 [assembly: AssemblyDescription("Diagnostic logger and log viewer.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("BBS Technologies")]
-[assembly: AssemblyProduct("BBS.TracerX")]
-[assembly: AssemblyCopyright("Copyright © BBS Technologies 2006 - 2007")]
+[assembly: AssemblyProduct("TracerX")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2006 - 2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,9 +29,7 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 // The version components are specified manually.
-// Set the Minor Version to 3 for V3, 4 for V4, etc. (started with V3).
-// Set the Build Number to the date of the build (yymmdd) where
-// year 01 means 2007.  The revision should start at 0 and increment by 1 for
-// each build released on that day.
-[assembly: AssemblyVersion("1.8.011209.0")] // V8, 2007/Dec/09
+// Set the last component to the date of the build (yymmdd) where
+// year 01 means 2007.  
+[assembly: AssemblyVersion("2.0.0.011212")] // 2007/Dec/12
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion

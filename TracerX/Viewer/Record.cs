@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     /// <summary>
     /// A Record object corresponds to a message logged by the logger.  The Record text may contain
     /// embedded newlines, which the viewer can expand into multiple Row objects.

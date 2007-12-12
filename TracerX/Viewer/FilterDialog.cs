@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 // TODO: Add support for methods.
 
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     public partial class FilterDialog : Form {
         private MainForm _mainForm = MainForm.TheMainForm;
         private ColumnHeader _clickedHeader;

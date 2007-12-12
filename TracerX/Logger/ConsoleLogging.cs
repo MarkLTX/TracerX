@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace BBS.TracerX {
+namespace TracerX {
     public partial class Logger {
 
         /// <summary>

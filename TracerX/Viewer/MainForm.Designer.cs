@@ -1,4 +1,4 @@
-namespace BBS.TracerX.Viewer {
+namespace TracerX.Viewer {
     partial class MainForm {
         /// <summary>
         /// Required designer variable.
@@ -99,6 +99,7 @@ namespace BBS.TracerX.Viewer {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.colMenuOptionsItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuColumnItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -459,28 +460,28 @@ namespace BBS.TracerX.Viewer {
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // propertiesToolStripMenuItem
             // 
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.propertiesToolStripMenuItem.Text = "Properties";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // editToolStripMenuItem
             // 
@@ -611,7 +612,7 @@ namespace BBS.TracerX.Viewer {
             // clearAllFilteringToolStripMenuItem
             // 
             this.clearAllFilteringToolStripMenuItem.Enabled = false;
-            this.clearAllFilteringToolStripMenuItem.Image = global::BBS.TracerX.Properties.Resources.FilterNot;
+            this.clearAllFilteringToolStripMenuItem.Image = global::TracerX.Properties.Resources.FilterNot;
             this.clearAllFilteringToolStripMenuItem.Name = "clearAllFilteringToolStripMenuItem";
             this.clearAllFilteringToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.clearAllFilteringToolStripMenuItem.Text = "Clear All Filtering";
@@ -644,7 +645,8 @@ namespace BBS.TracerX.Viewer {
             // 
             this.helpToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.licenseToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -653,8 +655,8 @@ namespace BBS.TracerX.Viewer {
             // 
             this.aboutToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
-            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // toolStrip1
@@ -673,7 +675,7 @@ namespace BBS.TracerX.Viewer {
             // 
             this.NoFilteringButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.NoFilteringButton.Enabled = false;
-            this.NoFilteringButton.Image = global::BBS.TracerX.Properties.Resources.FilterNot;
+            this.NoFilteringButton.Image = global::TracerX.Properties.Resources.FilterNot;
             this.NoFilteringButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.NoFilteringButton.Name = "NoFilteringButton";
             this.NoFilteringButton.Size = new System.Drawing.Size(23, 22);
@@ -748,6 +750,13 @@ namespace BBS.TracerX.Viewer {
             this.colMenuColumnItem.Size = new System.Drawing.Size(151, 22);
             this.colMenuColumnItem.Text = "Columns...";
             this.colMenuColumnItem.Click += new System.EventHandler(this.columnsToolStripMenuItem_Click);
+            // 
+            // licenseToolStripMenuItem
+            // 
+            this.licenseToolStripMenuItem.Name = "licenseToolStripMenuItem";
+            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.licenseToolStripMenuItem.Text = "License...";
+            this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -850,5 +859,6 @@ namespace BBS.TracerX.Viewer {
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton startAutoRefresh;
         private System.Windows.Forms.ToolStripButton stopAutoRefresh;
+        private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
     }
 }

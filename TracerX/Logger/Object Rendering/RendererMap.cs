@@ -22,7 +22,7 @@
 using System;
 using System.IO;
 
-namespace BBS.TracerX {
+namespace TracerX {
     /// <summary>
     /// Maps object types to <see cref="IObjectRenderer"/>s that render objects of each registered
     /// type as strings for logging.
