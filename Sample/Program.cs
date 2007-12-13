@@ -16,7 +16,7 @@ namespace Sample
         private static bool InitLogging() 
         {
             Thread.CurrentThread.Name = "MainThread";
-            Logger.Xml.Configure(new FileInfo("TracerX.xml"));
+            Logger.Xml.Configure(new FileInfo("LoggerConfig.xml"));
             return Logger.FileLogging.Open();
         }
 
