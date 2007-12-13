@@ -61,7 +61,6 @@
     <Compile Include="Logger\Object Rendering\ExceptionRenderer.cs" />
     <Compile Include="Logger\Object Rendering\IObjectRenderer.cs" />
     <Compile Include="Logger\Object Rendering\RendererMap.cs" />
-    <Compile Include="Logger\ObsoleteStuff.cs" />
     <Compile Include="Logger\ThreadData.cs" />
     <Compile Include="Logger\Xml.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

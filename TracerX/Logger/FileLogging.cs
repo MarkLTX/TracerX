@@ -218,12 +218,6 @@ namespace TracerX {
             }
             private static uint _circularStartDelaySeconds = 60;
 
-            [Obsolete("Configure the logger named 'StandardData' to control the startup logging.")]
-            public static bool LogPotentiallySensitiveDataAtStartup {
-                get { return true; }
-                set { bool dummy = value; }
-            }
-
             #endregion
 
             #region Data members
