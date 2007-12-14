@@ -74,6 +74,11 @@ namespace TracerX {
         public static readonly Logger Root; // Initialized by static ctor.
 
         /// <summary>
+        /// The Logger used to log standard environment data when the log file is opened.
+        /// </summary>
+        public static readonly Logger StandardData; // Initialized by static ctor.
+
+        /// <summary>
         /// The maximum number of events TracerX will log to the event log regarding
         /// unhandled exceptions that occur in the application.  TracerX detects these exceptions
         /// via the Application.ThreadException and AppDomain.CurrentDomain.UnhandledException events.
@@ -674,9 +679,9 @@ namespace TracerX {
 
         #region Private/Internal
         /// <summary>
-        /// Ctor is internal.  GetLogger() should be the only caller.
+        /// Ctor is private.  GetLogger() should be the only caller.
         /// </summary>
-        internal Logger(string name) {
+        private Logger(string name) {
             _name = name;
             DestinationLevels = new LevelPair[] { FileLevels, ConsoleLevels, DebugOutLevels, EventLogLevels };
             _loggers.Add(name, this);
@@ -690,9 +695,10 @@ namespace TracerX {
             Root.DebugTraceLevel = TraceLevel.Off;
             Root.EventLogTraceLevel = TraceLevel.Off;
 
-            // The StandardData logger is special in that it is created with a FileTraceLevel
+            // The StandardData logger is special in that it is initialized with a FileTraceLevel
             // of Verbose.  The user can change it programatically or via XML.
-            GetLogger("StandardData").FileTraceLevel = TraceLevel.Verbose;
+            StandardData = GetLogger("StandardData");
+            StandardData.FileTraceLevel = TraceLevel.Verbose;
         
             Application.ThreadException += _threadExceptionHandler;
             AppDomain.CurrentDomain.UnhandledException += _appDomainExceptionHandler;
