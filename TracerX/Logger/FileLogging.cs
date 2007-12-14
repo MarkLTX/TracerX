@@ -353,7 +353,7 @@ namespace TracerX {
             }
 
             private static void LogStandardData() {
-                Logger Log = Logger.GetLogger("StandardData");
+                Logger Log = Logger.StandardData;
 
                 using (Log.InfoCall()) {
                     Assembly entryAssembly = Assembly.GetEntryAssembly();
