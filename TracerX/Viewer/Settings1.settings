@@ -44,5 +44,11 @@
     <Setting Name="KeepFilter" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="VersionCheckInterval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="VersionLastChecked" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2007-12-15</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

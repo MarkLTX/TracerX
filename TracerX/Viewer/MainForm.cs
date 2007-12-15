@@ -8,7 +8,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
+using Microsoft.Win32; 
 
 // See http://blogs.msdn.com/cumgranosalis/archive/2006/03/06/VirtualListViewUsage.aspx
 // for a good article on using ListView in virtual mode.
@@ -93,6 +94,8 @@ namespace TracerX.Viewer {
             if (args.Length > 0) {
                 StartReading(args[0]);
             }
+
+            VersionChecker.CheckForNewVersion();
         }
 
         // Perform column-related initialization.

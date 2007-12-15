@@ -184,5 +184,29 @@ namespace TracerX.Viewer {
                 this["KeepFilter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int VersionCheckInterval {
+            get {
+                return ((int)(this["VersionCheckInterval"]));
+            }
+            set {
+                this["VersionCheckInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2007-12-15")]
+        public global::System.DateTime VersionLastChecked {
+            get {
+                return ((global::System.DateTime)(this["VersionLastChecked"]));
+            }
+            set {
+                this["VersionLastChecked"] = value;
+            }
+        }
     }
 }
