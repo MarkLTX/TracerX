@@ -135,6 +135,7 @@ namespace TracerX.Viewer {
             this.linkLabel1.Text = "TracerX is a combination logger and viewer for .NET written by Mark A. Lauritsen." +
                 " See http://www.codeplex.com/TracerX.";
             this.linkLabel1.UseCompatibleTextRendering = true;
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // About
             // 

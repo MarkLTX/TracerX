@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace TracerX.Viewer {
     internal partial class About : Form {
@@ -19,6 +20,10 @@ namespace TracerX.Viewer {
             this.loadDir.Text = Path.GetDirectoryName(Application.ExecutablePath);
             this.minFileVer.Text = Reader.MinFormatVersion.ToString();
             this.curFileVer.Text = Logger.FileLogging.FormatVersion.ToString();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            Process.Start("http://www.codeplex.com/TracerX");   
         }
     }
 }
