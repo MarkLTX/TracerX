@@ -16,6 +16,7 @@ namespace TracerX.Viewer {
             InitTime();
             InitText();
             InitAutoRefresh();
+            InitVersionCheck();
         }
 
         public OptionsDialog(ColumnHeader header) : this() {
@@ -52,12 +53,12 @@ namespace TracerX.Viewer {
         }
 
         private bool ApplyChanges() {
-            // Currently, only the text page requires verification.
-            if (VerifyText(true) && VerifyAutoRefresh(true)) {
+            if (VerifyText(true) && VerifyAutoRefresh(true) && VerifyVersionCheck(true)) {
                 ApplyLine();
                 ApplyTime();
                 ApplyText();
                 ApplyAutoRefresh();
+                ApplyVersionCheck();
 
                 // We're not hiding or showing anything, so don't call RebuildRows.
                 // Just make sure any visible rows get redrawn.
@@ -79,6 +80,8 @@ namespace TracerX.Viewer {
                 e.Cancel = !VerifyText(true);
             } else if (e.TabPage == autoRefreshPage) {
                 e.Cancel = !VerifyAutoRefresh(true);
+            } else if (e.TabPage == versionPage) {
+                e.Cancel = !VerifyVersionCheck(true);
             }
         }
 
@@ -165,5 +168,32 @@ namespace TracerX.Viewer {
             Settings1.Default.KeepFilter = reapplyFilter.Checked;
         }
         #endregion Auto refresh
+
+        #region Version Check
+        private void InitVersionCheck() {
+            txtVersionInterval.Text = Settings1.Default.VersionCheckInterval.ToString();
+        }
+
+        private bool VerifyVersionCheck(bool showErrors) {
+            int temp;
+            bool ret = true;
+
+            if (int.TryParse(txtVersionInterval.Text, out temp)) {
+                if (temp < 0) {
+                    ret = false;
+                    if (showErrors) MessageBox.Show("The version checking interval must not be negative.");
+                }
+            } else {
+                ret = false;
+                if (showErrors) MessageBox.Show("The version checking interval must be a number.");
+            }
+
+            return ret;
+        }
+
+        private void ApplyVersionCheck() {
+            Settings1.Default.VersionCheckInterval = int.Parse(txtVersionInterval.Text);
+        }
+        #endregion Version Check
     }
 }

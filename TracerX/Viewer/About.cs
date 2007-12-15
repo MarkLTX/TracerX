@@ -19,8 +19,6 @@ namespace TracerX.Viewer {
             this.loadDir.Text = Path.GetDirectoryName(Application.ExecutablePath);
             this.minFileVer.Text = Reader.MinFormatVersion.ToString();
             this.curFileVer.Text = Logger.FileLogging.FormatVersion.ToString();
-
-
         }
     }
 }
