@@ -49,11 +49,11 @@ namespace TracerX.Viewer {
             this.refreshSeconds = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.versionPage = new System.Windows.Forms.TabPage();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtVersionInterval = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtVersionInterval = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.timePage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -365,32 +365,14 @@ namespace TracerX.Viewer {
             this.versionPage.Text = "Version Checking";
             this.versionPage.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // label9
             // 
-            this.label6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label6.Location = new System.Drawing.Point(0, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(307, 32);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
-                "website?";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(0, 37);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(34, 13);
-            this.label7.TabIndex = 1;
-            this.label7.Text = "Every";
-            // 
-            // txtVersionInterval
-            // 
-            this.txtVersionInterval.Location = new System.Drawing.Point(35, 34);
-            this.txtVersionInterval.MaxLength = 5;
-            this.txtVersionInterval.Name = "txtVersionInterval";
-            this.txtVersionInterval.Size = new System.Drawing.Size(35, 20);
-            this.txtVersionInterval.TabIndex = 2;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(0, 63);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(249, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Note: Enter 0 to check every time the viewer starts.";
             // 
             // label8
             // 
@@ -401,14 +383,33 @@ namespace TracerX.Viewer {
             this.label8.TabIndex = 3;
             this.label8.Text = "days.";
             // 
-            // label9
+            // txtVersionInterval
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(0, 63);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(249, 13);
-            this.label9.TabIndex = 4;
-            this.label9.Text = "Note: Enter 0 to check every time the viewer starts.";
+            this.txtVersionInterval.Location = new System.Drawing.Point(35, 34);
+            this.txtVersionInterval.MaxLength = 5;
+            this.txtVersionInterval.Name = "txtVersionInterval";
+            this.txtVersionInterval.Size = new System.Drawing.Size(35, 20);
+            this.txtVersionInterval.TabIndex = 2;
+            this.txtVersionInterval.TextChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(0, 37);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(34, 13);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Every";
+            // 
+            // label6
+            // 
+            this.label6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label6.Location = new System.Drawing.Point(0, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(307, 32);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
+                "website?";
             // 
             // OptionsDialog
             // 
