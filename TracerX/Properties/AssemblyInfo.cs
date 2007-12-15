@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // The version components are specified manually.
 // Set the last component to the date of the build (yymmdd) where
 // year 01 means 2007.  
-[assembly: AssemblyVersion("2.0.0.011212")] // 2007/Dec/12
+[assembly: AssemblyVersion("1.9.0.011215")] // 2007/Dec/15
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion
