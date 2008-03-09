@@ -103,11 +103,11 @@ namespace TracerX {
             /// <summary>
             /// Directory of the output log file.  Environment variables are expanded
             /// when this is set.  
-            /// %LOCALAPPDATA% (not a real environment variable) 
+            /// %LOCAL_APPDATA% (not a real environment variable) 
             /// is expanded to the current user's local (i.e. non-roaming) 
             /// application data directory.
             /// %EXEDIR% (not a real environment variable) is expanded to the directory
-            /// of the executable, regardless of the Current Directory.
+            /// of the executable.
             /// Attempts to change this property after the log file is open are ignored.
             /// </summary>
             public static string Directory {
@@ -115,16 +115,32 @@ namespace TracerX {
                 set {
                     lock (FileLogging._fileLocker) {
                         if (!FileLogging.IsOpen) {
-                            if (value.Contains("%LOCALAPPDATA%"))
-                                value = value.Replace("%LOCALAPPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData));
-                            if (value.Contains("%EXEDIR%"))
-                                value = value.Replace("%EXEDIR%", Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-                            _logDirectory = Environment.ExpandEnvironmentVariables(value);
+                            try {
+                                if (value.Contains("%LOCAL_APPDATA%")) value = value.Replace("%LOCAL_APPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData));
+                                if (value.Contains("%LOCALAPPDATA%")) value = value.Replace("%LOCALAPPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData));
+                                if (value.Contains("%COMMON_APPDATA%")) value = value.Replace("%COMMON_APPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData));
+                                if (value.Contains("%DESKTOP%")) value = value.Replace("%DESKTOP%", Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
+                                if (value.Contains("%MY_DOCUMENTS%")) value = value.Replace("%MY_DOCUMENTS%", Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments));
+                                if (value.Contains("%EXEDIR%")) value = value.Replace("%EXEDIR%", GetAppDir());
+                                _logDirectory = Environment.ExpandEnvironmentVariables(value);
+                            } catch (Exception ex) {
+                                EventLogging.Log("An error occurred while replacing environment variables in FileLogging.Directory value " + value + "\r\n" + ex.Message, EventLogging.ExceptionInLogger);
+                            }
                         }
                     }
                 }
             }
-            private static string _logDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+
+            private static string _logDirectory = GetDefaultDir();
+
+            private static string GetDefaultDir() {
+                if (Assembly.GetEntryAssembly() == null) {
+                    // Must be a web app.
+                    return GetWebAppDir();
+                } else {
+                    return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+                }
+            }
 
             /// <summary>
             /// The name of the log file within the LogDirectory.  The default is based on the
@@ -141,7 +157,7 @@ namespace TracerX {
                     }
                 }
             }
-            private static string _logFileName = Path.GetFileNameWithoutExtension(System.Windows.Forms.Application.ExecutablePath) + ".tx1";
+            private static string _logFileName = GetAppName() + ".tx1";
 
             /// <summary>
             /// Full path of the log file.
@@ -358,15 +374,17 @@ namespace TracerX {
                 using (Log.InfoCall()) {
                     Assembly entryAssembly = Assembly.GetEntryAssembly();
 
-                    Log.Info("EntryAssembly.Location = ", entryAssembly.Location);
-                    Log.Info("EntryAssembly.FullName = ", entryAssembly.FullName); // Includes assembly version.
+                    if (entryAssembly != null) {
+                        Log.Info("EntryAssembly.Location = ", entryAssembly.Location);
+                        Log.Info("EntryAssembly.FullName = ", entryAssembly.FullName); // Includes assembly version.
 
-                    try {
-                        // Try to get the file version.
-                        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(entryAssembly.Location);
-                        Log.Info("FileVersionInfo.FileVersion = ", fvi.FileVersion);
-                        Log.Info("FileVersionInfo.ProductVersion = ", fvi.ProductVersion);
-                    } catch (Exception) {
+                        try {
+                            // Try to get the file version.
+                            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(entryAssembly.Location);
+                            Log.Info("FileVersionInfo.FileVersion = ", fvi.FileVersion);
+                            Log.Info("FileVersionInfo.ProductVersion = ", fvi.ProductVersion);
+                        } catch (Exception) {
+                        }
                     }
 
                     Log.Info("Environment.OSVersion = ", Environment.OSVersion);

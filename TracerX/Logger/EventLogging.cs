@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.IO;
-using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
 using System.Text;
@@ -35,7 +34,7 @@ namespace TracerX {
                 get { return _eventLog; }
                 set { _eventLog = value; }
             }
-            private static EventLog _eventLog = new EventLog("Application", ".", "TracerX - " + Path.GetFileNameWithoutExtension(Application.ExecutablePath));
+            private static EventLog _eventLog = new EventLog("Application", ".", "TracerX - " + GetAppName());
 
             /// <summary>
             /// Controls which fields are written to the event log by all loggers where
