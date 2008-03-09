@@ -47,6 +47,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -147,7 +148,6 @@
     <Compile Include="Viewer\VersionChecker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="History.txt" />
     <EmbeddedResource Include="Apache_License.txt" />
     <Content Include="Logger\Config\SampleConfig.xml" />
     <None Include="Resources\Filter.ico" />

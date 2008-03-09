@@ -1,9 +1,9 @@
 using System;
+using System.Reflection;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 namespace TracerX {
     /// <summary>
@@ -678,6 +678,12 @@ namespace TracerX {
         #endregion
 
         #region Private/Internal
+        // Set to true when System.Windows.Forms is detected.
+        private static bool _winFormsLoaded;
+
+        // Set to true by the static ctor if we seem be in a web app.
+        private static bool _webApp;
+
         /// <summary>
         /// Ctor is private.  GetLogger() should be the only caller.
         /// </summary>
@@ -699,9 +705,38 @@ namespace TracerX {
             // of Verbose.  The user can change it programatically or via XML.
             StandardData = GetLogger("StandardData");
             StandardData.FileTraceLevel = TraceLevel.Verbose;
-        
-            Application.ThreadException += _threadExceptionHandler;
+
             AppDomain.CurrentDomain.UnhandledException += _appDomainExceptionHandler;
+
+            _webApp = Assembly.GetEntryAssembly() == null;
+        }
+
+        // Sets _winFormsLoaded to true if the the winforms assembly has already been loaded.
+        // If not, this registers an event handler to detect when it is loaded.
+        // If winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
+        // so we can log unhandled exceptions in GUI apps.
+        private static void CheckForWinForms() {
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (asm.GetName().Name.ToLower() == "system.windows.forms") {
+                    RegisterApplicationEventHandler();
+                    _winFormsLoaded = true;
+                    return;
+                }
+            }
+
+            // Getting here means winforms has not been loaded yet, so monitor for it with an anonymous delegate.
+            AppDomain.CurrentDomain.AssemblyLoad += delegate(object sender, AssemblyLoadEventArgs args) {
+                if (args.LoadedAssembly.GetName().Name.ToLower() == "system.windows.forms") {
+                    RegisterApplicationEventHandler();
+                    _winFormsLoaded = true;
+                }
+            };
+        }
+
+        // This is only called if System.Windows.Forms is already loaded since 
+        // we don't want to be the reason for loading such a large assembly.
+        private static void RegisterApplicationEventHandler() {
+            System.Windows.Forms.Application.ThreadException += _threadExceptionHandler;
         }
 
         private static string ParseFormatString(string input) {
@@ -718,6 +753,38 @@ namespace TracerX {
             builder.Replace("{msg", "{8");
 
             return builder.ToString();
+        }
+
+        // Get the application name without loading System.Windows.Forms.dll
+        // or calling Process.GetProcess(), which requires significant permission.
+        private static string GetAppName() {
+            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            if (entryAssembly == null) {
+                // This happens in web (asp.net) apps.  
+                return GetWebAppName();
+            } else {
+                return entryAssembly.GetName().Name;
+            }
+        }
+
+        // Get the directory of the executable or web app without loading System.Windows.Forms.dll.
+        private static string GetAppDir() {
+            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            if (entryAssembly == null) {
+                // This happens in web (asp.net) apps.  
+                return GetWebAppDir();
+            } else {
+                return Path.GetDirectoryName(entryAssembly.Location);
+            }
+        }
+
+        private static string GetWebAppName() {
+            string dir = GetWebAppDir().TrimEnd('\\', '/');
+            return Path.GetFileNameWithoutExtension(dir);
+        }
+
+        private static string GetWebAppDir() {
+            return System.Web.HttpRuntime.AppDomainAppPath;
         }
 
         #region Trace levels
