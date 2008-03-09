@@ -126,6 +126,12 @@
     <Compile Include="Viewer\OptionsDialog.Designer.cs">
       <DependentUpon>OptionsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Viewer\PasswordDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Viewer\PasswordDialog.Designer.cs">
+      <DependentUpon>PasswordDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Viewer\Record.cs" />
     <Compile Include="Viewer\MainForm.cs">
       <SubType>Form</SubType>
@@ -216,6 +222,10 @@
     <EmbeddedResource Include="Viewer\OptionsDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Viewer\PasswordDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PasswordDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

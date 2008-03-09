@@ -12,7 +12,9 @@ namespace TracerX.Viewer {
         // The minimum and maximum file format versions supported
         // by the viewer/reader.
         private const int _minVersion = 2;
-        private const int _maxVersion = 3;
+        private const int _maxVersion = 4;
+
+        private static int _lastHash;
 
         [Browsable(false)]
         public static int MinFormatVersion { get { return _minVersion; } }
@@ -169,6 +171,9 @@ namespace TracerX.Viewer {
                         MessageBox.Show("The file has a format version of " + FormatVersion + ".  This program only supports format version " + _maxVersion + ".");
                         _fileReader.Close();
                         _fileReader = null;
+                    } else  if (FormatVersion == 4 && !PromptUserForPassword()) {
+                        _fileReader.Close();
+                        _fileReader = null;
                     } else {
                         ReadPreamble();
                     }
@@ -179,6 +184,29 @@ namespace TracerX.Viewer {
             }
 
             return _fileReader != null;
+        }
+
+        // Called if the file has a password.  Reads the password hash from the file
+        // and prompts the user to enter a matching password.
+        // Returns true if the user enters the correct password.
+        private bool PromptUserForPassword() {
+            int hash = _fileReader.ReadInt32();
+
+            if (hash == _lastHash) {
+                // Either the same file is being loaded again (refreshed), 
+                // or a different file has the same password.  Either way,
+                // don't ask for the same password again.
+                return true;
+            } else {
+                PasswordDialog dlg = new PasswordDialog(hash);
+                DialogResult result = dlg.ShowDialog();
+                if (result == DialogResult.OK) {
+                    _lastHash = hash;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
 
         public void CloseLogFile() {
@@ -195,6 +223,7 @@ namespace TracerX.Viewer {
 
         private void ReadPreamble() {
             long ticks;
+
             if (FormatVersion >= 3) {
                 // Logger version was added to the preamble in version 3.
                 _loggerVersion = _fileReader.ReadString();

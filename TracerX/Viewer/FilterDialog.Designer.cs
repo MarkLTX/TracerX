@@ -514,7 +514,7 @@ namespace TracerX.Viewer {
             this.Name = "FilterDialog";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Filters";
+            this.Text = "TracerX Filters";
             this.tabControl1.ResumeLayout(false);
             this.traceLevelPage.ResumeLayout(false);
             this.loggerPage.ResumeLayout(false);
