@@ -234,11 +234,30 @@ namespace TracerX {
             }
             private static uint _circularStartDelaySeconds = 60;
 
+            /// <summary>
+            /// If a password is set before the file is opened, the viewer will
+            /// require the user to enter the same password to open the file.
+            /// </summary>
+            public static string Password {
+                set {
+                    if (string.IsNullOrEmpty(value)) { 
+                        _hasPassword = false; 
+                    } else {
+                        _passwordHash = value.GetHashCode();
+                        _hasPassword = true;
+                    }
+                }
+            }
+            private static bool _hasPassword;
+            private static int _passwordHash;
             #endregion
 
             #region Data members
             // The version of the log file format created by this assembly.
             private const int _formatVersion = 3;
+            
+            // The file version if a password is specified.
+            private const int _formatVersionWithPassword = 4;
 
             // Object used with the lock keyword to serialize file I/O.
             private static readonly object _fileLocker = new object();
@@ -406,7 +425,16 @@ namespace TracerX {
 
                 // Format version should be the first
                 // item in the file so the viewer knows how to read the rest.
-                _logfile.Write(_formatVersion);
+                // Version 4 is the same as 3 with a password hash.  Starting
+                // with version 5, we should ALWAYS include something to indicate
+                // the presence or absence of the password hash (e.g. a bool).
+                if (_hasPassword) {
+                    _logfile.Write(_formatVersionWithPassword);
+                    _logfile.Write(_passwordHash);
+                } else {
+                    _logfile.Write(_formatVersion);
+                }
+
                 _logfile.Write(asmVersion.ToString()); // Added in file format version 3.
                 _logfile.Write(MaxSizeMb);
                 _logfile.Write(_openTimeUtc.Ticks);
