@@ -374,6 +374,7 @@ namespace TracerX.Viewer {
                 buttonStop.Enabled = true;
                 refreshMenuItem.Enabled = false;
                 clearAllFilteringToolStripMenuItem.Enabled = false;
+                openFilters.Enabled = false;
                 filenameLabel.Text = filename;
 
                 backgroundWorker1.RunWorkerAsync();
@@ -436,7 +437,7 @@ namespace TracerX.Viewer {
             closeToolStripMenuItem.Enabled = true;
             propertiesToolStripMenuItem.Enabled = true;
             refreshMenuItem.Enabled = true;
-            //clearAllFilteringToolStripMenuItem.Enabled = true;
+            openFilters.Enabled = true;
 
             _visibleTraceLevels &= ValidTraceLevels;
             ThreadObject.RecountThreads();
@@ -712,6 +713,7 @@ namespace TracerX.Viewer {
             _rows = null;
             _records = null;
             toolStripProgressBar1.Value = 0;
+            openFilters.Enabled = false;
         }
 
         private void toolStripDropDownButton1_Click(object sender, EventArgs e) {
@@ -864,6 +866,11 @@ namespace TracerX.Viewer {
             VisibleTraceLevels = _reader.LevelsFound;
             FilterDialog.TextFilterDisable();
             RebuildAllRows();
+        }
+
+        // Open the filter dialog.
+        private void openFilters_Click(object sender, EventArgs e) {
+            filterToolStripMenuItem_Click(sender, e) ;
         }
 
         // Called when the first filter is added or the last filter is

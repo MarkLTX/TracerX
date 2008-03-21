@@ -76,8 +76,8 @@ namespace TracerX.Viewer {
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.traceLevelPage);
             this.tabControl1.Controls.Add(this.loggerPage);
-            this.tabControl1.Controls.Add(this.threadIdPage);
             this.tabControl1.Controls.Add(this.threadNamePage);
+            this.tabControl1.Controls.Add(this.threadIdPage);
             this.tabControl1.Controls.Add(this.textPage);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";

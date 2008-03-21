@@ -60,10 +60,10 @@ namespace TracerX.Properties {
             }
         }
         
-        internal static System.Drawing.Icon Filter {
+        internal static System.Drawing.Bitmap Filter {
             get {
                 object obj = ResourceManager.GetObject("Filter", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
