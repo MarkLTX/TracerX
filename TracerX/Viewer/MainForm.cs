@@ -17,58 +17,7 @@ using Microsoft.Win32;
 namespace TracerX.Viewer {
     // This is the main form for the TracerX log viewer.
     internal partial class MainForm : Form {
-        // This gives other classes access to the MainForm instance.
-        public static MainForm TheMainForm;
-
-        // The current log file.
-        private FileInfo _fileInfo;
-
-        // Helper that reads the log file.
-        private Reader _reader;
-
-        // List of records read from the log file.
-        private List<Record> _records;
-
-        // Array of rows being displayed by the ListView. 
-        // This gets regenerated when the filter changes and
-        // when rows are expanded or collapsed.
-        private Row[] _rows;
-
-        // Timer that drives the auto-refresh feature.
-        private System.Windows.Forms.Timer _refreshTimer = new System.Windows.Forms.Timer();
-
-        // The row number (scroll position) to restore after refreshing the file.
-        private int _rowNumToRestore;
-
-        // The original title to which the file name is appended to be
-        // displayed in the title bar.
-        private string _originalTitle;
-
-        // The trace levels selected to be visible (not filtered out).
-        private TraceLevel _visibleTraceLevels;
-
-        // Text search settings for F3 ("find next").
-        private string _needle;
-        StringComparison _compareType = StringComparison.InvariantCultureIgnoreCase;
-        private Regex _regex;
-
-        // Cache of ListViewItems used to improve the performance of the ListView control
-        // in virtual mode (it tends to request the same item many times).
-        private ListViewItem[] _itemCache;
-
-        // Index of first item in _itemCache.
-        private int _firstItemIndex; 
-
-        // The area occupied by the ListView header.  Used to determine which column header is
-        // right-clicked so the appropriate context menu can be displayed.
-        private Rectangle _headerRect;
-
-        // The position in the File menu where the Most Recently Used file list begins.
-        private int _mruPos;
-
-        // The original columns in the ListView before any are hidden.
-        public ColumnHeader[] OriginalColumns;
-
+        #region Ctor/init
         // Constructor.  args[0] may contain the log file path to load.
         public MainForm(string[] args) {
             InitializeComponent();
@@ -90,6 +39,8 @@ namespace TracerX.Viewer {
             InitColumns();
 
             if (Settings1.Default.IndentChar == '\0') Settings1.Default.IndentChar = ' ';
+
+            _FileState = FileState.NoFile;
 
             if (args.Length > 0) {
                 StartReading(args[0]);
@@ -144,36 +95,18 @@ namespace TracerX.Viewer {
                 Settings1.Default.MRU = new System.Collections.Specialized.StringCollection();
             }
         }
+        #endregion
 
-        // True if the file has changed since the last call.
-        private bool FileChanged {
-            get {
-                DateTime oldtime = _fileInfo.LastWriteTime;
-                _fileInfo.Refresh();
-                bool ret = (oldtime != _fileInfo.LastWriteTime);
-                Debug.Print("FileChanged = " + ret);
-                return ret;
-            }
-        }
+        #region Public
+        // This gives other classes access to the MainForm instance.
+        public static MainForm TheMainForm;
+
+        // The original columns in the ListView before any are hidden.
+        public ColumnHeader[] OriginalColumns;
 
         // These are the trace levels that exist in the current file.
         public TraceLevel ValidTraceLevels {
             get { return _reader.LevelsFound; }
-        }
-
-        // This returns an array of the ColumnHeaders in the order they are
-        // displayed by the ListView.  Used to determine which column header
-        // was right-clicked.
-        private ColumnHeader[] OrderedHeaders {
-            get {
-                ColumnHeader[] arr = new ColumnHeader[TheListView.Columns.Count];
-
-                foreach (ColumnHeader col in TheListView.Columns) {
-                    arr[col.DisplayIndex] = col;
-                }
-
-                return arr;
-            }
         }
 
         // Track which trace levels are visible (not filtered out).
@@ -191,7 +124,7 @@ namespace TracerX.Viewer {
                 }
             }
         }
-        
+
         // The Row corresponding to the the ListViewItem that has focus, or the first
         // row if no item has the focus.  Used as the start of a Find.
         public Row FocusedRow {
@@ -204,19 +137,44 @@ namespace TracerX.Viewer {
             }
         }
 
-        private Record FocusedRec {
-            get {
-                Row focusedRow = FocusedRow;
-                if (focusedRow == null) {
-                    return null;
-                } else {
-                    return focusedRow.Rec;
+        public int NumRows {
+            get { return TheListView.VirtualListSize; }
+            
+            set {
+                try {
+                    // This can throw an exception when the user selects a row near the
+                    // end of the file and hides a thread with lots of records.  It seems
+                    // to be a bug in ListView.  The app seems to function OK as long as we catch
+                    // and ignore the exception.
+                    TheListView.VirtualListSize = value;
+                } catch (Exception ex) {
+                    Debug.Print("Exception setting ListView.VirtualListSize: " + ex.ToString());
                 }
+
+                // Disable Find and FindNext/F3 if no text is visible.
+                UpdateFindCommands();
             }
         }
 
-        public int NumRows {
-            get { return TheListView.VirtualListSize; }
+        public Row SelectSingleItem(int rowIndex) {
+            SelectSingleItem(_rows[rowIndex]);
+            return _rows[rowIndex];
+        }
+
+        public void ClearItemCache() {
+            Debug.Print("Clearing _itemCache.");
+            _itemCache = null; // Cause cache to be rebuilt.
+        }
+
+        public void GetVirtualItem(Object sender, RetrieveVirtualItemEventArgs e) {
+            e.Item = GetListItem(e.ItemIndex);
+            //Row row = (Row)e.Item.Tag;
+            //Debug.Print("Got virtual item " +e.ItemIndex + ", index = " + row.Index + ", record num = " + row.Rec.MsgNum + ", line = " + row.Line);
+        }
+
+        public void InvalidateTheListView() {
+            ClearItemCache();
+            TheListView.Invalidate();
         }
 
         // Called by the FindDialog and when F3 is pressed.
@@ -230,11 +188,11 @@ namespace TracerX.Viewer {
             bool found = false;
 
             // Remember inputs in case user hits F3 or shift+F3.
-            _needle = needle;
+            _needle = needle; 
             _compareType = compareType;
             _regex = regex;
 
-            findNextToolStripMenuItem.Enabled = findPreviousToolStripMenuItem.Enabled = true;
+            UpdateFindCommands();
 
             try {
                 do {
@@ -263,6 +221,136 @@ namespace TracerX.Viewer {
             return null;
         }
 
+        // Find the index of the last visible item displayed by TheListView.
+        public int FindLastVisibleItem() {
+            int ndx = TheListView.TopItem.Index;
+            do {
+                ++ndx;
+            } while (ndx < NumRows && TheListView.ClientRectangle.IntersectsWith(TheListView.Items[ndx].Bounds));
+
+            //Debug.Print("Last visible index = " + (ndx - 1));
+            return ndx - 1;
+        }
+
+        // Called by the FilterDialog when the user clicks Apply or OK.
+        public void RebuildAllRows() {
+            RebuildRows(0, _records[0]);
+        }
+        #endregion
+
+        private enum FileState { NoFile, Loading, Loaded };
+        private FileState _fileState = FileState.NoFile;
+
+        // The current log file.
+        private FileInfo _fileInfo;
+
+        // Helper that reads the log file.
+        private Reader _reader;
+
+        // List of records read from the log file.
+        private List<Record> _records;
+
+        // Array of rows being displayed by the ListView. 
+        // This gets regenerated when the filter changes and
+        // when rows are expanded or collapsed.
+        private Row[] _rows;
+
+        // Timer that drives the auto-refresh feature.
+        private System.Windows.Forms.Timer _refreshTimer = new System.Windows.Forms.Timer();
+
+        // The row number (scroll position) to restore after refreshing the file.
+        private int _rowNumToRestore;
+
+        // The original title to which the file name is appended to be
+        // displayed in the title bar.
+        private string _originalTitle;
+
+        // The trace levels selected to be visible (not filtered out).
+        private TraceLevel _visibleTraceLevels;
+
+        // Text search settings for F3 ("find next").
+        private string _needle;
+        StringComparison _compareType = StringComparison.InvariantCultureIgnoreCase;
+        private Regex _regex;
+
+        // Cache of ListViewItems used to improve the performance of the ListView control
+        // in virtual mode (it tends to request the same item many times).
+        private ListViewItem[] _itemCache;
+
+        // Index of first item in _itemCache.
+        private int _firstItemIndex; 
+
+        // The area occupied by the ListView header.  Used to determine which column header is
+        // right-clicked so the appropriate context menu can be displayed.
+        private Rectangle _headerRect;
+
+        // The position in the File menu where the Most Recently Used file list begins.
+        private int _mruPos;
+
+        private FileState _FileState {
+            get { return _fileState; }
+            set { 
+                _fileState = value;
+                startAutoRefresh.Enabled = (_fileState == FileState.Loaded && !stopAutoRefresh.Enabled);
+                propertiesToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
+                openFilters.Enabled = (_fileState == FileState.Loaded);
+                closeToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
+                refreshMenuItem.Enabled = (_fileState == FileState.Loaded);
+
+                buttonStop.Visible = (_fileState == FileState.Loading);
+
+                openToolStripMenuItem.Enabled = (_fileState != FileState.Loading);
+
+                if (_fileState != FileState.Loaded) {
+                    NumRows = 0;
+                    _rows = null;
+                    _records = null;
+                    toolStripProgressBar1.Value = 0;
+                }
+
+                UpdateFindCommands();
+
+                // TODO: enable/disable ui elements.
+            } 
+        }
+
+        // True if the file has changed since the last call.
+        private bool _FileChanged {
+            get {
+                DateTime oldtime = _fileInfo.LastWriteTime;
+                _fileInfo.Refresh();
+                bool ret = (oldtime != _fileInfo.LastWriteTime);
+                Debug.Print("FileChanged = " + ret);
+                return ret;
+            }
+        }
+
+        // This returns an array of the ColumnHeaders in the order they are
+        // displayed by the ListView.  Used to determine which column header
+        // was right-clicked.
+        private ColumnHeader[] _OrderedHeaders {
+            get {
+                ColumnHeader[] arr = new ColumnHeader[TheListView.Columns.Count];
+
+                foreach (ColumnHeader col in TheListView.Columns) {
+                    arr[col.DisplayIndex] = col;
+                }
+
+                return arr;
+            }
+        }
+
+        private Record _FocusedRec {
+            get {
+                Row focusedRow = FocusedRow;
+                if (focusedRow == null) {
+                    return null;
+                } else {
+                    return focusedRow.Rec;
+                }
+            }
+        }
+
         // Returns true if the specified text matches the current search/find settings.
         private bool IsMatch(string curText, string needle, StringComparison compareType, Regex regex) {
             if (regex == null) {
@@ -277,17 +365,12 @@ namespace TracerX.Viewer {
             int ndx = curRow.Index;
             if (searchUp) {
                 --ndx;
-                if (ndx < 0) ndx = TheListView.VirtualListSize - 1;
+                if (ndx < 0) ndx = NumRows - 1;
             } else {
-                ndx = (ndx + 1) % TheListView.VirtualListSize;
+                ndx = (ndx + 1) % NumRows;
             }
 
             return _rows[ndx];
-        }
-
-        public Row SelectSingleItem(int rowIndex) {
-            SelectSingleItem(_rows[rowIndex]);
-            return _rows[rowIndex];
         }
 
         private void SelectSingleItem(Row row) {
@@ -319,7 +402,7 @@ namespace TracerX.Viewer {
         // This gets the row number to restore after refreshing the file.
         private int GetRowNumToRestore() {
             int ret = 0;
-            if (TheListView.FocusedItem != null && TheListView.FocusedItem.Index == TheListView.VirtualListSize - 1) {
+            if (TheListView.FocusedItem != null && TheListView.FocusedItem.Index == NumRows - 1) {
                 ret = -1; // Special value meaning the very end.
             } else if (TheListView.TopItem != null) {
                 ret = TheListView.TopItem.Index;
@@ -333,7 +416,7 @@ namespace TracerX.Viewer {
         // A null filename means to refresh the current file.
         private void StartReading(string filename) {
             Reader prospectiveReader = new Reader();
-            bool refreshing = false;
+            bool refreshing;
 
             if (filename == null) {
                 filename = _fileInfo.FullName;
@@ -342,8 +425,10 @@ namespace TracerX.Viewer {
                 refreshing = false;
             }
 
+            // If we can't open the new file, the old file stays loaded.
             if (prospectiveReader.OpenLogFile(filename)) {
                 _refreshTimer.Stop();
+                _FileState = FileState.Loading;
 
                 if (refreshing && Settings1.Default.KeepFilter) {
                     prospectiveReader.ReuseFilters();
@@ -366,15 +451,7 @@ namespace TracerX.Viewer {
                 _fileInfo = new FileInfo(filename);
                 DateTime dummy = _fileInfo.LastWriteTime; // Makes FileChanged work correctly.
 
-                startAutoRefresh.Enabled = !stopAutoRefresh.Enabled;
-                closeToolStripMenuItem_Click(null, null);
-                openToolStripMenuItem.Enabled = false;
-                closeToolStripMenuItem.Enabled = false;
-                propertiesToolStripMenuItem.Enabled = false;
-                buttonStop.Enabled = true;
-                refreshMenuItem.Enabled = false;
                 clearAllFilteringToolStripMenuItem.Enabled = false;
-                openFilters.Enabled = false;
                 filenameLabel.Text = filename;
 
                 backgroundWorker1.RunWorkerAsync();
@@ -430,14 +507,10 @@ namespace TracerX.Viewer {
                 pctLabel.Text = "100%";
             }
 
+            _FileState = FileState.Loaded;
+
             AddFileToMru(_fileInfo.FullName);
             this.Text = _fileInfo.Name + " - " + _originalTitle;
-            buttonStop.Visible = false;
-            openToolStripMenuItem.Enabled = true;
-            closeToolStripMenuItem.Enabled = true;
-            propertiesToolStripMenuItem.Enabled = true;
-            refreshMenuItem.Enabled = true;
-            openFilters.Enabled = true;
 
             _visibleTraceLevels &= ValidTraceLevels;
             ThreadObject.RecountThreads();
@@ -451,15 +524,14 @@ namespace TracerX.Viewer {
             if (_records.Count == 0) {
                 MessageBox.Show(this, "There are no records in the file.", "TracerX");
             } else {
-                findToolStripMenuItem.Enabled = true;
                 Row.ZeroTime = _records[0].Time;
                 RebuildAllRows();
 
                 // Attempt to maintain the same scroll position as before the refresh.
-                if (_rowNumToRestore == -1 || _rowNumToRestore >= TheListView.VirtualListSize) {
+                if (_rowNumToRestore == -1 || _rowNumToRestore >= NumRows) {
                     // Go to the very end and select the last row so the next iteration will also
                     // scroll to the end.
-                    SelectSingleItem(TheListView.VirtualListSize - 1);
+                    SelectSingleItem(NumRows - 1);
                 } else {
                     // Scroll to the same index as before the refresh.
                     // For some reason, setting the TopItem once doesn't work.  Setting
@@ -485,7 +557,7 @@ namespace TracerX.Viewer {
         }
 
         void _refreshTimer_Tick(object sender, EventArgs e) {
-            if (FileChanged) {
+            if (_FileChanged) {
                 StartReading(null); // Null means refresh the current file.
             }
         }
@@ -514,17 +586,6 @@ namespace TracerX.Viewer {
             pctLabel.Text = e.ProgressPercentage.ToString() + "%";
         }
         #endregion
-        
-        // Find the index of the last visible item displayed by TheListView.
-        public int FindLastVisibleItem() {
-            int ndx = TheListView.TopItem.Index;
-            do {
-                ++ndx;
-            } while (ndx < TheListView.VirtualListSize && TheListView.ClientRectangle.IntersectsWith(TheListView.Items[ndx].Bounds));
-
-            //Debug.Print("Last visible index = " + (ndx - 1));
-            return ndx - 1;
-        }
 
         // Increment or decrement the CollapsedDepth of every record between this one and 
         // the corresponding Exit record (for the same thread).
@@ -545,11 +606,6 @@ namespace TracerX.Viewer {
                     }
                 }
             }
-        }
-
-        // Called by the FilterDialog when the user clicks Apply or OK.
-        public void RebuildAllRows() {
-            RebuildRows(0, _records[0]);
         }
 
         // Reset the _rows elements from startRow forward.
@@ -573,57 +629,42 @@ namespace TracerX.Viewer {
                 offset = FocusedRow.Index - TheListView.TopItem.Index;
             }
 
-            try {
-                int curRow = startRow;
-                int curRec = rec.Index;
+            int curRow = startRow;
+            int curRec = rec.Index;
 
-                while (curRec < _records.Count) {
-                    curRow = _records[curRec].SetVisibleRows(_rows, curRow);
-                    ++curRec;
-                }
-
-                ClearItemCache();
-
-                // This can throw an exception when the user selects a row near the
-                // end of the file and hides a thread with lots of records.  It seems
-                // to be a bug in ListView.  The app seems to function OK as long as we catch
-                // and ignore the exception.
-                TheListView.VirtualListSize = curRow;
-            } catch (Exception exception) {
-                Debug.Print(exception.ToString());
-            } finally {
-                if (showRec != null) {
-                    int showRow = showRec.RowIndices[showLine];
-
-                    // If showRec is no longer visible, find the nearest record that is.
-                    while (!showRec.IsVisible && showRec.Index > 0) {
-                        showRec = _records[showRec.Index - 1];
-                    }
-
-                    // If we found a visible record, scroll to it.
-                    if (showRec.IsVisible) {
-                        if (showRow == -1 || !showRec.HasNewlines || showRec.IsCollapsed)
-                            showRow = showRec.FirstRowIndex;
-
-                        //Debug.Print("selecting item " + showRow);
-                        SelectSingleItem(showRow);
-                        int top = showRow - offset;
-                        if (top > 0) {
-                            //Debug.Print("setting top " + top);
-                            TheListView.TopItem = TheListView.Items[top];
-                        }
-                    }
-                }
-
-                this.Cursor = restoreCursor;
-                Debug.Print("RebuildRows exiting");
-
+            while (curRec < _records.Count) {
+                curRow = _records[curRec].SetVisibleRows(_rows, curRow);
+                ++curRec;
             }
-        }
 
-        public void ClearItemCache() {
-            Debug.Print("Clearing _itemCache.");
-            _itemCache = null; // Cause cache to be rebuilt.
+            ClearItemCache();
+            NumRows = curRow;
+
+            if (showRec != null) {
+                int showRow = showRec.RowIndices[showLine];
+
+                // If showRec is no longer visible, find the nearest record that is.
+                while (!showRec.IsVisible && showRec.Index > 0) {
+                    showRec = _records[showRec.Index - 1];
+                }
+
+                // If we found a visible record, scroll to it.
+                if (showRec.IsVisible) {
+                    if (showRow == -1 || !showRec.HasNewlines || showRec.IsCollapsed)
+                        showRow = showRec.FirstRowIndex;
+
+                    //Debug.Print("selecting item " + showRow);
+                    SelectSingleItem(showRow);
+                    int top = showRow - offset;
+                    if (top > 0) {
+                        //Debug.Print("setting top " + top);
+                        TheListView.TopItem = TheListView.Items[top];
+                    }
+                }
+            }
+
+            this.Cursor = restoreCursor;
+            Debug.Print("RebuildRows exiting");
         }
 
         protected override void OnClosing(CancelEventArgs e) {
@@ -659,12 +700,6 @@ namespace TracerX.Viewer {
                     return _rows[i].MakeItem(_rows[i-1]);
                 }
             }
-        }
-
-        public void GetVirtualItem(Object sender, RetrieveVirtualItemEventArgs e) {
-            e.Item = GetListItem(e.ItemIndex);
-            //Row row = (Row)e.Item.Tag;
-            //Debug.Print("Got virtual item " +e.ItemIndex + ", index = " + row.Index + ", record num = " + row.Rec.MsgNum + ", line = " + row.Line);
         }
 
         private void listView1_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e) {
@@ -709,11 +744,7 @@ namespace TracerX.Viewer {
        }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
-            TheListView.VirtualListSize = 0;
-            _rows = null;
-            _records = null;
-            toolStripProgressBar1.Value = 0;
-            openFilters.Enabled = false;
+            _FileState = FileState.NoFile;
         }
 
         private void toolStripDropDownButton1_Click(object sender, EventArgs e) {
@@ -750,7 +781,7 @@ namespace TracerX.Viewer {
                 }
 
                 this.TheListView.EndUpdate();
-                //Debug.Print("Double click handled, rows = " + TheListView.VirtualListSize + ", time = " + (DateTime.Now - start));
+                //Debug.Print("Double click handled, rows = " + NumRows + ", time = " + (DateTime.Now - start));
             }
 
         }
@@ -773,11 +804,6 @@ namespace TracerX.Viewer {
         }
 
         #region Bookmarks
-        public void InvalidateTheListView() {
-            ClearItemCache();
-            TheListView.Invalidate();
-        }
-
         private void bookmarkToggle_Click(object sender, EventArgs e) {
             if (TheListView.FocusedItem != null) {
                 Row row = TheListView.FocusedItem.Tag as Row;
@@ -822,14 +848,14 @@ namespace TracerX.Viewer {
                 start = TheListView.FocusedItem.Index + 1;
             }
 
-            if (!FindBookmark(start, TheListView.VirtualListSize)) {
+            if (!FindBookmark(start, NumRows)) {
                 // Wrap back to the first row.
                 FindBookmark(0, start);
             }
         }
 
         private void previousBookmarkToolStripMenuItem_Click(object sender, EventArgs e) {
-            int start = TheListView.VirtualListSize - 1;
+            int start = NumRows - 1;
 
             if (TheListView.FocusedItem != null) {
                 start = TheListView.FocusedItem.Index - 1;
@@ -837,7 +863,7 @@ namespace TracerX.Viewer {
 
             if (!FindBookmark(start, -1)) {
                 // Wrap back to the last row.
-                FindBookmark(TheListView.VirtualListSize - 1, start);
+                FindBookmark(NumRows - 1, start);
             }
         }
         #endregion Bookmarks
@@ -850,12 +876,12 @@ namespace TracerX.Viewer {
 
         // Search down for the current search string.
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e) {
-            DoSearch(_needle, _compareType, _regex, false, false);
+            if (_needle != null) DoSearch(_needle, _compareType, _regex, false, false);
         }
 
         // Search up for the current search string.
         private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e) {
-            DoSearch(_needle, _compareType, _regex, true, false);
+            if (_needle != null) DoSearch(_needle, _compareType, _regex, true, false);
         }
 
         // Clear all filtering.
@@ -1154,7 +1180,11 @@ namespace TracerX.Viewer {
                     endOfMethodMenuItem.Enabled = false;
                 }
             }
+        }
 
+        private void UpdateFindCommands() {
+            findToolStripMenuItem.Enabled = _FileState == FileState.Loaded && NumRows > 0;
+            findNextToolStripMenuItem.Enabled = findPreviousToolStripMenuItem.Enabled = (findToolStripMenuItem.Enabled && _needle != null);
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
@@ -1178,7 +1208,7 @@ namespace TracerX.Viewer {
                 // their widths as we go.  When the sum exceeds the xoffset, we know the mouse
                 // is on the current column. 
                 int sum = 0;
-                foreach (ColumnHeader col in OrderedHeaders) {
+                foreach (ColumnHeader col in _OrderedHeaders) {
                     sum += col.Width;
                     if (sum > xoffset) {
                         ShowMenuForColumnHeader(col);
@@ -1328,7 +1358,7 @@ namespace TracerX.Viewer {
         }
 
         private void viewToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
-            filterToolStripMenuItem.Enabled = _reader != null;
+            filterToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1466,7 +1496,7 @@ namespace TracerX.Viewer {
             startAutoRefresh.Enabled = false;
             stopAutoRefresh.Enabled = true;
 
-            if (FileChanged) {
+            if (_FileChanged) {
                 StartReading(null);
             } else {
                 _refreshTimer.Interval = Settings1.Default.AutoRefreshInterval * 1000;
