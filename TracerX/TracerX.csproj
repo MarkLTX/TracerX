@@ -162,8 +162,12 @@
     <Content Include="Resources\ArrowUp.ico" />
     <Content Include="Resources\BookmarkArrowDown.ico" />
     <Content Include="Resources\BookmarkArrowUp.ico" />
+    <None Include="Resources\BookmarkClear.bmp" />
     <Content Include="Resources\BookmarkLastSubline.ico" />
+    <None Include="Resources\BookmarkNext.bmp" />
+    <None Include="Resources\BookmarkPrev.bmp" />
     <Content Include="Resources\BookmarkSubline.ico" />
+    <None Include="Resources\BookmarkToggle.bmp" />
     <Content Include="Resources\LastSubline.ico" />
     <Content Include="Resources\Stop.bmp" />
     <Content Include="Resources\Play.bmp" />

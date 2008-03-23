@@ -14,6 +14,8 @@ using Microsoft.Win32;
 // See http://blogs.msdn.com/cumgranosalis/archive/2006/03/06/VirtualListViewUsage.aspx
 // for a good article on using ListView in virtual mode.
 
+// SvnBridge: https://tfs05.codeplex.com, id_cp
+
 namespace TracerX.Viewer {
     // This is the main form for the TracerX log viewer.
     internal partial class MainForm : Form {
@@ -153,6 +155,9 @@ namespace TracerX.Viewer {
 
                 // Disable Find and FindNext/F3 if no text is visible.
                 UpdateFindCommands();
+                UpdateBookmarkCommands();
+
+                Debug.Print("NumRows now " + NumRows);
             }
         }
 
@@ -309,6 +314,7 @@ namespace TracerX.Viewer {
                 }
 
                 UpdateFindCommands();
+                UpdateBookmarkCommands();
 
                 // TODO: enable/disable ui elements.
             } 
@@ -1182,9 +1188,19 @@ namespace TracerX.Viewer {
             }
         }
 
+        // Enable or disable find, find next, find prev.  It is not sufficient to only do this when 
+        // the Edit menu is opening because these commands also have shortcut keys and toolbar buttons.
         private void UpdateFindCommands() {
             findToolStripMenuItem.Enabled = _FileState == FileState.Loaded && NumRows > 0;
             findNextToolStripMenuItem.Enabled = findPreviousToolStripMenuItem.Enabled = (findToolStripMenuItem.Enabled && _needle != null);
+        }
+
+        private void UpdateBookmarkCommands() {
+            bookmarkToggle.Enabled = TheListView.FocusedItem != null;
+
+            nextBookmarkToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
+            previousBookmarkToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
+            clearAllBookmarksToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
@@ -1515,6 +1531,11 @@ namespace TracerX.Viewer {
         {
             License dlg = new License();
             dlg.ShowDialog(this);
+        }
+
+        private void TheListView_SelectedIndexChanged(object sender, EventArgs e) {
+            Debug.Print("SelectedIndexChanged " + TheListView.SelectedIndices.Count );
+            UpdateBookmarkCommands();
         }
     }
 }
