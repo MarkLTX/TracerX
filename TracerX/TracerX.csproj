@@ -151,6 +151,12 @@
     </Compile>
     <Compile Include="Viewer\ThreadName.cs" />
     <Compile Include="Viewer\ThreadObject.cs" />
+    <Compile Include="Viewer\UICommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Viewer\UICommand.Designer.cs">
+      <DependentUpon>UICommand.cs</DependentUpon>
+    </Compile>
     <Compile Include="Viewer\VersionChecker.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +173,7 @@
     <None Include="Resources\BookmarkNext.bmp" />
     <None Include="Resources\BookmarkPrev.bmp" />
     <Content Include="Resources\BookmarkSubline.ico" />
-    <None Include="Resources\BookmarkToggle.bmp" />
+    <None Include="Resources\BookmarkToggle2.bmp" />
     <Content Include="Resources\LastSubline.ico" />
     <Content Include="Resources\Stop.bmp" />
     <Content Include="Resources\Play.bmp" />

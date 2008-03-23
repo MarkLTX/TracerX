@@ -83,7 +83,7 @@ namespace TracerX.Viewer {
             this.copyColsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearAllFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearFilterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.columnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,15 +92,27 @@ namespace TracerX.Viewer {
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.openFilters = new System.Windows.Forms.ToolStripButton();
-            this.NoFilteringButton = new System.Windows.Forms.ToolStripButton();
+            this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.startAutoRefresh = new System.Windows.Forms.ToolStripButton();
             this.stopAutoRefresh = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.bookmarkToggleButton = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkPrev = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkNext = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkClear = new System.Windows.Forms.ToolStripButton();
             this.columnContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.colMenuFilterItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuRemoveItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.colMenuOptionsItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuColumnItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleBookmarkCmd = new TracerX.Viewer.UICommand(this.components);
+            this.openFiltersCmd = new TracerX.Viewer.UICommand(this.components);
+            this.clearFiltersCmd = new TracerX.Viewer.UICommand(this.components);
+            this.prevBookmarkCmd = new TracerX.Viewer.UICommand(this.components);
+            this.nextBookmarkCmd = new TracerX.Viewer.UICommand(this.components);
+            this.clearBookmarksCmd = new TracerX.Viewer.UICommand(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -543,7 +555,6 @@ namespace TracerX.Viewer {
             this.bookmarkToggle.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
             this.bookmarkToggle.Size = new System.Drawing.Size(245, 22);
             this.bookmarkToggle.Text = "Toggle Bookmark";
-            this.bookmarkToggle.Click += new System.EventHandler(this.bookmarkToggle_Click);
             // 
             // nextBookmarkToolStripMenuItem
             // 
@@ -551,7 +562,6 @@ namespace TracerX.Viewer {
             this.nextBookmarkToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this.nextBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
             this.nextBookmarkToolStripMenuItem.Text = "Next Bookmark";
-            this.nextBookmarkToolStripMenuItem.Click += new System.EventHandler(this.nextBookmarkToolStripMenuItem_Click);
             // 
             // previousBookmarkToolStripMenuItem
             // 
@@ -559,14 +569,12 @@ namespace TracerX.Viewer {
             this.previousBookmarkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F2)));
             this.previousBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
             this.previousBookmarkToolStripMenuItem.Text = "Previous Bookmark";
-            this.previousBookmarkToolStripMenuItem.Click += new System.EventHandler(this.previousBookmarkToolStripMenuItem_Click);
             // 
             // clearAllBookmarksToolStripMenuItem
             // 
             this.clearAllBookmarksToolStripMenuItem.Name = "clearAllBookmarksToolStripMenuItem";
             this.clearAllBookmarksToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
             this.clearAllBookmarksToolStripMenuItem.Text = "Clear All Bookmarks";
-            this.clearAllBookmarksToolStripMenuItem.Click += new System.EventHandler(this.clearAllBookmarksToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -594,31 +602,29 @@ namespace TracerX.Viewer {
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.filterToolStripMenuItem,
-            this.clearAllFilteringToolStripMenuItem,
+            this.clearFilterMenuItem,
             this.columnsToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.refreshMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.viewToolStripMenuItem.Text = "View";
-            this.viewToolStripMenuItem.DropDownOpening += new System.EventHandler(this.viewToolStripMenuItem_DropDownOpening);
             // 
             // filterToolStripMenuItem
             // 
             this.filterToolStripMenuItem.Enabled = false;
+            this.filterToolStripMenuItem.Image = global::TracerX.Properties.Resources.Filter;
             this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
             this.filterToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.filterToolStripMenuItem.Text = "Filter...";
-            this.filterToolStripMenuItem.Click += new System.EventHandler(this.filterToolStripMenuItem_Click);
             // 
-            // clearAllFilteringToolStripMenuItem
+            // clearFilterMenuItem
             // 
-            this.clearAllFilteringToolStripMenuItem.Enabled = false;
-            this.clearAllFilteringToolStripMenuItem.Image = global::TracerX.Properties.Resources.FilterNot;
-            this.clearAllFilteringToolStripMenuItem.Name = "clearAllFilteringToolStripMenuItem";
-            this.clearAllFilteringToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.clearAllFilteringToolStripMenuItem.Text = "Clear All Filtering";
-            this.clearAllFilteringToolStripMenuItem.Click += new System.EventHandler(this.clearAllFilteringToolStripMenuItem_Click);
+            this.clearFilterMenuItem.Enabled = false;
+            this.clearFilterMenuItem.Image = global::TracerX.Properties.Resources.FilterNot;
+            this.clearFilterMenuItem.Name = "clearFilterMenuItem";
+            this.clearFilterMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.clearFilterMenuItem.Text = "Clear All Filtering";
             // 
             // columnsToolStripMenuItem
             // 
@@ -672,9 +678,15 @@ namespace TracerX.Viewer {
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFilters,
-            this.NoFilteringButton,
+            this.clearFilterButton,
+            this.toolStripSeparator6,
             this.startAutoRefresh,
-            this.stopAutoRefresh});
+            this.stopAutoRefresh,
+            this.toolStripSeparator7,
+            this.bookmarkToggleButton,
+            this.bookmarkPrev,
+            this.bookmarkNext,
+            this.bookmarkClear});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(886, 25);
@@ -690,19 +702,22 @@ namespace TracerX.Viewer {
             this.openFilters.Name = "openFilters";
             this.openFilters.Size = new System.Drawing.Size(23, 22);
             this.openFilters.Text = "Open filter dialog";
-            this.openFilters.Click += new System.EventHandler(this.openFilters_Click);
             // 
-            // NoFilteringButton
+            // clearFilterButton
             // 
-            this.NoFilteringButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.NoFilteringButton.Enabled = false;
-            this.NoFilteringButton.Image = global::TracerX.Properties.Resources.FilterNot;
-            this.NoFilteringButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.NoFilteringButton.Name = "NoFilteringButton";
-            this.NoFilteringButton.Size = new System.Drawing.Size(23, 22);
-            this.NoFilteringButton.Text = "toolStripButton1";
-            this.NoFilteringButton.ToolTipText = "Clear all filtering";
-            this.NoFilteringButton.Click += new System.EventHandler(this.clearAllFilteringToolStripMenuItem_Click);
+            this.clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.clearFilterButton.Enabled = false;
+            this.clearFilterButton.Image = global::TracerX.Properties.Resources.FilterNot;
+            this.clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.clearFilterButton.Name = "clearFilterButton";
+            this.clearFilterButton.Size = new System.Drawing.Size(23, 22);
+            this.clearFilterButton.Text = "toolStripButton1";
+            this.clearFilterButton.ToolTipText = "Clear all filtering";
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
             // startAutoRefresh
             // 
@@ -726,6 +741,51 @@ namespace TracerX.Viewer {
             this.stopAutoRefresh.Size = new System.Drawing.Size(23, 22);
             this.stopAutoRefresh.Text = "Stop Auto-Refresh";
             this.stopAutoRefresh.Click += new System.EventHandler(this.stopAutoRefresh_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bookmarkToggleButton
+            // 
+            this.bookmarkToggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkToggleButton.Image = global::TracerX.Properties.Resources.BookmarkToggle2;
+            this.bookmarkToggleButton.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkToggleButton.Name = "bookmarkToggleButton";
+            this.bookmarkToggleButton.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkToggleButton.Text = "toolStripButton1";
+            this.bookmarkToggleButton.ToolTipText = "Toggle bookmark";
+            // 
+            // bookmarkPrev
+            // 
+            this.bookmarkPrev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkPrev.Image = global::TracerX.Properties.Resources.BookmarkPrev;
+            this.bookmarkPrev.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkPrev.Name = "bookmarkPrev";
+            this.bookmarkPrev.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkPrev.Text = "toolStripButton1";
+            this.bookmarkPrev.ToolTipText = "Previous bookmark";
+            // 
+            // bookmarkNext
+            // 
+            this.bookmarkNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkNext.Image = global::TracerX.Properties.Resources.BookmarkNext;
+            this.bookmarkNext.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkNext.Name = "bookmarkNext";
+            this.bookmarkNext.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkNext.Text = "toolStripButton1";
+            this.bookmarkNext.ToolTipText = "Next bookmark";
+            // 
+            // bookmarkClear
+            // 
+            this.bookmarkClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkClear.Image = global::TracerX.Properties.Resources.BookmarkClear;
+            this.bookmarkClear.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkClear.Name = "bookmarkClear";
+            this.bookmarkClear.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkClear.Text = "toolStripButton1";
+            this.bookmarkClear.ToolTipText = "Clear all bookmarks";
             // 
             // columnContextMenu
             // 
@@ -771,6 +831,54 @@ namespace TracerX.Viewer {
             this.colMenuColumnItem.Size = new System.Drawing.Size(151, 22);
             this.colMenuColumnItem.Text = "Columns...";
             this.colMenuColumnItem.Click += new System.EventHandler(this.columnsToolStripMenuItem_Click);
+            // 
+            // toggleBookmarkCmd
+            // 
+            this.toggleBookmarkCmd.ContextMenuItem = null;
+            this.toggleBookmarkCmd.Enabled = false;
+            this.toggleBookmarkCmd.MenuItem = this.bookmarkToggle;
+            this.toggleBookmarkCmd.ToolStripButton = this.bookmarkToggleButton;
+            this.toggleBookmarkCmd.Execute += new System.EventHandler(this.ExecuteToggleBookmark);
+            // 
+            // openFiltersCmd
+            // 
+            this.openFiltersCmd.ContextMenuItem = null;
+            this.openFiltersCmd.Enabled = false;
+            this.openFiltersCmd.MenuItem = this.filterToolStripMenuItem;
+            this.openFiltersCmd.ToolStripButton = this.openFilters;
+            this.openFiltersCmd.Execute += new System.EventHandler(this.ExecuteOpenFilterDialog);
+            // 
+            // clearFiltersCmd
+            // 
+            this.clearFiltersCmd.ContextMenuItem = null;
+            this.clearFiltersCmd.Enabled = false;
+            this.clearFiltersCmd.MenuItem = this.clearFilterMenuItem;
+            this.clearFiltersCmd.ToolStripButton = this.clearFilterButton;
+            this.clearFiltersCmd.Execute += new System.EventHandler(this.ExecuteClearFilter);
+            // 
+            // prevBookmarkCmd
+            // 
+            this.prevBookmarkCmd.ContextMenuItem = null;
+            this.prevBookmarkCmd.Enabled = false;
+            this.prevBookmarkCmd.MenuItem = this.previousBookmarkToolStripMenuItem;
+            this.prevBookmarkCmd.ToolStripButton = this.bookmarkPrev;
+            this.prevBookmarkCmd.Execute += new System.EventHandler(this.ExecutePrevBookmark);
+            // 
+            // nextBookmarkCmd
+            // 
+            this.nextBookmarkCmd.ContextMenuItem = null;
+            this.nextBookmarkCmd.Enabled = false;
+            this.nextBookmarkCmd.MenuItem = this.nextBookmarkToolStripMenuItem;
+            this.nextBookmarkCmd.ToolStripButton = this.bookmarkNext;
+            this.nextBookmarkCmd.Execute += new System.EventHandler(this.ExecuteNextBookmark);
+            // 
+            // clearBookmarks
+            // 
+            this.clearBookmarksCmd.ContextMenuItem = null;
+            this.clearBookmarksCmd.Enabled = false;
+            this.clearBookmarksCmd.MenuItem = this.clearAllBookmarksToolStripMenuItem;
+            this.clearBookmarksCmd.ToolStripButton = this.bookmarkClear;
+            this.clearBookmarksCmd.Execute += new System.EventHandler(this.ExecuteClearBookmarks);
             // 
             // MainForm
             // 
@@ -821,13 +929,13 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripMenuItem showOnlySelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showSelectedThreadsMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton NoFilteringButton;
+        private System.Windows.Forms.ToolStripButton clearFilterButton;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findPreviousToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clearAllFilteringToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearFilterMenuItem;
         private System.Windows.Forms.ToolStripMenuItem columnsToolStripMenuItem;
         public System.Windows.Forms.ListView TheListView;
         private System.Windows.Forms.ToolStripMenuItem loggersToolStripMenuItem;
@@ -875,5 +983,17 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripButton stopAutoRefresh;
         private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton openFilters;
+        private System.Windows.Forms.ToolStripButton bookmarkToggleButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripButton bookmarkPrev;
+        private UICommand toggleBookmarkCmd;
+        private UICommand openFiltersCmd;
+        private UICommand clearFiltersCmd;
+        private UICommand prevBookmarkCmd;
+        private System.Windows.Forms.ToolStripButton bookmarkNext;
+        private UICommand nextBookmarkCmd;
+        private System.Windows.Forms.ToolStripButton bookmarkClear;
+        private UICommand clearBookmarksCmd;
     }
 }
