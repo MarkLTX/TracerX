@@ -42,6 +42,7 @@ namespace TracerX.Viewer {
 
             if (Settings1.Default.IndentChar == '\0') Settings1.Default.IndentChar = ' ';
 
+            // Setting the FileState affects many menu items and buttons.
             _FileState = FileState.NoFile;
 
             if (args.Length > 0) {
@@ -298,7 +299,7 @@ namespace TracerX.Viewer {
                 _fileState = value;
                 startAutoRefresh.Enabled = (_fileState == FileState.Loaded && !stopAutoRefresh.Enabled);
                 propertiesToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
-                openFilters.Enabled = (_fileState == FileState.Loaded);
+                openFiltersCmd.Enabled = (_fileState == FileState.Loaded);
                 closeToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
                 refreshMenuItem.Enabled = (_fileState == FileState.Loaded);
 
@@ -311,6 +312,11 @@ namespace TracerX.Viewer {
                     _rows = null;
                     _records = null;
                     toolStripProgressBar1.Value = 0;
+
+                    toggleBookmarkCmd.Enabled = false;
+                    nextBookmarkCmd.Enabled = false;
+                    prevBookmarkCmd.Enabled = false;
+                    clearBookmarksCmd.Enabled = false;
                 }
 
                 UpdateFindCommands();
@@ -457,7 +463,7 @@ namespace TracerX.Viewer {
                 _fileInfo = new FileInfo(filename);
                 DateTime dummy = _fileInfo.LastWriteTime; // Makes FileChanged work correctly.
 
-                clearAllFilteringToolStripMenuItem.Enabled = false;
+                clearFiltersCmd.Enabled = false;
                 filenameLabel.Text = filename;
 
                 backgroundWorker1.RunWorkerAsync();
@@ -810,10 +816,17 @@ namespace TracerX.Viewer {
         }
 
         #region Bookmarks
-        private void bookmarkToggle_Click(object sender, EventArgs e) {
+        private void ExecuteToggleBookmark(object sender, EventArgs e) {
             if (TheListView.FocusedItem != null) {
                 Row row = TheListView.FocusedItem.Tag as Row;
                 row.IsBookmarked = !row.IsBookmarked;
+
+                // The first bookmark created enables these commands.
+                // They remain enabled until the file is unloaded or all
+                // bookmarks are cleared.
+                prevBookmarkCmd.Enabled = true;
+                nextBookmarkCmd.Enabled = true;
+                clearBookmarksCmd.Enabled = true;
 
                 // row.ImageIndex is determined by IsBookmarked.
                 TheListView.FocusedItem.ImageIndex = row.ImageIndex;
@@ -821,13 +834,17 @@ namespace TracerX.Viewer {
             }
         }
 
-        private void clearAllBookmarksToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteClearBookmarks(object sender, EventArgs e) {
             // We must visit every record, including those that are collapsed/hidden.
             foreach (Record rec in _records) {
                 for (int i = 0; i < rec.IsBookmarked.Length; ++i) {
                     rec.IsBookmarked[i] = false;
                 }
             }
+
+            prevBookmarkCmd.Enabled = false;
+            nextBookmarkCmd.Enabled = false;
+            clearBookmarksCmd.Enabled = false;
 
             InvalidateTheListView();
         }
@@ -847,7 +864,7 @@ namespace TracerX.Viewer {
             return false;
         }
 
-        private void nextBookmarkToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteNextBookmark(object sender, EventArgs e) {
             int start = 0;
 
             if (TheListView.FocusedItem != null) {
@@ -860,7 +877,7 @@ namespace TracerX.Viewer {
             }
         }
 
-        private void previousBookmarkToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecutePrevBookmark(object sender, EventArgs e) {
             int start = NumRows - 1;
 
             if (TheListView.FocusedItem != null) {
@@ -891,7 +908,7 @@ namespace TracerX.Viewer {
         }
 
         // Clear all filtering.
-        private void clearAllFilteringToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteClearFilter(object sender, EventArgs e) {
             ThreadObject.ShowAllThreads();
             ThreadName.ShowAllThreads();
             LoggerObject.ShowAllLoggers();
@@ -900,25 +917,19 @@ namespace TracerX.Viewer {
             RebuildAllRows();
         }
 
-        // Open the filter dialog.
-        private void openFilters_Click(object sender, EventArgs e) {
-            filterToolStripMenuItem_Click(sender, e) ;
-        }
-
         // Called when the first filter is added or the last filter is
         // removed for a class of objects such as loggers or threads,
         // or whenever the presence/status of the filter icons that appear
         // in the column headers and the "clear all filtering" commands 
         // may need to be updated.
         private void FilterAddedOrRemoved(object sender, EventArgs e) {
-            NoFilteringButton.Enabled = false;
-            clearAllFilteringToolStripMenuItem.Enabled = false;
+            clearFiltersCmd.Enabled = false;
 
             if (VisibleTraceLevels == ValidTraceLevels) {
                 headerLevel.ImageIndex = -1;
             } else {
                 headerLevel.ImageIndex = 9;
-                NoFilteringButton.Enabled = true;
+                clearFiltersCmd.Enabled = true;
             }
 
             if (ThreadName.AllVisible) {
@@ -926,7 +937,7 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerThreadName.ImageIndex = 9;
-                NoFilteringButton.Enabled = true;
+                clearFiltersCmd.Enabled = true;
             }
 
             if (ThreadObject.AllVisible) {
@@ -934,7 +945,7 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerThreadId.ImageIndex = 9;
-                NoFilteringButton.Enabled = true;
+                clearFiltersCmd.Enabled = true;
             }
 
             if (LoggerObject.AllVisible) {
@@ -942,18 +953,16 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerLogger.ImageIndex = 9;
-                NoFilteringButton.Enabled = true;
+                clearFiltersCmd.Enabled = true;
             }
 
             if (FilterDialog.TextFilterOn) {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerText.ImageIndex = 9;
-                NoFilteringButton.Enabled = true;
+                clearFiltersCmd.Enabled = true;
             } else {
                 headerText.ImageIndex = -1;
             }
-
-            clearAllFilteringToolStripMenuItem.Enabled = NoFilteringButton.Enabled;
         }
 
         // Hide selected thread names
@@ -1196,11 +1205,6 @@ namespace TracerX.Viewer {
         }
 
         private void UpdateBookmarkCommands() {
-            bookmarkToggle.Enabled = TheListView.FocusedItem != null;
-
-            nextBookmarkToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
-            previousBookmarkToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
-            clearAllBookmarksToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
@@ -1368,13 +1372,9 @@ namespace TracerX.Viewer {
             row.ShowFullText();
         }
 
-        private void filterToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteOpenFilterDialog(object sender, EventArgs e) {
             FilterDialog dialog = new FilterDialog();
             dialog.ShowDialog(this);
-        }
-
-        private void viewToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
-            filterToolStripMenuItem.Enabled = _FileState == FileState.Loaded;
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1535,7 +1535,7 @@ namespace TracerX.Viewer {
 
         private void TheListView_SelectedIndexChanged(object sender, EventArgs e) {
             Debug.Print("SelectedIndexChanged " + TheListView.SelectedIndices.Count );
-            UpdateBookmarkCommands();
+            toggleBookmarkCmd.Enabled = TheListView.FocusedItem != null;
         }
     }
 }

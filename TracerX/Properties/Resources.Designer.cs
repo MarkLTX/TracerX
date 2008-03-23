@@ -81,9 +81,9 @@ namespace TracerX.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap BookmarkToggle {
+        internal static System.Drawing.Bitmap BookmarkToggle2 {
             get {
-                object obj = ResourceManager.GetObject("BookmarkToggle", resourceCulture);
+                object obj = ResourceManager.GetObject("BookmarkToggle2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
