@@ -138,6 +138,7 @@ namespace TracerX.Viewer {
             this.Name = "FindDialog";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Find Text";
             this.ResumeLayout(false);
             this.PerformLayout();
