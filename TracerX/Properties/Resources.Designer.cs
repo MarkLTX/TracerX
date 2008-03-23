@@ -60,6 +60,34 @@ namespace TracerX.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap BookmarkClear {
+            get {
+                object obj = ResourceManager.GetObject("BookmarkClear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap BookmarkNext {
+            get {
+                object obj = ResourceManager.GetObject("BookmarkNext", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap BookmarkPrev {
+            get {
+                object obj = ResourceManager.GetObject("BookmarkPrev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap BookmarkToggle {
+            get {
+                object obj = ResourceManager.GetObject("BookmarkToggle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Filter {
             get {
                 object obj = ResourceManager.GetObject("Filter", resourceCulture);

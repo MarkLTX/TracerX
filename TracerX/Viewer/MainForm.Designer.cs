@@ -135,6 +135,7 @@ namespace TracerX.Viewer {
             this.TheListView.View = System.Windows.Forms.View.Details;
             this.TheListView.VirtualMode = true;
             this.TheListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TheListView_MouseDoubleClick);
+            this.TheListView.SelectedIndexChanged += new System.EventHandler(this.TheListView_SelectedIndexChanged);
             this.TheListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.TheListView_ColumnClick);
             this.TheListView.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.GetVirtualItem);
             this.TheListView.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.listView1_CacheVirtualItems);
