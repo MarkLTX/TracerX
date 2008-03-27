@@ -157,6 +157,12 @@
     <Compile Include="Viewer\UICommand.Designer.cs">
       <DependentUpon>UICommand.cs</DependentUpon>
     </Compile>
+    <Compile Include="Viewer\UICommandProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Viewer\UICommandProvider.designer.cs">
+      <DependentUpon>UICommandProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="Viewer\VersionChecker.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +181,9 @@
     <Content Include="Resources\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
     <Content Include="Resources\LastSubline.ico" />
+    <Content Include="Resources\find.png" />
+    <Content Include="Resources\findNext.png" />
+    <Content Include="Resources\findPrev.png" />
     <Content Include="Resources\Stop.bmp" />
     <Content Include="Resources\Play.bmp" />
     <Content Include="Resources\scroll_view.ico" />

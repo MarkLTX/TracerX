@@ -5,11 +5,13 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TracerX.Viewer {
+namespace Commander {
     /// <summary>
-    /// The UICommand class allows a ToolStripButton and two ToolStripMenuItems to be enabled/disabled
-    /// together.  It also associates the Click event of all three objects with the same event handler.
-    /// Any of the three can be null.
+    /// Several UI controls (e.g. a menu item, toolbar button, and a regular
+    /// button) can be associated with a single UICommand.  Enabling/disabling the UICommand
+    /// object enables/disables the UI controls.  Clicking one of the UI controls raises the
+    /// UICommand.Execute event.  Another class (UICommandProvider) allows the programmer to
+    /// specify a UICommand instance for each UI controls.
     /// </summary>
     public partial class UICommand : Component {
         public UICommand() {
@@ -20,71 +22,61 @@ namespace TracerX.Viewer {
             container.Add(this);
 
             InitializeComponent();
+            ClickForwarderDelegate = new EventHandler(ClickForwarder);
         }
 
-        public ToolStripButton ToolStripButton {
-            get { return _toolStripButton; }
-            set { 
-                _toolStripButton = value;
-                if (_toolStripButton != null) {
-                    if (_execute != null) _toolStripButton.Click += _execute;
-                    _toolStripButton.Enabled = _enabled;
-                }
-            }
-        }
-        private ToolStripButton _toolStripButton;
+        // This event is raised whenever one of the attached controls is clicked.
+        public event EventHandler Execute;
 
-        public ToolStripMenuItem MenuItem {
-            get { return _menuItem; }
-            set {
-                _menuItem = value;
-                if (_menuItem != null) {
-                    if (_execute != null) _menuItem.Click += _execute;
-                    _menuItem.Enabled = _enabled;
-                }
-            }
-        }
-        private ToolStripMenuItem _menuItem;
-
-        public ToolStripMenuItem ContextMenuItem {
-            get { return _contextMenuItem; }
-            set { 
-                _contextMenuItem = value;
-                if (_contextMenuItem != null) {
-                    if (_execute != null) _contextMenuItem.Click += _execute;
-                    _contextMenuItem.Enabled = _enabled;
-                }
-            }
-        }
-        private ToolStripMenuItem _contextMenuItem;
-
-        public event EventHandler Execute {
-            add {
-                _execute = value;
-                if (_toolStripButton != null) _toolStripButton.Click += value;
-                if (_menuItem != null) _menuItem.Click += value;
-                if (_contextMenuItem != null) _contextMenuItem.Click += value;
-            }
-            
-            remove {
-                _execute = null;
-                if (_toolStripButton != null) _toolStripButton.Click -= value;
-                if (_menuItem != null) _menuItem.Click -= value;
-                if (_contextMenuItem != null) _contextMenuItem.Click -= value;
-            }
-        }
-        private EventHandler _execute;
-
+        // Sets/gets the Enabled property of the attached controls.
         public bool Enabled {
             get { return _enabled; }
-            set {
+            set { 
                 _enabled = value;
-                if (_toolStripButton != null) _toolStripButton.Enabled = value;
-                if (_menuItem != null) _menuItem.Enabled = value;
-                if (_contextMenuItem != null) _contextMenuItem.Enabled = value;
+                foreach (Component c in _components) {
+                    if (c is Control) ((Control)c).Enabled = _enabled;
+                    else if (c is ToolStripItem) ((ToolStripItem)c).Enabled = _enabled;
+                    else throw new ApplicationException("Object has unexpected type " + c.GetType());
+                }
             }
         }
-        private bool _enabled;
-    }
 
+        private bool _enabled;
+
+        // The list of UI contols attached to this UICommand.  Since menu items and toolbar
+        // buttons don't derive from Control, it's a list of Components instead of Controls.
+        private List<Component> _components = new List<Component>();
+
+        // The attached controls have their Click events mapped to this, which
+        // forwards the click event to the Execute event.
+        private void ClickForwarder(object sender, EventArgs args) {
+            if (Execute != null) Execute(sender, args);
+        }
+
+        private EventHandler ClickForwarderDelegate;
+
+        // This attaches the specified control to this UICommand. 
+        internal void Add(Component component) {
+            // We must be able to handle any object that UICommandProvider.CanExtend returns true for.
+            if (component is Control) {
+                ((Control)component).Click += ClickForwarderDelegate;
+                ((Control)component).Enabled = _enabled;
+            } else if (component is ToolStripItem) {
+                ((ToolStripItem)component).Click += ClickForwarderDelegate;
+                ((ToolStripItem)component).Enabled = _enabled;
+            } else throw new ApplicationException("Object has unexpected type " + component.GetType());
+            
+            _components.Add(component);
+        }
+
+        // This removes the specified control from this UICommand. 
+        internal void Remove(Component component) {
+            // We must be able to handle any object that UICommandProvider.CanExtend returns true for.
+            _components.Remove(component);
+
+            if (component is Control) ((Control)component).Click -= ClickForwarderDelegate;
+            else if (component is ToolStripItem) ((ToolStripItem)component).Click -= ClickForwarderDelegate;
+            else throw new ApplicationException("Object has unexpected type " + component.GetType());
+        }
+    }
 }

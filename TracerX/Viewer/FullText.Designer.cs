@@ -92,8 +92,10 @@ namespace TracerX.Viewer {
             // 
             // FullText
             // 
+            this.AcceptButton = this.ok;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.ok;
             this.ClientSize = new System.Drawing.Size(652, 178);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.copy);
