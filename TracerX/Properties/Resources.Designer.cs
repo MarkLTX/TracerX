@@ -102,6 +102,27 @@ namespace TracerX.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap find {
+            get {
+                object obj = ResourceManager.GetObject("find", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap findNext {
+            get {
+                object obj = ResourceManager.GetObject("findNext", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap findPrev {
+            get {
+                object obj = ResourceManager.GetObject("findPrev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon scroll_view {
             get {
                 object obj = ResourceManager.GetObject("scroll_view", resourceCulture);

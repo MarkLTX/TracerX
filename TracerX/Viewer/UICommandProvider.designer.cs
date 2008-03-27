@@ -1,5 +1,5 @@
 namespace Commander {
-    partial class UICommand {
+    partial class UICommandProvider {
         /// <summary>
         /// Required designer variable.
         /// </summary>

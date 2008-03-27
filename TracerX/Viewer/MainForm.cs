@@ -156,7 +156,6 @@ namespace TracerX.Viewer {
 
                 // Disable Find and FindNext/F3 if no text is visible.
                 UpdateFindCommands();
-                UpdateBookmarkCommands();
 
                 Debug.Print("NumRows now " + NumRows);
             }
@@ -299,7 +298,7 @@ namespace TracerX.Viewer {
                 _fileState = value;
                 startAutoRefresh.Enabled = (_fileState == FileState.Loaded && !stopAutoRefresh.Enabled);
                 propertiesToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
-                openFiltersCmd.Enabled = (_fileState == FileState.Loaded);
+                filterDlgCmd.Enabled = (_fileState == FileState.Loaded);
                 closeToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
                 refreshMenuItem.Enabled = (_fileState == FileState.Loaded);
 
@@ -313,14 +312,16 @@ namespace TracerX.Viewer {
                     _records = null;
                     toolStripProgressBar1.Value = 0;
 
-                    toggleBookmarkCmd.Enabled = false;
-                    nextBookmarkCmd.Enabled = false;
-                    prevBookmarkCmd.Enabled = false;
-                    clearBookmarksCmd.Enabled = false;
+                    // Disabling these commands when filestate != Loaded is not the same
+                    // as enabling them when filestate == Loaded.
+                    filterClearCmd.Enabled = false;
+                    bookmarkToggleCmd.Enabled = false;
+                    bookmarkNextCmd.Enabled = false;
+                    bookmarkPrevCmd.Enabled = false;
+                    bookmarkClearCmd.Enabled = false;
                 }
 
                 UpdateFindCommands();
-                UpdateBookmarkCommands();
 
                 // TODO: enable/disable ui elements.
             } 
@@ -463,7 +464,7 @@ namespace TracerX.Viewer {
                 _fileInfo = new FileInfo(filename);
                 DateTime dummy = _fileInfo.LastWriteTime; // Makes FileChanged work correctly.
 
-                clearFiltersCmd.Enabled = false;
+                filterClearCmd.Enabled = false;
                 filenameLabel.Text = filename;
 
                 backgroundWorker1.RunWorkerAsync();
@@ -824,9 +825,9 @@ namespace TracerX.Viewer {
                 // The first bookmark created enables these commands.
                 // They remain enabled until the file is unloaded or all
                 // bookmarks are cleared.
-                prevBookmarkCmd.Enabled = true;
-                nextBookmarkCmd.Enabled = true;
-                clearBookmarksCmd.Enabled = true;
+                bookmarkPrevCmd.Enabled = true;
+                bookmarkNextCmd.Enabled = true;
+                bookmarkClearCmd.Enabled = true;
 
                 // row.ImageIndex is determined by IsBookmarked.
                 TheListView.FocusedItem.ImageIndex = row.ImageIndex;
@@ -842,9 +843,9 @@ namespace TracerX.Viewer {
                 }
             }
 
-            prevBookmarkCmd.Enabled = false;
-            nextBookmarkCmd.Enabled = false;
-            clearBookmarksCmd.Enabled = false;
+            bookmarkPrevCmd.Enabled = false;
+            bookmarkNextCmd.Enabled = false;
+            bookmarkClearCmd.Enabled = false;
 
             InvalidateTheListView();
         }
@@ -892,18 +893,18 @@ namespace TracerX.Viewer {
         #endregion Bookmarks
 
         // Display the Find dialog.
-        private void findToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteFind(object sender, EventArgs e) {
             FindDialog dlg = new FindDialog(this);
             dlg.ShowDialog(this);
         }
 
         // Search down for the current search string.
-        private void findNextToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteFindNext(object sender, EventArgs e) {
             if (_needle != null) DoSearch(_needle, _compareType, _regex, false, false);
         }
 
         // Search up for the current search string.
-        private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteFindPrevious(object sender, EventArgs e) {
             if (_needle != null) DoSearch(_needle, _compareType, _regex, true, false);
         }
 
@@ -923,13 +924,13 @@ namespace TracerX.Viewer {
         // in the column headers and the "clear all filtering" commands 
         // may need to be updated.
         private void FilterAddedOrRemoved(object sender, EventArgs e) {
-            clearFiltersCmd.Enabled = false;
+            filterClearCmd.Enabled = false;
 
             if (VisibleTraceLevels == ValidTraceLevels) {
                 headerLevel.ImageIndex = -1;
             } else {
                 headerLevel.ImageIndex = 9;
-                clearFiltersCmd.Enabled = true;
+                filterClearCmd.Enabled = true;
             }
 
             if (ThreadName.AllVisible) {
@@ -937,7 +938,7 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerThreadName.ImageIndex = 9;
-                clearFiltersCmd.Enabled = true;
+                filterClearCmd.Enabled = true;
             }
 
             if (ThreadObject.AllVisible) {
@@ -945,7 +946,7 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerThreadId.ImageIndex = 9;
-                clearFiltersCmd.Enabled = true;
+                filterClearCmd.Enabled = true;
             }
 
             if (LoggerObject.AllVisible) {
@@ -953,13 +954,13 @@ namespace TracerX.Viewer {
             } else {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerLogger.ImageIndex = 9;
-                clearFiltersCmd.Enabled = true;
+                filterClearCmd.Enabled = true;
             }
 
             if (FilterDialog.TextFilterOn) {
                 // Show a filter in the header so user knows a thread filter is applies.
                 headerText.ImageIndex = 9;
-                clearFiltersCmd.Enabled = true;
+                filterClearCmd.Enabled = true;
             } else {
                 headerText.ImageIndex = -1;
             }
@@ -1200,11 +1201,8 @@ namespace TracerX.Viewer {
         // Enable or disable find, find next, find prev.  It is not sufficient to only do this when 
         // the Edit menu is opening because these commands also have shortcut keys and toolbar buttons.
         private void UpdateFindCommands() {
-            findToolStripMenuItem.Enabled = _FileState == FileState.Loaded && NumRows > 0;
-            findNextToolStripMenuItem.Enabled = findPreviousToolStripMenuItem.Enabled = (findToolStripMenuItem.Enabled && _needle != null);
-        }
-
-        private void UpdateBookmarkCommands() {
+            findCmd.Enabled = _FileState == FileState.Loaded && NumRows > 0;
+            findNextCmd.Enabled = findPrevCmd.Enabled = (findCmd.Enabled && _needle != null);
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
@@ -1535,7 +1533,15 @@ namespace TracerX.Viewer {
 
         private void TheListView_SelectedIndexChanged(object sender, EventArgs e) {
             Debug.Print("SelectedIndexChanged " + TheListView.SelectedIndices.Count );
-            toggleBookmarkCmd.Enabled = TheListView.FocusedItem != null;
+            bookmarkToggleCmd.Enabled = TheListView.FocusedItem != null;
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e) {
+
+        }
+
+        private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e) {
+
         }
     }
 }
