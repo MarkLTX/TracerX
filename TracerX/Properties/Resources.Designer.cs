@@ -88,16 +88,30 @@ namespace TracerX.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap Filter {
+        internal static System.Drawing.Bitmap Columns {
             get {
-                object obj = ResourceManager.GetObject("Filter", resourceCulture);
+                object obj = ResourceManager.GetObject("Columns", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap FilterNot {
+        internal static System.Drawing.Icon Filter {
             get {
-                object obj = ResourceManager.GetObject("FilterNot", resourceCulture);
+                object obj = ResourceManager.GetObject("Filter", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Filter1 {
+            get {
+                object obj = ResourceManager.GetObject("Filter1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap FilterNot1 {
+            get {
+                object obj = ResourceManager.GetObject("FilterNot1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -119,6 +133,20 @@ namespace TracerX.Properties {
         internal static System.Drawing.Bitmap findPrev {
             get {
                 object obj = ResourceManager.GetObject("findPrev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Options {
+            get {
+                object obj = ResourceManager.GetObject("Options", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Refresh {
+            get {
+                object obj = ResourceManager.GetObject("Refresh", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

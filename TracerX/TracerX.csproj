@@ -168,8 +168,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Apache_License.txt" />
     <Content Include="Logger\Config\SampleConfig.xml" />
-    <None Include="Resources\Filter.ico" />
-    <None Include="Resources\FilterNot.ico" />
     <Content Include="Resources\ArrowDown.ico" />
     <Content Include="Resources\ArrowUp.ico" />
     <Content Include="Resources\BookmarkArrowDown.ico" />
@@ -180,10 +178,16 @@
     <None Include="Resources\BookmarkPrev.bmp" />
     <Content Include="Resources\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
+    <Content Include="Resources\Filter.ico" />
+    <Content Include="Resources\FilterNot.png" />
+    <Content Include="Resources\Filter.png" />
+    <Content Include="Resources\Columns.png" />
     <Content Include="Resources\LastSubline.ico" />
     <Content Include="Resources\find.png" />
     <Content Include="Resources\findNext.png" />
     <Content Include="Resources\findPrev.png" />
+    <Content Include="Resources\Options.png" />
+    <Content Include="Resources\Refresh.png" />
     <Content Include="Resources\Stop.bmp" />
     <Content Include="Resources\Play.bmp" />
     <Content Include="Resources\scroll_view.ico" />
