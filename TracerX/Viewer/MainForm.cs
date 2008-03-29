@@ -300,7 +300,7 @@ namespace TracerX.Viewer {
                 propertiesToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
                 filterDlgCmd.Enabled = (_fileState == FileState.Loaded);
                 closeToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
-                refreshMenuItem.Enabled = (_fileState == FileState.Loaded);
+                refreshCmd.Enabled = (_fileState == FileState.Loaded);
 
                 buttonStop.Visible = (_fileState == FileState.Loading);
 
@@ -1008,7 +1008,7 @@ namespace TracerX.Viewer {
         }
 
         // Show the column selection dialog.
-        private void columnsToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteColumns(object sender, EventArgs e) {
             ColumnsDlg dlg = new ColumnsDlg(this);
             dlg.ShowDialog(this);
         }
@@ -1361,7 +1361,7 @@ namespace TracerX.Viewer {
             InvalidateTheListView();
         }
 
-        private void refreshMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteRefresh(object sender, EventArgs e) {
             StartReading(null); // Null means refresh the current file.
         }
 
@@ -1375,7 +1375,7 @@ namespace TracerX.Viewer {
             dialog.ShowDialog(this);
         }
 
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteOptions(object sender, EventArgs e) {
             OptionsDialog dlg = new OptionsDialog();
             dlg.ShowDialog(this);
         }

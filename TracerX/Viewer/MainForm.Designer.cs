@@ -70,47 +70,52 @@ namespace TracerX.Viewer {
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.bookmarkToggle = new System.Windows.Forms.ToolStripMenuItem();
-            this.nextBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.previousBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearAllBookmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.copyTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyColsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearFilterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.columnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.openFilters = new System.Windows.Forms.ToolStripButton();
-            this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.startAutoRefresh = new System.Windows.Forms.ToolStripButton();
             this.stopAutoRefresh = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.bookmarkToggleButton = new System.Windows.Forms.ToolStripButton();
-            this.bookmarkPrev = new System.Windows.Forms.ToolStripButton();
-            this.bookmarkNext = new System.Windows.Forms.ToolStripButton();
-            this.bookmarkClear = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.findButton = new System.Windows.Forms.ToolStripButton();
-            this.findPrevButton = new System.Windows.Forms.ToolStripButton();
-            this.findNextButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.columnsButton = new System.Windows.Forms.ToolStripButton();
             this.columnContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.colMenuFilterItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuRemoveItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.colMenuOptionsItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuColumnItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.openFilters = new System.Windows.Forms.ToolStripButton();
+            this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
+            this.refreshButton = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkToggleButton = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkPrev = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkNext = new System.Windows.Forms.ToolStripButton();
+            this.bookmarkClear = new System.Windows.Forms.ToolStripButton();
+            this.findButton = new System.Windows.Forms.ToolStripButton();
+            this.findPrevButton = new System.Windows.Forms.ToolStripButton();
+            this.findNextButton = new System.Windows.Forms.ToolStripButton();
+            this.optionsButton = new System.Windows.Forms.ToolStripButton();
+            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bookmarkToggle = new System.Windows.Forms.ToolStripMenuItem();
+            this.nextBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previousBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearAllBookmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearFilterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandProvider = new Commander.UICommandProvider(this.components);
             this.findCmd = new Commander.UICommand(this.components);
             this.findNextCmd = new Commander.UICommand(this.components);
@@ -121,6 +126,9 @@ namespace TracerX.Viewer {
             this.bookmarkClearCmd = new Commander.UICommand(this.components);
             this.filterDlgCmd = new Commander.UICommand(this.components);
             this.filterClearCmd = new Commander.UICommand(this.components);
+            this.optionsCmd = new Commander.UICommand(this.components);
+            this.refreshCmd = new Commander.UICommand(this.components);
+            this.columnsCmd = new Commander.UICommand(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -418,7 +426,7 @@ namespace TracerX.Viewer {
             this.imageList1.Images.SetKeyName(6, "BookmarkArrowDown.ico");
             this.imageList1.Images.SetKeyName(7, "ArrowUp.ico");
             this.imageList1.Images.SetKeyName(8, "BookmarkArrowUp.ico");
-            this.imageList1.Images.SetKeyName(9, "Filter.ico");
+            this.imageList1.Images.SetKeyName(9, "Filter.png");
             this.imageList1.Images.SetKeyName(10, "Subline.ico");
             this.imageList1.Images.SetKeyName(11, "BookmarkSubline.ico");
             this.imageList1.Images.SetKeyName(12, "LastSubline.ico");
@@ -512,7 +520,7 @@ namespace TracerX.Viewer {
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.openToolStripMenuItem.Text = "Open...";
             this.commandProvider.SetUICommand(this.openToolStripMenuItem, null);
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
@@ -520,7 +528,7 @@ namespace TracerX.Viewer {
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.commandProvider.SetUICommand(this.closeToolStripMenuItem, null);
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
@@ -528,7 +536,7 @@ namespace TracerX.Viewer {
             // propertiesToolStripMenuItem
             // 
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.propertiesToolStripMenuItem.Text = "Properties";
             this.commandProvider.SetUICommand(this.propertiesToolStripMenuItem, null);
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
@@ -536,7 +544,7 @@ namespace TracerX.Viewer {
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
             this.commandProvider.SetUICommand(this.toolStripSeparator1, null);
             // 
             // editToolStripMenuItem
@@ -560,80 +568,11 @@ namespace TracerX.Viewer {
             this.editToolStripMenuItem.DropDownClosed += new System.EventHandler(this.editToolStripMenuItem_DropDownClosed);
             this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
             // 
-            // findToolStripMenuItem
-            // 
-            this.findToolStripMenuItem.Enabled = false;
-            this.findToolStripMenuItem.Image = global::TracerX.Properties.Resources.find;
-            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.findToolStripMenuItem.Text = "Find...";
-            this.commandProvider.SetUICommand(this.findToolStripMenuItem, this.findCmd);
-            // 
-            // findNextToolStripMenuItem
-            // 
-            this.findNextToolStripMenuItem.Enabled = false;
-            this.findNextToolStripMenuItem.Image = global::TracerX.Properties.Resources.findNext;
-            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
-            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.findNextToolStripMenuItem.Text = "Find Next";
-            this.commandProvider.SetUICommand(this.findNextToolStripMenuItem, this.findNextCmd);
-            // 
-            // findPreviousToolStripMenuItem
-            // 
-            this.findPreviousToolStripMenuItem.Enabled = false;
-            this.findPreviousToolStripMenuItem.Image = global::TracerX.Properties.Resources.findPrev;
-            this.findPreviousToolStripMenuItem.Name = "findPreviousToolStripMenuItem";
-            this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
-            this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.findPreviousToolStripMenuItem.Text = "Find Previous";
-            this.commandProvider.SetUICommand(this.findPreviousToolStripMenuItem, this.findPrevCmd);
-            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(242, 6);
             this.commandProvider.SetUICommand(this.toolStripSeparator2, null);
-            // 
-            // bookmarkToggle
-            // 
-            this.bookmarkToggle.Enabled = false;
-            this.bookmarkToggle.Image = global::TracerX.Properties.Resources.BookmarkToggle2;
-            this.bookmarkToggle.Name = "bookmarkToggle";
-            this.bookmarkToggle.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
-            this.bookmarkToggle.Size = new System.Drawing.Size(245, 22);
-            this.bookmarkToggle.Text = "Toggle Bookmark";
-            this.commandProvider.SetUICommand(this.bookmarkToggle, this.bookmarkToggleCmd);
-            // 
-            // nextBookmarkToolStripMenuItem
-            // 
-            this.nextBookmarkToolStripMenuItem.Enabled = false;
-            this.nextBookmarkToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkNext;
-            this.nextBookmarkToolStripMenuItem.Name = "nextBookmarkToolStripMenuItem";
-            this.nextBookmarkToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.nextBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.nextBookmarkToolStripMenuItem.Text = "Next Bookmark";
-            this.commandProvider.SetUICommand(this.nextBookmarkToolStripMenuItem, this.bookmarkNextCmd);
-            // 
-            // previousBookmarkToolStripMenuItem
-            // 
-            this.previousBookmarkToolStripMenuItem.Enabled = false;
-            this.previousBookmarkToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkPrev;
-            this.previousBookmarkToolStripMenuItem.Name = "previousBookmarkToolStripMenuItem";
-            this.previousBookmarkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F2)));
-            this.previousBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.previousBookmarkToolStripMenuItem.Text = "Previous Bookmark";
-            this.commandProvider.SetUICommand(this.previousBookmarkToolStripMenuItem, this.bookmarkPrevCmd);
-            // 
-            // clearAllBookmarksToolStripMenuItem
-            // 
-            this.clearAllBookmarksToolStripMenuItem.Enabled = false;
-            this.clearAllBookmarksToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkClear;
-            this.clearAllBookmarksToolStripMenuItem.Name = "clearAllBookmarksToolStripMenuItem";
-            this.clearAllBookmarksToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.clearAllBookmarksToolStripMenuItem.Text = "Clear All Bookmarks";
-            this.commandProvider.SetUICommand(this.clearAllBookmarksToolStripMenuItem, this.bookmarkClearCmd);
             // 
             // toolStripSeparator3
             // 
@@ -673,49 +612,13 @@ namespace TracerX.Viewer {
             this.viewToolStripMenuItem.Text = "View";
             this.commandProvider.SetUICommand(this.viewToolStripMenuItem, null);
             // 
-            // filterToolStripMenuItem
-            // 
-            this.filterToolStripMenuItem.Enabled = false;
-            this.filterToolStripMenuItem.Image = global::TracerX.Properties.Resources.Filter;
-            this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-            this.filterToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.filterToolStripMenuItem.Text = "Filter...";
-            this.commandProvider.SetUICommand(this.filterToolStripMenuItem, this.filterDlgCmd);
-            // 
-            // clearFilterMenuItem
-            // 
-            this.clearFilterMenuItem.Enabled = false;
-            this.clearFilterMenuItem.Image = global::TracerX.Properties.Resources.FilterNot;
-            this.clearFilterMenuItem.Name = "clearFilterMenuItem";
-            this.clearFilterMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.clearFilterMenuItem.Text = "Clear All Filtering";
-            this.commandProvider.SetUICommand(this.clearFilterMenuItem, this.filterClearCmd);
-            // 
             // columnsToolStripMenuItem
             // 
+            this.columnsToolStripMenuItem.Image = global::TracerX.Properties.Resources.Columns;
             this.columnsToolStripMenuItem.Name = "columnsToolStripMenuItem";
             this.columnsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.columnsToolStripMenuItem.Text = "Columns...";
-            this.commandProvider.SetUICommand(this.columnsToolStripMenuItem, null);
-            this.columnsToolStripMenuItem.Click += new System.EventHandler(this.columnsToolStripMenuItem_Click);
-            // 
-            // optionsToolStripMenuItem
-            // 
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.optionsToolStripMenuItem.Text = "Options...";
-            this.commandProvider.SetUICommand(this.optionsToolStripMenuItem, null);
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
-            // 
-            // refreshMenuItem
-            // 
-            this.refreshMenuItem.Enabled = false;
-            this.refreshMenuItem.Name = "refreshMenuItem";
-            this.refreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.refreshMenuItem.Text = "Refresh";
-            this.commandProvider.SetUICommand(this.refreshMenuItem, null);
-            this.refreshMenuItem.Click += new System.EventHandler(this.refreshMenuItem_Click);
+            this.commandProvider.SetUICommand(this.columnsToolStripMenuItem, this.columnsCmd);
             // 
             // helpToolStripMenuItem
             // 
@@ -751,6 +654,7 @@ namespace TracerX.Viewer {
             this.openFilters,
             this.clearFilterButton,
             this.toolStripSeparator6,
+            this.refreshButton,
             this.startAutoRefresh,
             this.stopAutoRefresh,
             this.toolStripSeparator7,
@@ -761,36 +665,16 @@ namespace TracerX.Viewer {
             this.toolStripSeparator8,
             this.findButton,
             this.findPrevButton,
-            this.findNextButton});
+            this.findNextButton,
+            this.toolStripSeparator10,
+            this.optionsButton,
+            this.columnsButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(886, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             this.commandProvider.SetUICommand(this.toolStrip1, null);
-            // 
-            // openFilters
-            // 
-            this.openFilters.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.openFilters.Enabled = false;
-            this.openFilters.Image = global::TracerX.Properties.Resources.Filter;
-            this.openFilters.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.openFilters.Name = "openFilters";
-            this.openFilters.Size = new System.Drawing.Size(23, 22);
-            this.openFilters.Text = "Open filter dialog";
-            this.commandProvider.SetUICommand(this.openFilters, this.filterDlgCmd);
-            // 
-            // clearFilterButton
-            // 
-            this.clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearFilterButton.Enabled = false;
-            this.clearFilterButton.Image = global::TracerX.Properties.Resources.FilterNot;
-            this.clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.clearFilterButton.Name = "clearFilterButton";
-            this.clearFilterButton.Size = new System.Drawing.Size(23, 22);
-            this.clearFilterButton.Text = "toolStripButton1";
-            this.clearFilterButton.ToolTipText = "Clear all filtering";
-            this.commandProvider.SetUICommand(this.clearFilterButton, this.filterClearCmd);
             // 
             // toolStripSeparator6
             // 
@@ -829,95 +713,27 @@ namespace TracerX.Viewer {
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
             this.commandProvider.SetUICommand(this.toolStripSeparator7, null);
             // 
-            // bookmarkToggleButton
-            // 
-            this.bookmarkToggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bookmarkToggleButton.Enabled = false;
-            this.bookmarkToggleButton.Image = global::TracerX.Properties.Resources.BookmarkToggle2;
-            this.bookmarkToggleButton.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.bookmarkToggleButton.Name = "bookmarkToggleButton";
-            this.bookmarkToggleButton.Size = new System.Drawing.Size(23, 22);
-            this.bookmarkToggleButton.Text = "toolStripButton1";
-            this.bookmarkToggleButton.ToolTipText = "Toggle bookmark";
-            this.commandProvider.SetUICommand(this.bookmarkToggleButton, this.bookmarkToggleCmd);
-            // 
-            // bookmarkPrev
-            // 
-            this.bookmarkPrev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bookmarkPrev.Enabled = false;
-            this.bookmarkPrev.Image = global::TracerX.Properties.Resources.BookmarkPrev;
-            this.bookmarkPrev.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.bookmarkPrev.Name = "bookmarkPrev";
-            this.bookmarkPrev.Size = new System.Drawing.Size(23, 22);
-            this.bookmarkPrev.Text = "toolStripButton1";
-            this.bookmarkPrev.ToolTipText = "Previous bookmark";
-            this.commandProvider.SetUICommand(this.bookmarkPrev, this.bookmarkPrevCmd);
-            // 
-            // bookmarkNext
-            // 
-            this.bookmarkNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bookmarkNext.Enabled = false;
-            this.bookmarkNext.Image = global::TracerX.Properties.Resources.BookmarkNext;
-            this.bookmarkNext.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.bookmarkNext.Name = "bookmarkNext";
-            this.bookmarkNext.Size = new System.Drawing.Size(23, 22);
-            this.bookmarkNext.Text = "toolStripButton1";
-            this.bookmarkNext.ToolTipText = "Next bookmark";
-            this.commandProvider.SetUICommand(this.bookmarkNext, this.bookmarkNextCmd);
-            // 
-            // bookmarkClear
-            // 
-            this.bookmarkClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bookmarkClear.Enabled = false;
-            this.bookmarkClear.Image = global::TracerX.Properties.Resources.BookmarkClear;
-            this.bookmarkClear.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.bookmarkClear.Name = "bookmarkClear";
-            this.bookmarkClear.Size = new System.Drawing.Size(23, 22);
-            this.bookmarkClear.Text = "toolStripButton1";
-            this.bookmarkClear.ToolTipText = "Clear all bookmarks";
-            this.commandProvider.SetUICommand(this.bookmarkClear, this.bookmarkClearCmd);
-            // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             this.toolStripSeparator8.Size = new System.Drawing.Size(6, 25);
             this.commandProvider.SetUICommand(this.toolStripSeparator8, null);
             // 
-            // findButton
+            // toolStripSeparator10
             // 
-            this.findButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.findButton.Enabled = false;
-            this.findButton.Image = global::TracerX.Properties.Resources.find;
-            this.findButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(23, 22);
-            this.findButton.Text = "toolStripButton1";
-            this.findButton.ToolTipText = "Find";
-            this.commandProvider.SetUICommand(this.findButton, this.findCmd);
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            this.commandProvider.SetUICommand(this.toolStripSeparator10, null);
             // 
-            // findPrevButton
+            // columnsButton
             // 
-            this.findPrevButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.findPrevButton.Enabled = false;
-            this.findPrevButton.Image = global::TracerX.Properties.Resources.findPrev;
-            this.findPrevButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.findPrevButton.Name = "findPrevButton";
-            this.findPrevButton.Size = new System.Drawing.Size(23, 22);
-            this.findPrevButton.Text = "toolStripButton1";
-            this.findPrevButton.ToolTipText = "Find previous";
-            this.commandProvider.SetUICommand(this.findPrevButton, this.findPrevCmd);
-            // 
-            // findNextButton
-            // 
-            this.findNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.findNextButton.Enabled = false;
-            this.findNextButton.Image = global::TracerX.Properties.Resources.findNext;
-            this.findNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.findNextButton.Name = "findNextButton";
-            this.findNextButton.Size = new System.Drawing.Size(23, 22);
-            this.findNextButton.Text = "toolStripButton2";
-            this.findNextButton.ToolTipText = "Find next";
-            this.commandProvider.SetUICommand(this.findNextButton, this.findNextCmd);
+            this.columnsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.columnsButton.Image = global::TracerX.Properties.Resources.Columns;
+            this.columnsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.columnsButton.Name = "columnsButton";
+            this.columnsButton.Size = new System.Drawing.Size(23, 22);
+            this.columnsButton.Text = "Columns";
+            this.commandProvider.SetUICommand(this.columnsButton, this.columnsCmd);
             // 
             // columnContextMenu
             // 
@@ -968,7 +784,246 @@ namespace TracerX.Viewer {
             this.colMenuColumnItem.Size = new System.Drawing.Size(151, 22);
             this.colMenuColumnItem.Text = "Columns...";
             this.commandProvider.SetUICommand(this.colMenuColumnItem, null);
-            this.colMenuColumnItem.Click += new System.EventHandler(this.columnsToolStripMenuItem_Click);
+            this.colMenuColumnItem.Click += new System.EventHandler(this.ExecuteColumns);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
+            this.commandProvider.SetUICommand(this.toolStripSeparator9, null);
+            // 
+            // openFilters
+            // 
+            this.openFilters.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.openFilters.Enabled = false;
+            this.openFilters.Image = global::TracerX.Properties.Resources.Filter1;
+            this.openFilters.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openFilters.Name = "openFilters";
+            this.openFilters.Size = new System.Drawing.Size(23, 22);
+            this.openFilters.Text = "Open filter dialog";
+            this.commandProvider.SetUICommand(this.openFilters, this.filterDlgCmd);
+            // 
+            // clearFilterButton
+            // 
+            this.clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.clearFilterButton.Enabled = false;
+            this.clearFilterButton.Image = ((System.Drawing.Image)(resources.GetObject("clearFilterButton.Image")));
+            this.clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.clearFilterButton.Name = "clearFilterButton";
+            this.clearFilterButton.Size = new System.Drawing.Size(23, 22);
+            this.clearFilterButton.Text = "toolStripButton1";
+            this.clearFilterButton.ToolTipText = "Clear all filtering";
+            this.commandProvider.SetUICommand(this.clearFilterButton, this.filterClearCmd);
+            // 
+            // refreshButton
+            // 
+            this.refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.refreshButton.Enabled = false;
+            this.refreshButton.Image = global::TracerX.Properties.Resources.Refresh;
+            this.refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(23, 22);
+            this.refreshButton.Text = "Refresh";
+            this.commandProvider.SetUICommand(this.refreshButton, this.refreshCmd);
+            // 
+            // bookmarkToggleButton
+            // 
+            this.bookmarkToggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkToggleButton.Enabled = false;
+            this.bookmarkToggleButton.Image = global::TracerX.Properties.Resources.BookmarkToggle2;
+            this.bookmarkToggleButton.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkToggleButton.Name = "bookmarkToggleButton";
+            this.bookmarkToggleButton.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkToggleButton.Text = "toolStripButton1";
+            this.bookmarkToggleButton.ToolTipText = "Toggle bookmark";
+            this.commandProvider.SetUICommand(this.bookmarkToggleButton, this.bookmarkToggleCmd);
+            // 
+            // bookmarkPrev
+            // 
+            this.bookmarkPrev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkPrev.Enabled = false;
+            this.bookmarkPrev.Image = global::TracerX.Properties.Resources.BookmarkPrev;
+            this.bookmarkPrev.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkPrev.Name = "bookmarkPrev";
+            this.bookmarkPrev.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkPrev.Text = "toolStripButton1";
+            this.bookmarkPrev.ToolTipText = "Previous bookmark";
+            this.commandProvider.SetUICommand(this.bookmarkPrev, this.bookmarkPrevCmd);
+            // 
+            // bookmarkNext
+            // 
+            this.bookmarkNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkNext.Enabled = false;
+            this.bookmarkNext.Image = global::TracerX.Properties.Resources.BookmarkNext;
+            this.bookmarkNext.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkNext.Name = "bookmarkNext";
+            this.bookmarkNext.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkNext.Text = "toolStripButton1";
+            this.bookmarkNext.ToolTipText = "Next bookmark";
+            this.commandProvider.SetUICommand(this.bookmarkNext, this.bookmarkNextCmd);
+            // 
+            // bookmarkClear
+            // 
+            this.bookmarkClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bookmarkClear.Enabled = false;
+            this.bookmarkClear.Image = global::TracerX.Properties.Resources.BookmarkClear;
+            this.bookmarkClear.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.bookmarkClear.Name = "bookmarkClear";
+            this.bookmarkClear.Size = new System.Drawing.Size(23, 22);
+            this.bookmarkClear.Text = "toolStripButton1";
+            this.bookmarkClear.ToolTipText = "Clear all bookmarks";
+            this.commandProvider.SetUICommand(this.bookmarkClear, this.bookmarkClearCmd);
+            // 
+            // findButton
+            // 
+            this.findButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.findButton.Enabled = false;
+            this.findButton.Image = global::TracerX.Properties.Resources.find;
+            this.findButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.findButton.Name = "findButton";
+            this.findButton.Size = new System.Drawing.Size(23, 22);
+            this.findButton.Text = "toolStripButton1";
+            this.findButton.ToolTipText = "Find";
+            this.commandProvider.SetUICommand(this.findButton, this.findCmd);
+            // 
+            // findPrevButton
+            // 
+            this.findPrevButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.findPrevButton.Enabled = false;
+            this.findPrevButton.Image = global::TracerX.Properties.Resources.findPrev;
+            this.findPrevButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.findPrevButton.Name = "findPrevButton";
+            this.findPrevButton.Size = new System.Drawing.Size(23, 22);
+            this.findPrevButton.Text = "toolStripButton1";
+            this.findPrevButton.ToolTipText = "Find previous";
+            this.commandProvider.SetUICommand(this.findPrevButton, this.findPrevCmd);
+            // 
+            // findNextButton
+            // 
+            this.findNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.findNextButton.Enabled = false;
+            this.findNextButton.Image = global::TracerX.Properties.Resources.findNext;
+            this.findNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.findNextButton.Name = "findNextButton";
+            this.findNextButton.Size = new System.Drawing.Size(23, 22);
+            this.findNextButton.Text = "toolStripButton2";
+            this.findNextButton.ToolTipText = "Find next";
+            this.commandProvider.SetUICommand(this.findNextButton, this.findNextCmd);
+            // 
+            // optionsButton
+            // 
+            this.optionsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.optionsButton.Image = global::TracerX.Properties.Resources.Options;
+            this.optionsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.optionsButton.Name = "optionsButton";
+            this.optionsButton.Size = new System.Drawing.Size(23, 22);
+            this.optionsButton.Text = "Options";
+            this.commandProvider.SetUICommand(this.optionsButton, this.optionsCmd);
+            // 
+            // findToolStripMenuItem
+            // 
+            this.findToolStripMenuItem.Enabled = false;
+            this.findToolStripMenuItem.Image = global::TracerX.Properties.Resources.find;
+            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
+            this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.findToolStripMenuItem.Text = "Find...";
+            this.commandProvider.SetUICommand(this.findToolStripMenuItem, this.findCmd);
+            // 
+            // findNextToolStripMenuItem
+            // 
+            this.findNextToolStripMenuItem.Enabled = false;
+            this.findNextToolStripMenuItem.Image = global::TracerX.Properties.Resources.findNext;
+            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
+            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.findNextToolStripMenuItem.Text = "Find Next";
+            this.commandProvider.SetUICommand(this.findNextToolStripMenuItem, this.findNextCmd);
+            // 
+            // findPreviousToolStripMenuItem
+            // 
+            this.findPreviousToolStripMenuItem.Enabled = false;
+            this.findPreviousToolStripMenuItem.Image = global::TracerX.Properties.Resources.findPrev;
+            this.findPreviousToolStripMenuItem.Name = "findPreviousToolStripMenuItem";
+            this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
+            this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.findPreviousToolStripMenuItem.Text = "Find Previous";
+            this.commandProvider.SetUICommand(this.findPreviousToolStripMenuItem, this.findPrevCmd);
+            // 
+            // bookmarkToggle
+            // 
+            this.bookmarkToggle.Enabled = false;
+            this.bookmarkToggle.Image = global::TracerX.Properties.Resources.BookmarkToggle2;
+            this.bookmarkToggle.Name = "bookmarkToggle";
+            this.bookmarkToggle.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
+            this.bookmarkToggle.Size = new System.Drawing.Size(245, 22);
+            this.bookmarkToggle.Text = "Toggle Bookmark";
+            this.commandProvider.SetUICommand(this.bookmarkToggle, this.bookmarkToggleCmd);
+            // 
+            // nextBookmarkToolStripMenuItem
+            // 
+            this.nextBookmarkToolStripMenuItem.Enabled = false;
+            this.nextBookmarkToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkNext;
+            this.nextBookmarkToolStripMenuItem.Name = "nextBookmarkToolStripMenuItem";
+            this.nextBookmarkToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.nextBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.nextBookmarkToolStripMenuItem.Text = "Next Bookmark";
+            this.commandProvider.SetUICommand(this.nextBookmarkToolStripMenuItem, this.bookmarkNextCmd);
+            // 
+            // previousBookmarkToolStripMenuItem
+            // 
+            this.previousBookmarkToolStripMenuItem.Enabled = false;
+            this.previousBookmarkToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkPrev;
+            this.previousBookmarkToolStripMenuItem.Name = "previousBookmarkToolStripMenuItem";
+            this.previousBookmarkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F2)));
+            this.previousBookmarkToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.previousBookmarkToolStripMenuItem.Text = "Previous Bookmark";
+            this.commandProvider.SetUICommand(this.previousBookmarkToolStripMenuItem, this.bookmarkPrevCmd);
+            // 
+            // clearAllBookmarksToolStripMenuItem
+            // 
+            this.clearAllBookmarksToolStripMenuItem.Enabled = false;
+            this.clearAllBookmarksToolStripMenuItem.Image = global::TracerX.Properties.Resources.BookmarkClear;
+            this.clearAllBookmarksToolStripMenuItem.Name = "clearAllBookmarksToolStripMenuItem";
+            this.clearAllBookmarksToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.clearAllBookmarksToolStripMenuItem.Text = "Clear All Bookmarks";
+            this.commandProvider.SetUICommand(this.clearAllBookmarksToolStripMenuItem, this.bookmarkClearCmd);
+            // 
+            // filterToolStripMenuItem
+            // 
+            this.filterToolStripMenuItem.Enabled = false;
+            this.filterToolStripMenuItem.Image = global::TracerX.Properties.Resources.Filter1;
+            this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
+            this.filterToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.filterToolStripMenuItem.Text = "Filter...";
+            this.commandProvider.SetUICommand(this.filterToolStripMenuItem, this.filterDlgCmd);
+            // 
+            // clearFilterMenuItem
+            // 
+            this.clearFilterMenuItem.Enabled = false;
+            this.clearFilterMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("clearFilterMenuItem.Image")));
+            this.clearFilterMenuItem.Name = "clearFilterMenuItem";
+            this.clearFilterMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.clearFilterMenuItem.Text = "Clear All Filtering";
+            this.commandProvider.SetUICommand(this.clearFilterMenuItem, this.filterClearCmd);
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.Image = global::TracerX.Properties.Resources.Options;
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.optionsToolStripMenuItem.Text = "Options...";
+            this.commandProvider.SetUICommand(this.optionsToolStripMenuItem, this.optionsCmd);
+            // 
+            // refreshMenuItem
+            // 
+            this.refreshMenuItem.Enabled = false;
+            this.refreshMenuItem.Image = global::TracerX.Properties.Resources.Refresh;
+            this.refreshMenuItem.Name = "refreshMenuItem";
+            this.refreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.refreshMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.refreshMenuItem.Text = "Refresh";
+            this.commandProvider.SetUICommand(this.refreshMenuItem, this.refreshCmd);
             // 
             // findCmd
             // 
@@ -1014,6 +1069,21 @@ namespace TracerX.Viewer {
             // 
             this.filterClearCmd.Enabled = false;
             this.filterClearCmd.Execute += new System.EventHandler(this.ExecuteClearFilter);
+            // 
+            // optionsCmd
+            // 
+            this.optionsCmd.Enabled = true;
+            this.optionsCmd.Execute += new System.EventHandler(this.ExecuteOptions);
+            // 
+            // refreshCmd
+            // 
+            this.refreshCmd.Enabled = false;
+            this.refreshCmd.Execute += new System.EventHandler(this.ExecuteRefresh);
+            // 
+            // columnsCmd
+            // 
+            this.columnsCmd.Enabled = true;
+            this.columnsCmd.Execute += new System.EventHandler(this.ExecuteColumns);
             // 
             // MainForm
             // 
@@ -1139,5 +1209,13 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripButton findPrevButton;
         private Commander.UICommand findNextCmd;
         private System.Windows.Forms.ToolStripButton findNextButton;
+        private System.Windows.Forms.ToolStripButton refreshButton;
+        private Commander.UICommand refreshCmd;
+        private Commander.UICommand optionsCmd;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripButton optionsButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripButton columnsButton;
+        private Commander.UICommand columnsCmd;
     }
 }
