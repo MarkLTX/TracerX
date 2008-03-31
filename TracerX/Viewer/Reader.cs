@@ -12,7 +12,7 @@ namespace TracerX.Viewer {
         // The minimum and maximum file format versions supported
         // by the viewer/reader.
         private const int _minVersion = 2;
-        private const int _maxVersion = 4;
+        private const int _maxVersion = 5;
 
         private static int _lastHash;
 
@@ -126,11 +126,11 @@ namespace TracerX.Viewer {
         public DateTime _time;
         public int _threadId;
         public string _msg;
-        public ThreadInfo _curThread;
+        public ReaderThreadInfo _curThread;
 
-        // Keeps track of thread IDs we have found while reading the file.  Each ThreadInfo object
+        // Keeps track of thread IDs we have found while reading the file.  Each ReaderThreadInfo object
         // stores the "per thread" info that is not usually written to the log when a thread switch occurs.
-        private Dictionary<int, ThreadInfo> _foundThreadIds = new Dictionary<int, ThreadInfo>();
+        private Dictionary<int, ReaderThreadInfo> _foundThreadIds = new Dictionary<int, ReaderThreadInfo>();
 
         // When refreshing a file, the ThreadObjects from the old file are put here and reused if the same
         // thread IDs are found in the new file.  This is how filtering is persisted across refreshes.
@@ -143,6 +143,11 @@ namespace TracerX.Viewer {
         private Dictionary<string, LoggerObject> _oldLoggers = new Dictionary<string, LoggerObject>();
 
         private long _circularStartPos;
+
+        public bool InCircularPart { get { return _circularStartPos != 0; } }
+
+        //private Record _lastNonCircularRecord;
+        //private Record _firstCircularRecord;
 
         [Browsable(false)]
         public BinaryReader FileReader { get { return _fileReader; } }
@@ -171,7 +176,10 @@ namespace TracerX.Viewer {
                         MessageBox.Show("The file has a format version of " + FormatVersion + ".  This program only supports format version " + _maxVersion + ".");
                         _fileReader.Close();
                         _fileReader = null;
-                    } else  if (FormatVersion == 4 && !PromptUserForPassword()) {
+                    } else if (FormatVersion == 4 && !PromptUserForPassword()) {
+                        _fileReader.Close();
+                        _fileReader = null;
+                    } else if (FormatVersion >= 5 && _fileReader.ReadBoolean() && !PromptUserForPassword()) {
                         _fileReader.Close();
                         _fileReader = null;
                     } else {
@@ -207,6 +215,20 @@ namespace TracerX.Viewer {
                     return false;
                 }
             }
+        }
+
+        // This gets entry and exit records that were generated to replace those
+        // lost when the log wrapped.  Should be called after all records are read
+        // and before calling CloseLogFile().  Should be called only once.
+        public List<Record> GetMissingEntryExitRecords() {
+            List<Record> list = new List<Record>();
+            foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
+                list.AddRange(threadInfo.MissingExits);
+                threadInfo.MissingEntries.Reverse();
+                list.AddRange(threadInfo.MissingEntries);
+            }
+
+            return list;
         }
 
         public void CloseLogFile() {
@@ -268,7 +290,7 @@ namespace TracerX.Viewer {
 
                 if ((flags & DataFlags.LineNumber) != DataFlags.None) {
                     _recordNumber = _fileReader.ReadUInt32();
-                } else if (_circularStartPos == 0) {
+                } else if (!InCircularPart) {
                     ++_recordNumber;
                 } else {
                     // _recordNumber was incremented by GetFlags.
@@ -284,7 +306,7 @@ namespace TracerX.Viewer {
                     // Look up or add the entry for this ThreadId.
                     if (!_foundThreadIds.TryGetValue(_threadId, out _curThread)) {
                         // First occurrence of this id.
-                        _curThread = new ThreadInfo();
+                        _curThread = new ReaderThreadInfo();
 
                         if (!_oldThreadIds.TryGetValue(_threadId, out _curThread.Thread)) {
                             _curThread.Thread = new ThreadObject();
@@ -311,7 +333,7 @@ namespace TracerX.Viewer {
                 if ((flags & DataFlags.TraceLevel) != DataFlags.None) {
                     _curThread.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
                     LevelsFound |= _curThread.Level;
-                } 
+                }
 
                 if ((flags & DataFlags.StackDepth) != DataFlags.None) {
                     _curThread.Depth = _fileReader.ReadByte();
@@ -340,24 +362,30 @@ namespace TracerX.Viewer {
                     _msg = _fileReader.ReadString();
                 }
 
-                // The Record ctor sets the members to the values just read for
-                // the current or previous record.
-                Record data = new Record(flags, this);
+                // Construct the Record before incrementing depth.
+                Record record = new Record(flags, _recordNumber, _time, _curThread, _msg);
 
                 if ((flags & DataFlags.MethodEntry) != DataFlags.None) {
+                    if (FormatVersion >= 5) _curThread.Push(record);
+
                     // Cause future records to be indented until a MethodExit is encountered.
                     ++_curThread.Depth;
+                } else if (FormatVersion >= 5 && (flags & DataFlags.MethodExit) != DataFlags.None) {
+                    // In version 5, we began including the line number of the corresponding
+                    // MethodEntry with each MethodExit in order to generate entry/exit lines
+                    // lost due to wrapping.  Read the uint and pass it to Pop.
+                    _curThread.Pop(record, _fileReader.ReadUInt32());
                 }
 
                 BytesRead += _fileReader.BaseStream.Position - startPos;
 
-                if (_fileReader.BaseStream.Position >= MaxMb << 20 && _circularStartPos != 0) {
+                if (InCircularPart && _fileReader.BaseStream.Position >= MaxMb << 20) {
                     // We've read to the max file size in circular mode.  Wrap.
                     _fileReader.BaseStream.Position = _circularStartPos;
                 }
 
                 ++_recordsRead;
-                return data;
+                return record;
             } catch (Exception) {
                 // The exception is either end-of-file or a corrupt file.
                 // Either way, we're done.  Returning null tells the caller to give up.
@@ -465,7 +493,7 @@ namespace TracerX.Viewer {
         // Starting at the current file position, there is an area of the specified size
         // containing a series of 6-byte records.  Each record consists of a uint16 counter
         // followed by an UInt32 file position.  Use the counters to find the last record
-        // written and return the corresponding file position.  This area was written to in
+        // written and return the corresponding file position.  This area was written in
         // a circular fashion allowing the counter to wrap.
         private long FindLastFilePos(uint areaSize) {
             long stopPos = _fileReader.BaseStream.Position + areaSize;
@@ -491,13 +519,4 @@ namespace TracerX.Viewer {
         }
     }
 
-    // Used only by Reader.
-    internal class ThreadInfo {
-        public ThreadObject Thread ;
-        public ThreadName ThreadName;
-        public LoggerObject Logger;
-        public string MethodName;
-        public TraceLevel Level;
-        public byte Depth;
-    }
 }

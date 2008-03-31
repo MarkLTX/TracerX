@@ -18,7 +18,7 @@ namespace TracerX {
     }
 
     // Instances of StackEntry are used to keep track of the call stack
-    // implied by calls to ErrorCall, DebugCall, etc..
+    // based on calls to ErrorCall, DebugCall, etc..
     internal class StackEntry
     {
         internal StackEntry(Logger logger, TraceLevel level, string method, StackEntry caller, Destination destinations) {
@@ -29,7 +29,8 @@ namespace TracerX {
             Caller = caller;
         }
 
-        internal Destination Destinations; // Flags for which destinations this was logged for.
+        internal uint EntryLine; // Line number of method entry in log file.
+        internal Destination Destinations; // Flags that indicate which destinations this was logged for.
         internal string MethodName; // The method that was called.
         internal TraceLevel Level;  // TraceLevel at which the call was called.
         internal Logger Logger;     // The Logger used to log the call.
@@ -51,7 +52,8 @@ namespace TracerX {
     /// 
     /// TracerX does not use the ManagedThreadId because the CLR
     /// appears to recycle the IDs.  That is, a new thread will often be assigned the
-    /// same ManagedThreadId as another thread that recently terminated.
+    /// same ManagedThreadId as another thread that recently terminated.  This means
+    /// ManagedThreadId isn't unique for the life of the process (and therefore the log).
     /// </summary>
     internal class ThreadData {
 
@@ -91,7 +93,7 @@ namespace TracerX {
         internal int ManagedId = Thread.CurrentThread.ManagedThreadId;
 
         // StackDepth is incremented by LogCallEntry and decremented by LogCallExit.
-        internal byte MsaterStackDepth;
+        internal byte MasterStackDepth;
 
         // The top of the call stack for this thread.
         internal StackEntry TopStackEntry;
@@ -162,7 +164,7 @@ namespace TracerX {
 
         // Log the entry of a method call.
         internal bool LogCallEntry(Logger logger, TraceLevel level, string method) {
-            if (MsaterStackDepth < byte.MaxValue) {
+            if (MasterStackDepth < byte.MaxValue) {
                 Destination destinations = logger.Destinations(level);
                 StackEntry stackEntry = new StackEntry(logger, level, method, TopStackEntry, destinations);
                 
@@ -190,7 +192,7 @@ namespace TracerX {
                     ++EventStackDepth;
                 }
                 
-                ++MsaterStackDepth;
+                ++MasterStackDepth;
                 TopStackEntry = stackEntry;
 
                 return true;
@@ -231,7 +233,7 @@ namespace TracerX {
                 CurrentEventMethod = newMethod;
             }
             
-            --MsaterStackDepth;
+            --MasterStackDepth;
             TopStackEntry = TopStackEntry.Caller;
         }
 

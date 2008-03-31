@@ -254,10 +254,7 @@ namespace TracerX {
 
             #region Data members
             // The version of the log file format created by this assembly.
-            private const int _formatVersion = 3;
-            
-            // The file version if a password is specified.
-            private const int _formatVersionWithPassword = 4;
+            private const int _formatVersion = 5;
 
             // Object used with the lock keyword to serialize file I/O.
             private static readonly object _fileLocker = new object();
@@ -425,16 +422,9 @@ namespace TracerX {
 
                 // Format version should be the first
                 // item in the file so the viewer knows how to read the rest.
-                // Version 4 is the same as 3 with a password hash.  Starting
-                // with version 5, we should ALWAYS include something to indicate
-                // the presence or absence of the password hash (e.g. a bool).
-                if (_hasPassword) {
-                    _logfile.Write(_formatVersionWithPassword);
-                    _logfile.Write(_passwordHash);
-                } else {
-                    _logfile.Write(_formatVersion);
-                }
-
+                _logfile.Write(_formatVersion);
+                _logfile.Write(_hasPassword); // Added in version 5.
+                if (_hasPassword) _logfile.Write(_passwordHash); // Added in version 4.
                 _logfile.Write(asmVersion.ToString()); // Added in file format version 3.
                 _logfile.Write(MaxSizeMb);
                 _logfile.Write(_openTimeUtc.Ticks);
@@ -526,7 +516,9 @@ namespace TracerX {
             // Log the entry (start) of a method call.
             internal static void LogEntry(ThreadData threadData, StackEntry stackEntry) {
                 // stackEntry is not yet on the stack.
-                WriteLine(DataFlags.MethodEntry, threadData, stackEntry.Logger, stackEntry.Level, null, false);
+                // Remember the line number where the MethodEntry flag is written so
+                // we can write it into the log when the method exits.
+                stackEntry.EntryLine = WriteLine(DataFlags.MethodEntry, threadData, stackEntry.Logger, stackEntry.Level, null, false);
             }
 
             // Log the exit of a method call.
@@ -549,7 +541,8 @@ namespace TracerX {
             // whether circular logging has or should be started,
             // and whether we're starting a new circular block.  
             // Write the output to the file.  Manage the circular part of the log.
-            private static void WriteLine(DataFlags flags, ThreadData threadData, Logger logger, TraceLevel lineLevel, string msg, bool recursive) {
+            // Return the line number just written.
+            private static uint WriteLine(DataFlags flags, ThreadData threadData, Logger logger, TraceLevel lineLevel, string msg, bool recursive) {
                 lock (_fileLocker) {
                     try {
                         if (IsOpen) {
@@ -564,8 +557,8 @@ namespace TracerX {
                             // Put this after calling IsNewTime() so _curTime will have 
                             // the latest DateTime value.
                             if (!recursive && !CircularStarted && (_curTime >= _circularStartTime ||
-                                (CircularStartSizeKb > 0 && _logfile.BaseStream.Position >= CircularStartSizeKb << 10))
-                               ) {
+                                (CircularStartSizeKb > 0 && _logfile.BaseStream.Position >= CircularStartSizeKb << 10))) //
+                            {
                                 // This will increment _curBlock if it starts the circular log.
                                 // It can also make a recursive call to this method via Metalog.
                                 StartCircular(logger, lineLevel);
@@ -582,11 +575,10 @@ namespace TracerX {
                             WriteData(flags, threadData, logger, lineLevel, msg);
 
                             if (CircularStarted) {
-                                //if (!recursive) {
                                 ManageCircularPart(startPos);
-                                //}
                             } else if (_logfile.BaseStream.Position >= MaxSizeMb << 20) {
-                                // Reaching max file size without being in circular mode means we're DONE.
+                                // Reaching max file size without being in circular mode means we'll never write to
+                                // this file again, and is probably a mistake on the user's part.
                                 string errmsg = "The maximum file size of " + MaxSizeMb + " Mb was reached before circular logging was engaged.  The log file is " + FullPath;
                                 EventLogging.Log(errmsg, EventLogging.MaxFileSizeReached);
                                 Close();
@@ -597,6 +589,8 @@ namespace TracerX {
                         EventLogging.Log("An exception was thrown while logging: " + ex.ToString(), EventLogging.ExceptionInLogger);
                         Close();
                     }
+
+                    return _lineCnt;
                 }
             }
 
@@ -690,7 +684,7 @@ namespace TracerX {
 
                 if ((flags & DataFlags.StackDepth) != DataFlags.None) {
                     if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                        // On MethodExit lines, the stack depth isn't decremented until after the line
+                        // On MethodExit lines, threadData.FileStackDepth isn't decremented until after the line
                         // is logged so any meta-logging has the right depth.
                         // Must write 1 byte here.
                         _logfile.Write((byte)(threadData.FileStackDepth - 1));
@@ -710,6 +704,10 @@ namespace TracerX {
 
                 if ((flags & DataFlags.Message) != DataFlags.None) {
                     _logfile.Write(msg);
+                }
+
+                if ((flags & DataFlags.MethodExit) != DataFlags.None) {
+                    _logfile.Write(threadData.TopStackEntry.EntryLine);
                 }
 
                 _lastBlock = _curBlock;

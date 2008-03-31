@@ -18,16 +18,15 @@ namespace TracerX.Viewer {
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static int MaxViewableChars = 259;
 
-        // Call ReadRecord to get an instance.
-        public Record(DataFlags dataflags, Reader reader) {
-            MsgNum = reader._recordNumber;
-            Time = reader._time;
-            Thread = reader._curThread.Thread;
-            ThreadName = reader._curThread.ThreadName;
-            Level = reader._curThread.Level;
-            Logger = reader._curThread.Logger;
-            StackDepth = reader._curThread.Depth;
-            MethodName = reader._curThread.MethodName;
+        public Record(DataFlags dataflags, uint msgNum, DateTime time, ReaderThreadInfo threadInfo, string msg) {
+            MsgNum = msgNum;
+            Time = time;
+            Thread = threadInfo.Thread;
+            ThreadName = threadInfo.ThreadName;
+            Level = threadInfo.Level;
+            Logger = threadInfo.Logger;
+            StackDepth = threadInfo.Depth;
+            MethodName = threadInfo.MethodName;
 
             if ((dataflags & DataFlags.MethodEntry) != DataFlags.None) {
                 // This is a method entry record.  It always contains exactly one line of text.
@@ -39,11 +38,36 @@ namespace TracerX.Viewer {
             } else {
                 // The message text for this record may contain newlines.  Split the
                 // message into one or more lines.
-                Lines = reader._msg.Split(_splitArg);
+                Lines = msg.Split(_splitArg);
                 IsCollapsed = Lines.Length > 1 && !Settings1.Default.ExpandNewlines;
             }
 
             // Each line also has a bool to indicate if it is bookmarked
+            // and a row index it may map to.
+            IsBookmarked = new bool[Lines.Length];
+            RowIndices = new int[Lines.Length];
+        }
+
+        // This constructs the missing MethodEntry Record for the given MethodExit record
+        // (or vice-versa);
+        public Record(Record counterpart) {
+            IsEntry = !counterpart.IsEntry;
+            MsgNum = 0; // TBD
+            Time = DateTime.MinValue; // TBD;
+            Thread = counterpart.Thread;
+            ThreadName = counterpart.ThreadName;
+            Level = counterpart.Level;
+            Logger = counterpart.Logger;
+            StackDepth = counterpart.StackDepth;
+            MethodName = counterpart.MethodName;
+
+            if (IsEntry) {
+                Lines = new string[] { string.Format("{{{0}: entered (overwritten due to wrapping)", MethodName) };
+            } else {
+                Lines = new string[] { string.Format("}}{0}: exiting (overwritten due to wrapping)", MethodName) };
+            }
+
+            // Each record also has a bool to indicate if it is bookmarked
             // and a row index it may map to.
             IsBookmarked = new bool[Lines.Length];
             RowIndices = new int[Lines.Length];
