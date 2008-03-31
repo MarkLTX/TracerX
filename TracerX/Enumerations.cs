@@ -47,7 +47,7 @@ namespace TracerX {
         Time =          1 << 4, // 8-byte tick value compatible with DateTime.UTC.
         CircularStart = 1 << 5, // Indicates the beginning of the circular part of the log.
         MethodEntry =   1 << 6, // Indicates stack depth should increase.
-        MethodExit =    1 << 7, // Indicates stack depth should decrease. 
+        MethodExit =    1 << 7, // Indicates stack depth should decrease. Includes line number of corresponding MethodEntry.
         MethodName =    1 << 8, // Line includes method name (e.g. because it's the first line from the method in the block or it differs from the previous line).
         ThreadId =      1 << 9, // TracerX's internal thread ID is included when the thread for this line is different from the previous line and on the first line in each block.
         ThreadName =    1 << 10,// .NET thread name is included when the thread's name has changed and on each thread's first line in each block.

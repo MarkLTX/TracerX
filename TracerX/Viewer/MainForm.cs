@@ -18,6 +18,7 @@ using Microsoft.Win32;
 
 namespace TracerX.Viewer {
     // This is the main form for the TracerX log viewer.
+    [System.Diagnostics.DebuggerDisplay("MainForm")] // Helps prevent debugger from freezing in the worker thread.
     internal partial class MainForm : Form {
         #region Ctor/init
         // Constructor.  args[0] may contain the log file path to load.
@@ -477,6 +478,7 @@ namespace TracerX.Viewer {
 
             int percent = 0;
             int rowCount = 0;
+            Record lastNonCircularRecord = null;
             long totalBytes = _reader.FileReader.BaseStream.Length;
 
             _records = new List<Record>((int)(totalBytes / 200)); // Guess at how many records
@@ -486,11 +488,13 @@ namespace TracerX.Viewer {
                 rowCount += record.Lines.Length;
                 record.Index = _records.Count;
                 _records.Add(record);
+                if (!_reader.InCircularPart) lastNonCircularRecord = record;
 
                 percent = (int)((_reader.BytesRead * 100) / totalBytes);
                 if (percent != toolStripProgressBar1.Value) {
                     backgroundWorker1.ReportProgress(percent);
                 }
+
                 record = _reader.ReadRecord();
 
                 // This Sleep call is critical.  Without it, the main thread doesn't seem to
@@ -501,6 +505,31 @@ namespace TracerX.Viewer {
                     Debug.Print("Background worker was cancelled.");
                     e.Cancel = true;
                     break;
+                }
+            }
+
+            // If the log has both a circular part and a non-circular part, there may
+            // be missing exit/entry records due to wrapping.
+            if (_reader.InCircularPart && lastNonCircularRecord != null) {
+                List<Record> missingRecords = _reader.GetMissingEntryExitRecords();
+                if (missingRecords.Count > 0) {
+                    uint msgNum = lastNonCircularRecord.MsgNum;
+                    int ndx = lastNonCircularRecord.Index;
+                    Debug.Assert(msgNum == ndx + 1);
+                    foreach (Record missingRec in missingRecords) {
+                        missingRec.Index = ++ndx;
+                        missingRec.MsgNum = ++msgNum;
+                        missingRec.Time = lastNonCircularRecord.Time;
+                    }
+
+                    Debug.Print("Inserting " + missingRecords.Count + " missing records.");
+                    _records.InsertRange(lastNonCircularRecord.Index + 1, missingRecords);
+                    rowCount += missingRecords.Count;
+
+                    for (int i = lastNonCircularRecord.Index + missingRecords.Count + 1; i < _records.Count; ++i) {
+                        Debug.Assert(i == _records[i].Index + missingRecords.Count);
+                        _records[i].Index = i;
+                    }
                 }
             }
 

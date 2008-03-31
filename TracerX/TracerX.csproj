@@ -164,6 +164,7 @@
       <DependentUpon>UICommandProvider.cs</DependentUpon>
     </Compile>
     <Compile Include="Viewer\VersionChecker.cs" />
+    <Compile Include="Viewer\ReaderThreadInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Apache_License.txt" />
