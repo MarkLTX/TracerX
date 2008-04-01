@@ -578,7 +578,7 @@ namespace TracerX {
                                 ManageCircularPart(startPos);
                             } else if (_logfile.BaseStream.Position >= MaxSizeMb << 20) {
                                 // Reaching max file size without being in circular mode means we'll never write to
-                                // this file again, and is probably a mistake on the user's part.
+                                // this file again, which is probably not what the user intended.
                                 string errmsg = "The maximum file size of " + MaxSizeMb + " Mb was reached before circular logging was engaged.  The log file is " + FullPath;
                                 EventLogging.Log(errmsg, EventLogging.MaxFileSizeReached);
                                 Close();
@@ -594,7 +594,7 @@ namespace TracerX {
                 }
             }
 
-            // This sets bits in the Flags parameter that specify what data to include with the line.
+            // This sets bits in the flags parameter that specify what data to include with the line.
             private static DataFlags SetDataFlags(DataFlags flags, ThreadData threadData, Logger logger, TraceLevel lineLevel) {
                 if (_lastBlock != _curBlock) {
                     // The very first line in each block (regardless of thread)
@@ -648,7 +648,7 @@ namespace TracerX {
                 ++_lineCnt;
 
                 if (CircularStarted) {
-                    // In circular mode, we write the line number on every line.
+                    // In circular mode, we write the line number on every line before the DataFlags.
                     // The viewer finds the last line by finding the line with
                     // a line number that's not 1 more than the previous line.
                     _logfile.Write(_lineCnt);
@@ -682,14 +682,42 @@ namespace TracerX {
                     _logfile.Write((byte)lineLevel);
                 }
 
+                // Before format version 5.
+                //if ((flags & DataFlags.StackDepth) != DataFlags.None) {
+                //    if ((flags & DataFlags.MethodExit) != DataFlags.None) {
+                //        // On MethodExit lines, threadData.FileStackDepth isn't decremented until after the line
+                //        // is logged so any meta-logging has the right depth.
+                //        // Must write 1 byte here.
+                //        _logfile.Write((byte)(threadData.FileStackDepth - 1));
+                //    } else {
+                //        _logfile.Write(threadData.FileStackDepth);
+                //    }
+                //}
+
+                // In format version 5 and later, the viewer subtracts 1 from the stack depth on
+                // MethodExit lines instead of the logger, so just write the depth as-is.
                 if ((flags & DataFlags.StackDepth) != DataFlags.None) {
-                    if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                        // On MethodExit lines, threadData.FileStackDepth isn't decremented until after the line
-                        // is logged so any meta-logging has the right depth.
-                        // Must write 1 byte here.
-                        _logfile.Write((byte)(threadData.FileStackDepth - 1));
-                    } else {
-                        _logfile.Write(threadData.FileStackDepth);
+                    _logfile.Write(threadData.FileStackDepth);
+
+                    if (CircularStarted) {
+                        // In the circular part, include the thread's call stack with the first line
+                        // logged for each thread in each block.  This enables the viewer to 
+                        // regenerate method entry/exit lines lost due to wrapping.
+                        // Added in format version 5.
+                        int count = 0;
+                        for (StackEntry stackEntry = threadData.TopStackEntry; stackEntry != null; stackEntry = stackEntry.Caller) {
+                            if ((stackEntry.Destinations & Destination.File) == Destination.File) {
+                                ++count;
+                                _logfile.Write(stackEntry.EntryLine);
+                                _logfile.Write((byte)stackEntry.Level);
+                                _logfile.Write(stackEntry.Logger.Name);
+                                _logfile.Write(stackEntry.MethodName);
+                            }
+                        }
+
+                        // The FileStackDepth we wrote previously is how the viewer will know how many 
+                        // stack entries to read.
+                        System.Diagnostics.Debug.Assert(count == threadData.FileStackDepth);
                     }
                 }
 
@@ -704,10 +732,6 @@ namespace TracerX {
 
                 if ((flags & DataFlags.Message) != DataFlags.None) {
                     _logfile.Write(msg);
-                }
-
-                if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                    _logfile.Write(threadData.TopStackEntry.EntryLine);
                 }
 
                 _lastBlock = _curBlock;

@@ -511,23 +511,25 @@ namespace TracerX.Viewer {
             // If the log has both a circular part and a non-circular part, there may
             // be missing exit/entry records due to wrapping.
             if (_reader.InCircularPart && lastNonCircularRecord != null) {
-                List<Record> missingRecords = _reader.GetMissingEntryExitRecords();
-                if (missingRecords.Count > 0) {
+                List<Record> generatedRecords = _reader.GetMissingRecords();
+                if (generatedRecords.Count > 0) {
+                    // Set certain fields of the generated records based on the last non-circular record.
                     uint msgNum = lastNonCircularRecord.MsgNum;
                     int ndx = lastNonCircularRecord.Index;
                     Debug.Assert(msgNum == ndx + 1);
-                    foreach (Record missingRec in missingRecords) {
+                    foreach (Record missingRec in generatedRecords) {
                         missingRec.Index = ++ndx;
                         missingRec.MsgNum = ++msgNum;
                         missingRec.Time = lastNonCircularRecord.Time;
                     }
 
-                    Debug.Print("Inserting " + missingRecords.Count + " missing records.");
-                    _records.InsertRange(lastNonCircularRecord.Index + 1, missingRecords);
-                    rowCount += missingRecords.Count;
+                    Debug.Print("Inserting " + generatedRecords.Count + " missing records.");
+                    _records.InsertRange(lastNonCircularRecord.Index + 1, generatedRecords);
+                    rowCount += generatedRecords.Count;
 
-                    for (int i = lastNonCircularRecord.Index + missingRecords.Count + 1; i < _records.Count; ++i) {
-                        Debug.Assert(i == _records[i].Index + missingRecords.Count);
+                    // The Index of each subsequent record must be adjusted due to the insertion.
+                    for (int i = lastNonCircularRecord.Index + generatedRecords.Count + 1; i < _records.Count; ++i) {
+                        Debug.Assert(i == _records[i].Index + generatedRecords.Count);
                         _records[i].Index = i;
                     }
                 }
