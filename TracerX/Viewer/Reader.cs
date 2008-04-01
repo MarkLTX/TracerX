@@ -220,12 +220,15 @@ namespace TracerX.Viewer {
         // This gets entry and exit records that were generated to replace those
         // lost when the log wrapped.  Should be called after all records are read
         // and before calling CloseLogFile().  Should be called only once.
-        public List<Record> GetMissingEntryExitRecords() {
+        public List<Record> GetMissingRecords() {
             List<Record> list = new List<Record>();
             foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
-                list.AddRange(threadInfo.MissingExits);
-                threadInfo.MissingEntries.Reverse();
-                list.AddRange(threadInfo.MissingEntries);
+                // Exit records must come first.
+                list.AddRange(threadInfo.MissingExitRecords);
+
+                // Entry records are in reverse order.
+                threadInfo.MissingEntryRecords.Reverse();
+                list.AddRange(threadInfo.MissingEntryRecords);
             }
 
             return list;
@@ -335,23 +338,48 @@ namespace TracerX.Viewer {
                     LevelsFound |= _curThread.Level;
                 }
 
-                if ((flags & DataFlags.StackDepth) != DataFlags.None) {
-                    _curThread.Depth = _fileReader.ReadByte();
-                } else if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                    --_curThread.Depth;
+                if (FormatVersion < 5) {
+                    if ((flags & DataFlags.StackDepth) != DataFlags.None) {
+                        _curThread.Depth = _fileReader.ReadByte();
+                    } else if ((flags & DataFlags.MethodExit) != DataFlags.None) {
+                        --_curThread.Depth;
+                    }
+                } else {
+                    if ((flags & DataFlags.StackDepth) != DataFlags.None) {
+                        _curThread.Depth = _fileReader.ReadByte();
+
+                        if (InCircularPart) {
+                            // In format version 5, we began logging each thread's current call stack
+                            // on the thread's first line in each block (i.e. when the StackDepth flag is set).
+                            ReaderStackEntry[] stack = null;
+
+                            if (_curThread.Depth > 0) {
+                                stack = new ReaderStackEntry[_curThread.Depth];
+                                for (int i = _curThread.Depth-1; i >= 0; --i) {
+                                    ReaderStackEntry entry = new ReaderStackEntry();
+                                    entry.EntryLineNum = _fileReader.ReadUInt32();
+                                    entry.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
+                                    entry.Logger = GetLogger(_fileReader.ReadString());
+                                    entry.Method = _fileReader.ReadString();
+                                    entry.Depth = (byte)i;
+                                    stack[i] = entry;
+                                }
+                            }
+
+                            _curThread.MakeMissingRecords(stack);
+                        }
+                    }
+
+                    // Starting in format version 5, the viewer decrements the depth on MethodExit
+                    // lines even if it was included on the line.
+                    if ((flags & DataFlags.MethodExit) != DataFlags.None) {
+                        --_curThread.Depth;
+                    }
                 }
 
                 if ((flags & DataFlags.LoggerName) != DataFlags.None) {
                     string loggerName = _fileReader.ReadString();
-                    if (!_foundLoggers.TryGetValue(loggerName, out _curThread.Logger)) {
-                        if (!_oldLoggers.TryGetValue(loggerName, out _curThread.Logger)) {
-                            _curThread.Logger = new LoggerObject();
-                            _curThread.Logger.Name = loggerName;
-                        }
-
-                        _foundLoggers.Add(loggerName, _curThread.Logger);
-                        LoggerObject.AllLoggers.Add(_curThread.Logger);
-                    }
+                    _curThread.Logger = GetLogger(loggerName);
                 }
 
                 if ((flags & DataFlags.MethodName) != DataFlags.None) {
@@ -366,15 +394,16 @@ namespace TracerX.Viewer {
                 Record record = new Record(flags, _recordNumber, _time, _curThread, _msg);
 
                 if ((flags & DataFlags.MethodEntry) != DataFlags.None) {
-                    if (FormatVersion >= 5) _curThread.Push(record);
-
                     // Cause future records to be indented until a MethodExit is encountered.
                     ++_curThread.Depth;
-                } else if (FormatVersion >= 5 && (flags & DataFlags.MethodExit) != DataFlags.None) {
-                    // In version 5, we began including the line number of the corresponding
-                    // MethodEntry with each MethodExit in order to generate entry/exit lines
-                    // lost due to wrapping.  Read the uint and pass it to Pop.
-                    _curThread.Pop(record, _fileReader.ReadUInt32());
+
+                    // In format version 5+, we keep track of the call stack in the noncircular
+                    // part of the log by "pushing" MethodEntry records and "popping" MethodExit records
+                    if (FormatVersion >= 5 && !InCircularPart) {
+                        _curThread.Push(record);
+                    }
+                } else if (FormatVersion >= 5 && !InCircularPart && (flags & DataFlags.MethodExit) != DataFlags.None) {
+                    _curThread.Pop();
                 }
 
                 BytesRead += _fileReader.BaseStream.Position - startPos;
@@ -391,6 +420,23 @@ namespace TracerX.Viewer {
                 // Either way, we're done.  Returning null tells the caller to give up.
                 return null;
             }
+        }
+
+        // Gets or makes the LoggerObject with the specified name.
+        private LoggerObject GetLogger(string loggerName) {
+            LoggerObject logger;
+
+            if (!_foundLoggers.TryGetValue(loggerName, out logger)) {
+                if (!_oldLoggers.TryGetValue(loggerName, out logger)) {
+                    logger = new LoggerObject();
+                    logger.Name = loggerName;
+                }
+
+                _foundLoggers.Add(loggerName, logger);
+                LoggerObject.AllLoggers.Add(logger);
+            }
+
+            return logger;
         }
 
         // This is called when reading the circular part of the log to 

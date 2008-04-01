@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace TracerX.Viewer {
     /// <summary>
@@ -48,29 +49,45 @@ namespace TracerX.Viewer {
             RowIndices = new int[Lines.Length];
         }
 
-        // This constructs the missing MethodEntry Record for the given MethodExit record
-        // (or vice-versa);
+        // This constructs the missing MethodExit Record for the given MethodEntry record
         public Record(Record counterpart) {
-            IsEntry = !counterpart.IsEntry;
+            Debug.Assert(counterpart.IsEntry);
+            IsEntry = false;
             MsgNum = 0; // TBD
             Time = DateTime.MinValue; // TBD;
+            Index = 0; // TBD
             Thread = counterpart.Thread;
             ThreadName = counterpart.ThreadName;
             Level = counterpart.Level;
             Logger = counterpart.Logger;
             StackDepth = counterpart.StackDepth;
             MethodName = counterpart.MethodName;
-
-            if (IsEntry) {
-                Lines = new string[] { string.Format("{{{0}: entered (overwritten due to wrapping)", MethodName) };
-            } else {
-                Lines = new string[] { string.Format("}}{0}: exiting (overwritten due to wrapping)", MethodName) };
-            }
+            Lines = new string[] { string.Format("}}{0}: exiting (replaces record lost due to wrapping)", MethodName) };
 
             // Each record also has a bool to indicate if it is bookmarked
             // and a row index it may map to.
-            IsBookmarked = new bool[Lines.Length];
-            RowIndices = new int[Lines.Length];
+            IsBookmarked = new bool[1];
+            RowIndices = new int[1];
+        }
+
+        // This constructs a missing MethodEntry Record from the given ReaderStackEntry.
+        public Record(ReaderThreadInfo threadInfo, ReaderStackEntry methodEntry ) {
+            IsEntry = true;
+            MsgNum = 0; // TBD
+            Time = DateTime.MinValue; // TBD
+            Index = 0; // TBD
+            Thread = threadInfo.Thread;
+            ThreadName = threadInfo.ThreadName;
+            Level = methodEntry.Level;
+            Logger = methodEntry.Logger;
+            StackDepth = methodEntry.Depth;
+            MethodName = methodEntry.Method;
+            Lines = new string[] { string.Format("{{{0}: entered (replaces record lost due to wrapping)", MethodName) };
+
+            // Each record also has a bool to indicate if it is bookmarked
+            // and a row index it may map to.
+            IsBookmarked = new bool[1];
+            RowIndices = new int[1];
         }
 
         // Array of strings obtained by splitting the record's message text at embedded newlines.
