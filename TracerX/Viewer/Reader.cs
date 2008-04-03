@@ -217,18 +217,29 @@ namespace TracerX.Viewer {
             }
         }
 
-        // This gets entry and exit records that were generated to replace those
+        // This gets entry records that were generated to replace those
         // lost when the log wrapped.  Should be called after all records are read
         // and before calling CloseLogFile().  Should be called only once.
-        public List<Record> GetMissingRecords() {
+        public List<Record> GetMissingEntryRecords() {
             List<Record> list = new List<Record>();
             foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
-                // Exit records must come first.
-                list.AddRange(threadInfo.MissingExitRecords);
+                if (threadInfo.MissingEntryRecords != null) {
+                    // Entry records are in reverse order.
+                    threadInfo.MissingEntryRecords.Reverse();
+                    list.AddRange(threadInfo.MissingEntryRecords);
+                }
+            }
 
-                // Entry records are in reverse order.
-                threadInfo.MissingEntryRecords.Reverse();
-                list.AddRange(threadInfo.MissingEntryRecords);
+            return list;
+        }
+
+        // This gets exit records that were generated to replace those
+        // lost when the log wrapped.  Should be called after all records are read
+        // and before calling CloseLogFile().  Should be called only once.
+        public List<Record> GetMissingExitRecords() {
+            List<Record> list = new List<Record>();
+            foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
+                if (threadInfo.MissingExitRecords != null) list.AddRange(threadInfo.MissingExitRecords);
             }
 
             return list;
@@ -349,24 +360,29 @@ namespace TracerX.Viewer {
                         _curThread.Depth = _fileReader.ReadByte();
 
                         if (InCircularPart) {
-                            // In format version 5, we began logging each thread's current call stack
-                            // on the thread's first line in each block (i.e. when the StackDepth flag is set).
-                            ReaderStackEntry[] stack = null;
-
                             if (_curThread.Depth > 0) {
-                                stack = new ReaderStackEntry[_curThread.Depth];
-                                for (int i = _curThread.Depth-1; i >= 0; --i) {
+                                // In format version 5, we began logging each thread's current call
+                                // stack on the thread's first line in each block (i.e. when the
+                                // StackDepth flag is set). This is the thread's true call stack at
+                                // this point in the log. It reflects MethodEntry and MethodExit
+                                // records that may have been lost when the log wrapped (as well
+                                // as those that weren't lost).
+
+                                ReaderStackEntry[] trueStack = new ReaderStackEntry[_curThread.Depth];
+                                for (int i = _curThread.Depth - 1; i >= 0; --i) {
                                     ReaderStackEntry entry = new ReaderStackEntry();
                                     entry.EntryLineNum = _fileReader.ReadUInt32();
                                     entry.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
                                     entry.Logger = GetLogger(_fileReader.ReadString());
                                     entry.Method = _fileReader.ReadString();
                                     entry.Depth = (byte)i;
-                                    stack[i] = entry;
+                                    trueStack[i] = entry;
                                 }
-                            }
 
-                            _curThread.MakeMissingRecords(stack);
+                                _curThread.MakeMissingRecords(trueStack);
+                            } else {
+                                _curThread.MakeMissingRecords(null);
+                            }
                         }
                     }
 
@@ -415,7 +431,7 @@ namespace TracerX.Viewer {
 
                 ++_recordsRead;
                 return record;
-            } catch (Exception) {
+            } catch (Exception ex) {
                 // The exception is either end-of-file or a corrupt file.
                 // Either way, we're done.  Returning null tells the caller to give up.
                 return null;

@@ -511,28 +511,7 @@ namespace TracerX.Viewer {
             // If the log has both a circular part and a non-circular part, there may
             // be missing exit/entry records due to wrapping.
             if (_reader.InCircularPart && lastNonCircularRecord != null) {
-                List<Record> generatedRecords = _reader.GetMissingRecords();
-                if (generatedRecords.Count > 0) {
-                    // Set certain fields of the generated records based on the last non-circular record.
-                    uint msgNum = lastNonCircularRecord.MsgNum;
-                    int ndx = lastNonCircularRecord.Index;
-                    Debug.Assert(msgNum == ndx + 1);
-                    foreach (Record missingRec in generatedRecords) {
-                        missingRec.Index = ++ndx;
-                        missingRec.MsgNum = ++msgNum;
-                        missingRec.Time = lastNonCircularRecord.Time;
-                    }
-
-                    Debug.Print("Inserting " + generatedRecords.Count + " missing records.");
-                    _records.InsertRange(lastNonCircularRecord.Index + 1, generatedRecords);
-                    rowCount += generatedRecords.Count;
-
-                    // The Index of each subsequent record must be adjusted due to the insertion.
-                    for (int i = lastNonCircularRecord.Index + generatedRecords.Count + 1; i < _records.Count; ++i) {
-                        Debug.Assert(i == _records[i].Index + generatedRecords.Count);
-                        _records[i].Index = i;
-                    }
-                }
+                rowCount += InsertMissingRecords(lastNonCircularRecord);
             }
 
             Debug.Print("Closing log file.");
@@ -543,6 +522,50 @@ namespace TracerX.Viewer {
             // expands rows with embedded newlines.
             // Allocate enough rows to handle the case of all messages with embedded newlines being expanded.
             _rows = new Row[rowCount];
+        }
+
+        // This inserts an exit record for every entry record in the non-circular part of the log
+        // whose corresponding exit record was lost due to wrapping. It also inserts an entry
+        // record for every exit record in the circular part of the log whose corresponding entry
+        // record was lost due to wrapping.
+        private int InsertMissingRecords(Record lastNonCircularRecord) {
+            Record firstCircularRecord = _records[lastNonCircularRecord.Index + 1];
+            List<Record> generatedExitRecords = _reader.GetMissingExitRecords();
+            List<Record> generatedEntryRecords = _reader.GetMissingEntryRecords();
+
+            // Set certain fields of the generated records based on the last non-circular record.
+            // The exit records are always inserted before the entry records, just after the last
+            // non-circular record, so the MsgNum is contiguous from there.
+            uint msgNum = lastNonCircularRecord.MsgNum;
+            foreach (Record missingRec in generatedExitRecords) {
+                missingRec.MsgNum = ++msgNum;
+                missingRec.Time = lastNonCircularRecord.Time;
+            }
+
+            // Now patch up the generated entry records so they appear to come just before the
+            // first true circular record.  Any gap in the resulting MsgNum values will appear
+            // between the exit records and the entry records.
+            msgNum = firstCircularRecord.MsgNum - (uint)generatedEntryRecords.Count;
+            foreach (Record missingRec in generatedEntryRecords) {
+                missingRec.MsgNum = msgNum++;
+                missingRec.Time = firstCircularRecord.Time;
+            }
+
+            // Concatenate the generated exit and entry records and 
+            // insert them into the actual records.
+            generatedExitRecords.AddRange(generatedEntryRecords);
+            generatedEntryRecords = null;
+
+            if (generatedExitRecords.Count > 0) {
+                _records.InsertRange(lastNonCircularRecord.Index + 1, generatedExitRecords);
+
+                // The Index of each inserted and subsequent record must be adjusted due to the insertion.
+                for (int i = lastNonCircularRecord.Index + 1; i < _records.Count; ++i) {
+                    _records[i].Index = i;
+                }
+            }
+
+            return generatedExitRecords.Count;
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
