@@ -44,11 +44,11 @@ namespace TracerX.Viewer {
         // the log wrapped, but whose counterparts were not lost.  
         internal void MakeMissingRecords(ReaderStackEntry[] circularStack) {
             if (NonCircularStack != null) {
-                // The deepest entry comes last in circularStack.
-                int trueDepth = circularStack.Length ;
-
                 MissingEntryRecords = new List<Record>();
                 MissingExitRecords = new List<Record>();
+
+                // The deepest entry comes last in circularStack.
+                int trueDepth = circularStack == null ? 0 : circularStack.Length ;
 
                 // If the true stack depth is greater than the stack depth we got
                 // by pushing MehtodEntry records and popping MethodExit records,
