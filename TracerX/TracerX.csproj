@@ -179,6 +179,8 @@
     <None Include="Resources\BookmarkPrev.bmp" />
     <Content Include="Resources\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
+    <None Include="Resources\ExpandAll.png" />
+    <Content Include="Resources\Date and Time.png" />
     <Content Include="Resources\Filter.ico" />
     <Content Include="Resources\FilterNot.png" />
     <Content Include="Resources\Filter.png" />
@@ -187,11 +189,14 @@
     <Content Include="Resources\find.png" />
     <Content Include="Resources\findNext.png" />
     <Content Include="Resources\findPrev.png" />
+    <Content Include="Resources\OpenFolder.png" />
     <Content Include="Resources\Options.png" />
+    <None Include="Resources\Properties.png" />
     <Content Include="Resources\Refresh.png" />
     <Content Include="Resources\Stop.bmp" />
     <Content Include="Resources\Play.bmp" />
     <Content Include="Resources\scroll_view.ico" />
+    <Content Include="Resources\Stopwatch.png" />
     <Content Include="Resources\Subline.ico" />
     <Content Include="Resources\Transparent.ico" />
     <Content Include="Viewer\Bookmark.ico" />
