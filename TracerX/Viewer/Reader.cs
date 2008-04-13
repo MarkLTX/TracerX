@@ -41,16 +41,19 @@ namespace TracerX.Viewer {
         }
 
         #region Properties for PropertyGrid
+        [DisplayName("Creation time (UTC)")]
         public DateTime Log_CreationTimeInUtcTZ {
             get { return OpenTimeUtc; }
             set { }
         }
 
+        [DisplayName("Creation time (logger's TZ)")]
         public string Log_CreationTimeInAppsTZ {
             get { return OpenTimeLocal.ToString() + " " + LoggerTimeZone; }
             set { }
         }
 
+        [DisplayName("Creation time (local TZ)")]
         public DateTime Log_CreationTimeInViewersTZ {
             get { 
                 return OpenTimeUtc.ToLocalTime();
@@ -58,44 +61,58 @@ namespace TracerX.Viewer {
             set { }
         }
 
+        [DisplayName("Loggers assembly version")]
         public string Logger_AssemblyVersion {
             get { return _loggerVersion; }
             set {  }
         }
 
+        [DisplayName("Format version")]
         public int Logger_FileFormatVersion {
             get { return FormatVersion; }
             set { }
         }
 
+        [DisplayName("Max size (MB)")]
         public int File_MaxMegabytes {
             get { return MaxMb; }
             set { }
         }
 
+        [DisplayName("Size (bytes)")]
         public long File_Size {
             get { return Size; }
             set { }
         }
 
+        [DisplayName("Elapsed time")]
         public TimeSpan File_Timespan {
             get { return Records_LastTimestamp - OpenTimeUtc; }
             set { }
         }
 
+        [DisplayName("Last record number")]
         public uint Records_LastNumber {
             get { return _recordNumber; }
             set { }
         }
 
+        [DisplayName("Last timestamp")]
         public DateTime Records_LastTimestamp {
             get { return _time; }
+            set { }
+        }
+
+        [DisplayName("Circular logging started")]
+        public bool InCircularPart { 
+            get { return _circularStartPos != 0; }
             set { }
         }
 
         /// <summary>
         /// Number of records lost due to wrapping in the circular part of the log.
         /// </summary>
+        [DisplayName("Records lost by wrapping")]
         public uint Records_LostViaWrapping {
             get { return Records_LastNumber - Records_TotalRead; }
             set { }
@@ -104,6 +121,7 @@ namespace TracerX.Viewer {
         /// <summary>
         /// Number of records read from the file.
         /// </summary>
+        [DisplayName("Record count")]
         public uint Records_TotalRead {
             get { return _recordsRead; }
             set { }
@@ -143,8 +161,6 @@ namespace TracerX.Viewer {
         private Dictionary<string, LoggerObject> _oldLoggers = new Dictionary<string, LoggerObject>();
 
         private long _circularStartPos;
-
-        public bool InCircularPart { get { return _circularStartPos != 0; } }
 
         //private Record _lastNonCircularRecord;
         //private Record _firstCircularRecord;
