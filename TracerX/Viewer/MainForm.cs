@@ -46,6 +46,9 @@ namespace TracerX.Viewer {
             // Setting the FileState affects many menu items and buttons.
             _FileState = FileState.NoFile;
 
+            relativeTimeButton.Enabled = !Settings1.Default.RelativeTime;
+            absoluteTimeButton.Enabled = Settings1.Default.RelativeTime;
+
             if (args.Length > 0) {
                 StartReading(args[0]);
             }
@@ -298,14 +301,15 @@ namespace TracerX.Viewer {
             set { 
                 _fileState = value;
                 startAutoRefresh.Enabled = (_fileState == FileState.Loaded && !stopAutoRefresh.Enabled);
-                propertiesToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
+                propertiesCmd.Enabled = (_fileState == FileState.Loaded);
                 filterDlgCmd.Enabled = (_fileState == FileState.Loaded);
                 closeToolStripMenuItem.Enabled = (_fileState == FileState.Loaded);
                 refreshCmd.Enabled = (_fileState == FileState.Loaded);
+                expandAllButton.Enabled = (_FileState == FileState.Loaded);
 
                 buttonStop.Visible = (_fileState == FileState.Loading);
 
-                openToolStripMenuItem.Enabled = (_fileState != FileState.Loading);
+                openFileCmd.Enabled = (_fileState != FileState.Loading);
 
                 if (_fileState != FileState.Loaded) {
                     NumRows = 0;
@@ -675,6 +679,15 @@ namespace TracerX.Viewer {
             }
         }
 
+        private void expandAllButton_Click(object sender, EventArgs e) {
+            foreach (Record rec in _records) {
+                rec.IsCollapsed = false;
+                rec.CollapsedDepth = 0;
+            }
+
+            RebuildAllRows();
+        }
+
         // Reset the _rows elements from startRow forward.
         // The specified Record (rec) is the first Record whose
         // visibility may need recalculating.  The specified
@@ -789,7 +802,7 @@ namespace TracerX.Viewer {
             _itemCache = newCache;
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteOpenFile(object sender, EventArgs e) {
             string openDir = Settings1.Default.OpenDir;
             OpenFileDialog dlg = new OpenFileDialog();
 
@@ -853,7 +866,7 @@ namespace TracerX.Viewer {
 
         }
 
-        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExecuteProperties(object sender, EventArgs e) {
             FileProperties dlg = new FileProperties(_reader);
             dlg.ShowDialog();
         }
@@ -1590,12 +1603,16 @@ namespace TracerX.Viewer {
             bookmarkToggleCmd.Enabled = TheListView.FocusedItem != null;
         }
 
-        private void findToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void TimeButton_Click(object sender, EventArgs e) {
+            if (sender == absoluteTimeButton) {
+                Settings1.Default.RelativeTime = false;
+            } else if (sender == relativeTimeButton) {
+                Settings1.Default.RelativeTime = true;
+            }
 
-        }
-
-        private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e) {
-
+            absoluteTimeButton.Enabled = Settings1.Default.RelativeTime;
+            relativeTimeButton.Enabled = !Settings1.Default.RelativeTime;
+            InvalidateTheListView();
         }
     }
 }
