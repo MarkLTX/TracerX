@@ -224,6 +224,7 @@ namespace TracerX.Viewer {
             if (!found) {
                 MessageBox.Show("Did not find: " + needle);
             } else if (bookmark) {
+                bookmarkNextCmd.Enabled = bookmarkPrevCmd.Enabled = true;
                 InvalidateTheListView();
             }
 
