@@ -30,7 +30,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IndentChar" Type="System.Char" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)"> </Value>
     </Setting>
     <Setting Name="IndentAmount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>

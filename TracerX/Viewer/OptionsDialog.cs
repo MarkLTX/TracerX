@@ -38,6 +38,11 @@ namespace TracerX.Viewer {
         private void SomethingChanged(object sender, EventArgs e) {
             ok.Enabled = true;
             apply.Enabled = true;
+
+            if (indentChar.Text == string.Empty)
+                hex.Text = "An indentation character is required.";
+            else
+                hex.Text = string.Format("0x{0:X2}", (int)indentChar.Text[0]);        
         }
 
         private void ok_Click(object sender, EventArgs e) {

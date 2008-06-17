@@ -107,7 +107,8 @@ namespace TracerX {
             /// is expanded to the current user's local (i.e. non-roaming) 
             /// application data directory.
             /// %EXEDIR% (not a real environment variable) is expanded to the directory
-            /// of the executable.
+            /// of the executable.  Other special variables are %COMMON_APPDATA%,
+            /// %DESKTOP%, and %MY_DOCUMENTS%.
             /// Attempts to change this property after the log file is open are ignored.
             /// </summary>
             public static string Directory {
@@ -131,16 +132,32 @@ namespace TracerX {
                 }
             }
 
-            private static string _logDirectory = GetDefaultDir();
+             private static string _logDirectory = GetDefaultDir();
 
-            private static string GetDefaultDir() {
-                if (Assembly.GetEntryAssembly() == null) {
-                    // Must be a web app.
-                    return GetWebAppDir();
-                } else {
-                    return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-                }
-            }
+            // The default output dir for a winforms app is the local AppData dir.
+            // For a web app, it's the dir containing the web site.
+             private static string GetDefaultDir() {
+                 try {
+                     // This always returns null in web apps, sometimes returns
+                     // null in the winforms desiger.
+                     if (Assembly.GetEntryAssembly() == null) {
+                         // We might be in a web app, but this will throw an
+                         // exception if we're not.
+                         return GetWebAppDir();
+                     } else {
+                         // This generally means we're in a winforms app.
+                         return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+                     }
+                 } catch (Exception) {
+                     // Getting here means we're probably not in a web app.
+                     try {
+                         return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+                     } catch (Exception) {
+                         // Give up. Return something to avoid an exception.
+                         return "C:\\";
+                     }
+                 }
+             }
 
             /// <summary>
             /// The name of the log file within the LogDirectory.  The default is based on the

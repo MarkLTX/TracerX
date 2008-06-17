@@ -54,6 +54,7 @@ namespace TracerX.Viewer {
             this.txtVersionInterval = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.hex = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.timePage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -226,6 +227,7 @@ namespace TracerX.Viewer {
             // 
             // textPage
             // 
+            this.textPage.Controls.Add(this.hex);
             this.textPage.Controls.Add(this.indentAmount);
             this.textPage.Controls.Add(this.indentChar);
             this.textPage.Controls.Add(this.label2);
@@ -411,6 +413,15 @@ namespace TracerX.Viewer {
             this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
                 "website?";
             // 
+            // hex
+            // 
+            this.hex.AutoSize = true;
+            this.hex.Location = new System.Drawing.Point(147, 42);
+            this.hex.Name = "hex";
+            this.hex.Size = new System.Drawing.Size(24, 13);
+            this.hex.TabIndex = 5;
+            this.hex.Text = "hex";
+            // 
             // OptionsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -478,5 +489,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.Label label9;
         public System.Windows.Forms.TabPage versionPage;
         public System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Label hex;
     }
 }

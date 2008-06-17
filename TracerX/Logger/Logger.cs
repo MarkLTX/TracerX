@@ -681,8 +681,8 @@ namespace TracerX {
         // Set to true when System.Windows.Forms is detected.
         private static bool _winFormsLoaded;
 
-        // Set to true by the static ctor if we seem be in a web app.
-        private static bool _webApp;
+        //// Set to true by the static ctor if we seem be in a web app.
+        //private static bool _webApp;
 
         /// <summary>
         /// Ctor is private.  GetLogger() should be the only caller.
@@ -708,12 +708,12 @@ namespace TracerX {
 
             AppDomain.CurrentDomain.UnhandledException += _appDomainExceptionHandler;
 
-            _webApp = Assembly.GetEntryAssembly() == null;
+//            _webApp = Assembly.GetEntryAssembly() == null;
         }
 
         // Sets _winFormsLoaded to true if the the winforms assembly has already been loaded.
         // If not, this registers an event handler to detect when it is loaded.
-        // If winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
+        // When winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
         // so we can log unhandled exceptions in GUI apps.
         private static void CheckForWinForms() {
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
@@ -755,36 +755,64 @@ namespace TracerX {
             return builder.ToString();
         }
 
+        // Get the directory the EXE or website is in.
+        public static string GetAppDir() {
+            try {
+                // This throws an exception in web apps and sometimes in
+                // the winforms designer.
+                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            } catch (Exception) {
+                try {
+                    // This SEEMS to return the correct value for both web apps
+                    // and winforms apps.
+                    return AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
+                } catch (Exception) {
+                    try {
+                        // Expect an exception if we're not a web app.
+                        return GetWebAppDir();
+                    } catch (Exception) {
+                        try {
+                            // Punt.
+                            return Environment.CurrentDirectory;
+                        } catch (Exception) {
+                            // Give up.  Return something to avoid an exception.
+                            return "C:\\";
+                        }
+                    }
+                }
+            }
+        }
+
+        // If we are not a web app, this will throw an exception the
+        // caller must handle.  This will load the System.Web assembly
+        // if it hasn't already been loaded.
+        private static string GetWebAppDir() {
+            return System.Web.HttpRuntime.AppDomainAppPath.TrimEnd('\\', '/');
+        }
+
         // Get the application name without loading System.Windows.Forms.dll
         // or calling Process.GetProcess(), which requires significant permission.
-        private static string GetAppName() {
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
-            if (entryAssembly == null) {
-                // This happens in web (asp.net) apps.  
-                return GetWebAppName();
-            } else {
-                return entryAssembly.GetName().Name;
+        public static string GetAppName() {
+            try {
+                // This usually throws an exception in web apps and sometimes in
+                // the winforms designer.
+                return Assembly.GetEntryAssembly().GetName().Name;
+            } catch (Exception) {
+                try {
+                    // Expect an exception if we're not a web app.
+                    return Path.GetFileNameWithoutExtension(GetWebAppDir());
+                } catch (Exception) {
+                    try {
+                        // This is a good result for winforms, but not very
+                        // pretty for web apps.
+                        return AppDomain.CurrentDomain.FriendlyName;
+                    } catch (Exception) {
+                        // Can't think of anything else to try, but we must
+                        // return something and not allow an exception.
+                        return "TracerX_App";
+                    }
+                }
             }
-        }
-
-        // Get the directory of the executable or web app without loading System.Windows.Forms.dll.
-        private static string GetAppDir() {
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
-            if (entryAssembly == null) {
-                // This happens in web (asp.net) apps.  
-                return GetWebAppDir();
-            } else {
-                return Path.GetDirectoryName(entryAssembly.Location);
-            }
-        }
-
-        private static string GetWebAppName() {
-            string dir = GetWebAppDir().TrimEnd('\\', '/');
-            return Path.GetFileNameWithoutExtension(dir);
-        }
-
-        private static string GetWebAppDir() {
-            return System.Web.HttpRuntime.AppDomainAppPath;
         }
 
         #region Trace levels
