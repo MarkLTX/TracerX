@@ -30,6 +30,7 @@ namespace TracerX {
 
                             string msg = "The following log file was opened:\n" + FullPath;
                             EventLogging.Log(msg, EventLogging.LogFileOpened);
+                            PersistLatestFileName();
                         } catch (Exception ex) {
                             string msg = string.Format("The following exception occurred attempting to open the log file\n{0}\n\n{1}", FullPath, ex);
                             EventLogging.Log(msg, EventLogging.ExceptionInOpen);
@@ -398,6 +399,53 @@ namespace TracerX {
                     WritePreamble();
                     LogStandardData();
                     Archive(tempPath);
+                }
+            }
+
+            // Add the log file path to the list of files persisted for the viewer to read.
+            private static void PersistLatestFileName() {
+                try {
+                    string listFile = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                        "TracerX\\RecentlyGenerated.txt"
+                        );
+                    string[] files;
+
+                    // First read the existing list of files.
+                    try {
+                        files = File.ReadAllLines(listFile);
+                    } catch (Exception) {
+                        // Most likely, the file doesn't exist.
+                        // Make sure the directory exists so we can create the file there.
+
+                        files = null;
+                        string dir = Path.GetDirectoryName(listFile);
+                        if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
+                    }
+
+                    if (files == null) {
+                        // No lines read, so just create the file with the current
+                        // FullPath as its only content.
+                        File.WriteAllText(listFile, FullPath);
+                    } else {
+                        // Overwrite the file with the latest file name (FullPath) at the
+                        // top.
+                        using (StreamWriter writer = new StreamWriter(listFile, false)) {
+                            writer.WriteLine(FullPath);
+
+                            // Write up to three of the previously read file names, omitting
+                            // any that match the file name we just wrote (i.e. prevent duplicates).
+                            int i = 0;
+                            foreach (string filename in files) {
+                                if (!string.IsNullOrEmpty(filename) && !string.Equals(filename, FullPath, StringComparison.InvariantCultureIgnoreCase)) {
+                                    writer.WriteLine(filename);
+                                    ++i;
+                                    if (i == 3) break;
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception) {
                 }
             }
 

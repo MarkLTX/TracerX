@@ -756,7 +756,7 @@ namespace TracerX {
         }
 
         // Get the directory the EXE or website is in.
-        public static string GetAppDir() {
+        private static string GetAppDir() {
             try {
                 // This throws an exception in web apps and sometimes in
                 // the winforms designer.
@@ -792,7 +792,7 @@ namespace TracerX {
 
         // Get the application name without loading System.Windows.Forms.dll
         // or calling Process.GetProcess(), which requires significant permission.
-        public static string GetAppName() {
+        private static string GetAppName() {
             try {
                 // This usually throws an exception in web apps and sometimes in
                 // the winforms designer.
