@@ -96,9 +96,7 @@ namespace TracerX.Viewer {
         // Initialize the MRU part of the file menu.
         private void InitMruMenu() {
             _mruPos = fileToolStripMenuItem.DropDownItems.Count;
-            if (Settings1.Default.MRU != null) {
-                SetMruMenu();
-            } else {
+            if (Settings1.Default.MRU == null) {
                 Settings1.Default.MRU = new System.Collections.Specialized.StringCollection();
             }
         }
@@ -400,23 +398,6 @@ namespace TracerX.Viewer {
             item.Focused = true;
         }
 
-        // Make the MRU section of the file menu match the Settings1.Default.MRU collection.
-        private void SetMruMenu() {
-            // First remove all MRU menu items.
-            while (fileToolStripMenuItem.DropDownItems.Count > _mruPos) {
-                fileToolStripMenuItem.DropDownItems.RemoveAt(_mruPos);
-            }
-
-            // Now add a menu item for each file in Settings1.Default.MRU.
-            // The most recently opened file appears at the end of Settings1.Default.MRU and
-            // at the beginning of the MRU section of the File menu.
-            foreach (string recentFile in Settings1.Default.MRU) {
-                ToolStripMenuItem item = new ToolStripMenuItem(recentFile);
-                item.Tag = recentFile;
-                this.fileToolStripMenuItem.DropDownItems.Insert(_mruPos, item);
-            }
-        }
-
         #region File loading
         // This gets the row number to restore after refreshing the file.
         private int GetRowNumToRestore() {
@@ -648,7 +629,7 @@ namespace TracerX.Viewer {
 
             // Add the file we just loaded to the position of the most recent file in the MRU list.
             Settings1.Default.MRU.Add(filename);
-            SetMruMenu();
+            //SetMruMenu();
             Settings1.Default.Save();
         }
 
@@ -1614,6 +1595,48 @@ namespace TracerX.Viewer {
             absoluteTimeButton.Enabled = Settings1.Default.RelativeTime;
             relativeTimeButton.Enabled = !Settings1.Default.RelativeTime;
             InvalidateTheListView();
+        }
+
+        // Make the MRU section of the file menu match the Settings1.Default.MRU collection.
+        // Also add the most recently generated files.
+        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
+            // First remove all MRU menu items.
+            while (fileToolStripMenuItem.DropDownItems.Count > _mruPos) {
+                fileToolStripMenuItem.DropDownItems.RemoveAt(_mruPos);
+            }
+
+            // Now add a menu item for each file in Settings1.Default.MRU.
+            // The most recently opened file appears at the end of Settings1.Default.MRU and
+            // at the beginning of the MRU section of the File menu.
+            foreach (string recentFile in Settings1.Default.MRU) {
+                ToolStripMenuItem item = new ToolStripMenuItem(recentFile);
+                item.Tag = recentFile;
+                this.fileToolStripMenuItem.DropDownItems.Insert(_mruPos, item);
+            }
+
+
+            // If there are an files in the recently generated list, add a separator
+            // followed by the files.
+            try {  
+                string listFile = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                    "TracerX\\RecentlyGenerated.txt"
+                    );
+                string[] files = File.ReadAllLines(listFile);
+
+                if (files.Length > 0) {
+                    this.fileToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+                    foreach (string file in files) {
+                        ToolStripMenuItem item = new ToolStripMenuItem(file);
+                        item.Tag = file;
+                        this.fileToolStripMenuItem.DropDownItems.Add(item);
+                    }
+                }
+            } catch (Exception) {
+                // The file containing the list of recently generated filenames
+                // probably doesn't exist.
+            }
         }
     }
 }
