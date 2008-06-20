@@ -3,8 +3,8 @@
 	<LogFile>
 		<!-- This specifies the directory where the log file will be written. -->
 		<!-- Note that the log file name cannot be configured here.  The application should set it internally. -->
-		<!-- Also, %LOCALAPPDATA% is specific to each user.  The user is likely to have write access there. -->
-		<LogDirectory value="%LOCALAPPDATA%\Idera\Logs" />
+		<!-- Also, %LOCAL_APPDATA% is specific to each user.  The user is likely to have write access there. -->
+		<LogDirectory value="%LOCAL_APPDATA%\Idera\Logs" />
 
 		<!-- This specifies the approximate maximum size the file can grow to in Mb (1 Mb = 2**20). -->
 		<!-- Anything over 4095 is coerced to 4095 (i.e. 4,293,918,720 bytes). -->
