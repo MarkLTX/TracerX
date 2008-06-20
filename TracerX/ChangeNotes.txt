@@ -1,0 +1,5 @@
+Provide initial value of ' ' (blank) for IndentChar in app.config.
+Display hex value of IndentChar on Text page of Options dialog.
+Logger keeps a list of recently created log files.
+Viewer displays list of recently created log files under the File menu.
+Added option in configuration xml to enable/disable tracking of recently created files.

@@ -168,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Apache_License.txt" />
+    <Content Include="ChangeNotes.txt" />
     <Content Include="Logger\Config\SampleConfig.xml" />
     <Content Include="Resources\ArrowDown.ico" />
     <Content Include="Resources\ArrowUp.ico" />

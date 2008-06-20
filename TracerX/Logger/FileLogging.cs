@@ -30,7 +30,7 @@ namespace TracerX {
 
                             string msg = "The following log file was opened:\n" + FullPath;
                             EventLogging.Log(msg, EventLogging.LogFileOpened);
-                            PersistLatestFileName();
+                            if (AddToListOfRecentlyCreatedFiles) AddToRecentlyCreated();
                         } catch (Exception ex) {
                             string msg = string.Format("The following exception occurred attempting to open the log file\n{0}\n\n{1}", FullPath, ex);
                             EventLogging.Log(msg, EventLogging.ExceptionInOpen);
@@ -140,7 +140,7 @@ namespace TracerX {
              private static string GetDefaultDir() {
                  try {
                      // This always returns null in web apps, sometimes returns
-                     // null in the winforms desiger.
+                     // null in the winforms designer.
                      if (Assembly.GetEntryAssembly() == null) {
                          // We might be in a web app, but this will throw an
                          // exception if we're not.
@@ -268,6 +268,12 @@ namespace TracerX {
             }
             private static bool _hasPassword;
             private static int _passwordHash;
+
+            public static bool AddToListOfRecentlyCreatedFiles {
+                get { return _addToListOfRecentlyCreatedFiles; }
+                set { _addToListOfRecentlyCreatedFiles = value; }
+            }
+            private static bool _addToListOfRecentlyCreatedFiles = true;
             #endregion
 
             #region Data members
@@ -403,11 +409,11 @@ namespace TracerX {
             }
 
             // Add the log file path to the list of files persisted for the viewer to read.
-            private static void PersistLatestFileName() {
+            private static void AddToRecentlyCreated() {
                 try {
                     string listFile = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                        "TracerX\\RecentlyGenerated.txt"
+                        "TracerX\\RecentlyCreated.txt"
                         );
                     string[] files;
 
@@ -428,24 +434,24 @@ namespace TracerX {
                         // FullPath as its only content.
                         File.WriteAllText(listFile, FullPath);
                     } else {
-                        // Overwrite the file with the latest file name (FullPath) at the
-                        // top.
+                        // Overwrite the file, putting the the most recent file name (FullPath) at the top.
                         using (StreamWriter writer = new StreamWriter(listFile, false)) {
                             writer.WriteLine(FullPath);
 
-                            // Write up to three of the previously read file names, omitting
+                            // Write up to 8 of the previously read file names, omitting
                             // any that match the file name we just wrote (i.e. prevent duplicates).
+                            // Thus, the file will contain at most 9 lines.
                             int i = 0;
                             foreach (string filename in files) {
                                 if (!string.IsNullOrEmpty(filename) && !string.Equals(filename, FullPath, StringComparison.InvariantCultureIgnoreCase)) {
                                     writer.WriteLine(filename);
-                                    ++i;
-                                    if (i == 3) break;
+                                    if (i++ == 8) break;
                                 }
                             }
                         }
                     }
                 } catch (Exception) {
+                    // Nothing to do, really.
                 }
             }
 

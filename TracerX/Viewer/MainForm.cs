@@ -38,7 +38,6 @@ namespace TracerX.Viewer {
 
             _refreshTimer.Tick += new EventHandler(_refreshTimer_Tick);
 
-            InitMruMenu();
             InitColumns();
 
             if (Settings1.Default.IndentChar == '\0') Settings1.Default.IndentChar = ' ';
@@ -90,14 +89,6 @@ namespace TracerX.Viewer {
                     TheListView.Columns.Clear();
                     TheListView.Columns.AddRange(OriginalColumns);
                 }
-            }
-        }
-
-        // Initialize the MRU part of the file menu.
-        private void InitMruMenu() {
-            _mruPos = fileToolStripMenuItem.DropDownItems.Count;
-            if (Settings1.Default.MRU == null) {
-                Settings1.Default.MRU = new System.Collections.Specialized.StringCollection();
             }
         }
         #endregion
@@ -291,9 +282,6 @@ namespace TracerX.Viewer {
         // The area occupied by the ListView header.  Used to determine which column header is
         // right-clicked so the appropriate context menu can be displayed.
         private Rectangle _headerRect;
-
-        // The position in the File menu where the Most Recently Used file list begins.
-        private int _mruPos;
 
         private FileState _FileState {
             get { return _fileState; }
@@ -616,6 +604,8 @@ namespace TracerX.Viewer {
         }
 
         private void AddFileToMru(string filename) {
+            if (Settings1.Default.MRU == null) Settings1.Default.MRU = new System.Collections.Specialized.StringCollection();
+            
             if (Settings1.Default.MRU.Contains(filename)) {
                 // Remove the file we just loaded from Settings1.Default.MRU.
                 // It will be re-added at the end (most recent).
@@ -853,14 +843,13 @@ namespace TracerX.Viewer {
             dlg.ShowDialog();
         }
 
-        // This handles selecting from the MRU file list.
-        private void fileToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+        // This handles selecting from the MRU file lists.
+        private void MRU_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
             if (e.ClickedItem.Tag != null) {
                 // A Most Recently Used file was clicked.  Remove it from the list now.  It
                 // will be added back when file is finished loading.
                 string filename = (string)e.ClickedItem.Tag;
                 Settings1.Default.MRU.Remove(filename);
-                fileToolStripMenuItem.DropDownItems.Remove(e.ClickedItem);
                 StartReading(filename);
             }
         }
@@ -1597,46 +1586,56 @@ namespace TracerX.Viewer {
             InvalidateTheListView();
         }
 
-        // Make the MRU section of the file menu match the Settings1.Default.MRU collection.
-        // Also add the most recently generated files.
-        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
-            // First remove all MRU menu items.
-            while (fileToolStripMenuItem.DropDownItems.Count > _mruPos) {
-                fileToolStripMenuItem.DropDownItems.RemoveAt(_mruPos);
+        // Populate the Recently Viewed menu from the Settings1.Default.MRU collection.
+        private void SetRecentlyViewed() {
+            recentlyViewedToolStripMenuItem.DropDownItems.Clear();
+
+            if (Settings1.Default.MRU == null || Settings1.Default.MRU.Count == 0) {
+                recentlyViewedToolStripMenuItem.Enabled = false;
+            } else {
+                recentlyViewedToolStripMenuItem.Enabled = true;
+
+                // Add a menu item for each file in Settings1.Default.MRU.
+                // The most recently opened file appears at the end of Settings1.Default.MRU and
+                // at the beginning of the MRU section of the File menu.
+                foreach (string recentFile in Settings1.Default.MRU) {
+                    ToolStripMenuItem item = new ToolStripMenuItem(recentFile);
+                    item.Tag = recentFile;
+                    recentlyViewedToolStripMenuItem.DropDownItems.Insert(0, item);
+                }
             }
+        }
 
-            // Now add a menu item for each file in Settings1.Default.MRU.
-            // The most recently opened file appears at the end of Settings1.Default.MRU and
-            // at the beginning of the MRU section of the File menu.
-            foreach (string recentFile in Settings1.Default.MRU) {
-                ToolStripMenuItem item = new ToolStripMenuItem(recentFile);
-                item.Tag = recentFile;
-                this.fileToolStripMenuItem.DropDownItems.Insert(_mruPos, item);
-            }
+        // Populate the Recently Created menu from the RecentlyCreated.txt file.
+        private void SetRecentlyCreated() {
+            recentlyCreatedToolStripMenuItem.DropDownItems.Clear();
 
-
-            // If there are an files in the recently generated list, add a separator
-            // followed by the files.
-            try {  
+            // Get the list of recently created files from RecentlyCreated.txt.
+            try {
                 string listFile = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                    "TracerX\\RecentlyGenerated.txt"
+                    "TracerX\\RecentlyCreated.txt"
                     );
                 string[] files = File.ReadAllLines(listFile);
 
                 if (files.Length > 0) {
-                    this.fileToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-
                     foreach (string file in files) {
                         ToolStripMenuItem item = new ToolStripMenuItem(file);
                         item.Tag = file;
-                        this.fileToolStripMenuItem.DropDownItems.Add(item);
+                        recentlyCreatedToolStripMenuItem.DropDownItems.Add(item);
                     }
                 }
             } catch (Exception) {
-                // The file containing the list of recently generated filenames
+                // The file containing the list of recently created filenames
                 // probably doesn't exist.
             }
+
+            recentlyCreatedToolStripMenuItem.Enabled = (recentlyCreatedToolStripMenuItem.DropDownItems.Count > 0);
+        }
+
+        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
+            SetRecentlyViewed();
+            SetRecentlyCreated();
         }
     }
 }

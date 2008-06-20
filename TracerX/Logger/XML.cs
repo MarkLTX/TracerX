@@ -81,6 +81,9 @@ namespace TracerX {
                 return ret;
             }
 
+            static public bool Configure(string configFilePath) {
+                return Configure(new FileInfo(configFilePath));
+            }
 
             /// <summary>
             /// Configures TracerX using the specified configuration file.
@@ -389,6 +392,9 @@ namespace TracerX {
                                     break;
                                 case "circularstartdelayseconds":
                                     Logger.FileLogging.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.FileLogging.CircularStartDelaySeconds);
+                                    break;
+                                case "addtolistofrecentlycreatedfiles":
+                                    Logger.FileLogging.AddToListOfRecentlyCreatedFiles = GetBoolVal(subElement, "value", Logger.FileLogging.AddToListOfRecentlyCreatedFiles);
                                     break;
                                 case "logpotentiallysensitivedataatstartup":
                                     _warnings += "LogPotentiallySensitiveDataAtStartup is deprecated.\n\n";
