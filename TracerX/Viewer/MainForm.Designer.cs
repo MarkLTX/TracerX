@@ -526,7 +526,7 @@ namespace TracerX.Viewer {
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
             this.commandProvider.SetUICommand(this.fileToolStripMenuItem, null);
-            this.fileToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MRU_DropDownItemClicked);
+            this.fileToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
             this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.fileToolStripMenuItem_DropDownOpening);
             // 
             // openToolStripMenuItem
@@ -561,7 +561,7 @@ namespace TracerX.Viewer {
             this.recentlyViewedToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.recentlyViewedToolStripMenuItem.Text = "Recently Viewed";
             this.commandProvider.SetUICommand(this.recentlyViewedToolStripMenuItem, null);
-            this.recentlyViewedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MRU_DropDownItemClicked);
+            this.recentlyViewedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
             // 
             // recentlyCreatedToolStripMenuItem
             // 
@@ -569,7 +569,7 @@ namespace TracerX.Viewer {
             this.recentlyCreatedToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.recentlyCreatedToolStripMenuItem.Text = "Recently Created";
             this.commandProvider.SetUICommand(this.recentlyCreatedToolStripMenuItem, null);
-            this.recentlyCreatedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MRU_DropDownItemClicked);
+            this.recentlyCreatedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
             // 
             // editToolStripMenuItem
             // 
