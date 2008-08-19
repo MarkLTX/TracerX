@@ -1,7 +1,3 @@
-Provide initial value of ' ' (blank) for IndentChar in app.config.
-Display hex value of IndentChar on Text page of Options dialog.
-Logger keeps a list of recently created log files.
-Viewer displays list of recently created log files under the File menu.
-Added option in configuration xml to enable/disable tracking of recently created files.
-Fixed bug that crashes the viewer if a recently created file is selected when the recently viewed list is empty.
-Changed Next/Prev bookmark commands to select the bookmarked line, not just focus it.
+Fixed bug causing File\Properties to display the properties dialog twice.
+Updated copyright date.
+Removed handler for System.Windows.Forms.Application.ThreadException since it seems to hide the fact that an unhandled exception occurred and it isn't being used anyway.

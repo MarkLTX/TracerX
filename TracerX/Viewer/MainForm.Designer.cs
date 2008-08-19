@@ -553,7 +553,6 @@ namespace TracerX.Viewer {
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.propertiesToolStripMenuItem.Text = "Properties";
             this.commandProvider.SetUICommand(this.propertiesToolStripMenuItem, this.propertiesCmd);
-            this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.ExecuteProperties);
             // 
             // recentlyViewedToolStripMenuItem
             // 

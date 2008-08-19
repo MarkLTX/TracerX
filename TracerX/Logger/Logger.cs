@@ -679,7 +679,7 @@ namespace TracerX {
 
         #region Private/Internal
         // Set to true when System.Windows.Forms is detected.
-        private static bool _winFormsLoaded;
+        //private static bool _winFormsLoaded;
 
         //// Set to true by the static ctor if we seem be in a web app.
         //private static bool _webApp;
@@ -711,33 +711,33 @@ namespace TracerX {
 //            _webApp = Assembly.GetEntryAssembly() == null;
         }
 
-        // Sets _winFormsLoaded to true if the the winforms assembly has already been loaded.
-        // If not, this registers an event handler to detect when it is loaded.
-        // When winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
-        // so we can log unhandled exceptions in GUI apps.
-        private static void CheckForWinForms() {
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
-                if (asm.GetName().Name.ToLower() == "system.windows.forms") {
-                    RegisterApplicationEventHandler();
-                    _winFormsLoaded = true;
-                    return;
-                }
-            }
+        //// Sets _winFormsLoaded to true if the the winforms assembly has already been loaded.
+        //// If not, this registers an event handler to detect when it is loaded.
+        //// When winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
+        //// so we can log unhandled exceptions in GUI apps.
+        //private static void CheckForWinForms() {
+        //    foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
+        //        if (asm.GetName().Name.ToLower() == "system.windows.forms") {
+        //            RegisterApplicationEventHandler();
+        //            _winFormsLoaded = true;
+        //            return;
+        //        }
+        //    }
 
-            // Getting here means winforms has not been loaded yet, so monitor for it with an anonymous delegate.
-            AppDomain.CurrentDomain.AssemblyLoad += delegate(object sender, AssemblyLoadEventArgs args) {
-                if (args.LoadedAssembly.GetName().Name.ToLower() == "system.windows.forms") {
-                    RegisterApplicationEventHandler();
-                    _winFormsLoaded = true;
-                }
-            };
-        }
+        //    // Getting here means winforms has not been loaded yet, so monitor for it with an anonymous delegate.
+        //    AppDomain.CurrentDomain.AssemblyLoad += delegate(object sender, AssemblyLoadEventArgs args) {
+        //        if (args.LoadedAssembly.GetName().Name.ToLower() == "system.windows.forms") {
+        //            RegisterApplicationEventHandler();
+        //            _winFormsLoaded = true;
+        //        }
+        //    };
+        //}
 
-        // This is only called if System.Windows.Forms is already loaded since 
-        // we don't want to be the reason for loading such a large assembly.
-        private static void RegisterApplicationEventHandler() {
-            System.Windows.Forms.Application.ThreadException += _threadExceptionHandler;
-        }
+        //// This is only called if System.Windows.Forms is already loaded since 
+        //// we don't want to be the reason for loading such a large assembly.
+        //private static void RegisterApplicationEventHandler() {
+        //    System.Windows.Forms.Application.ThreadException += _threadExceptionHandler;
+        //}
 
         private static string ParseFormatString(string input) {
             StringBuilder builder = new StringBuilder(input);
@@ -1200,15 +1200,15 @@ namespace TracerX {
         private static int _exceptionsLogged;
         private static uint _maxExceptionsLogged = 3;
 
-        private static System.Threading.ThreadExceptionEventHandler _threadExceptionHandler = 
-            delegate (object sender, System.Threading.ThreadExceptionEventArgs e) {
-                if (_exceptionsLogged < MaxUnhandledExceptionsLogged) {
-                    ++_exceptionsLogged;
-                    EventLogging.Log("An unhandled exception was passed to TracerX's handler for the Application.ThreadException event.\n\n" + e.Exception.ToString(), EventLogging.UnhandledExceptionInApp);
-                } else {
-                    Logger.Root.Fatal("An unhandled exception was passed to TracerX's handler for the Application.ThreadException event, but was not logged to the event log.\n", e.Exception);
-                }
-            };
+        //private static System.Threading.ThreadExceptionEventHandler _threadExceptionHandler = 
+        //    delegate (object sender, System.Threading.ThreadExceptionEventArgs e) {
+        //        if (_exceptionsLogged < MaxUnhandledExceptionsLogged) {
+        //            ++_exceptionsLogged;
+        //            EventLogging.Log("An unhandled exception was passed to TracerX's handler for the Application.ThreadException event.\n\n" + e.Exception.ToString(), EventLogging.UnhandledExceptionInApp);
+        //        } else {
+        //            Logger.Root.Fatal("An unhandled exception was passed to TracerX's handler for the Application.ThreadException event, but was not logged to the event log.\n", e.Exception);
+        //        }
+        //    };
 
         private static UnhandledExceptionEventHandler _appDomainExceptionHandler =
             delegate(object sender, UnhandledExceptionEventArgs e) {
