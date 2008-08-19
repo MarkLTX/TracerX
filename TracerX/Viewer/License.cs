@@ -19,7 +19,7 @@ namespace TracerX.Viewer
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Stream licStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TracerX.Apache_License.txt");
+            Stream licStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TracerX.NotTheLicense.txt");
             StreamReader reader = new StreamReader(licStream);
             string lic = reader.ReadToEnd();
             reader.Close();
