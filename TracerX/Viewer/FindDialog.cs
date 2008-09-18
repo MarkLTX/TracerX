@@ -32,7 +32,6 @@ namespace TracerX.Viewer {
         }
 
         private MainForm _mainForm;
-        private Row _foundItem;
 
         private void DoSearch(bool bookmark) {
             Cursor restoreCursor = this.Cursor;
@@ -54,17 +53,7 @@ namespace TracerX.Viewer {
                     regex = new Regex(FilterDialog.WildcardToRegex(comboBox1.Text), regexOptions);
                 }
 
-                if (_foundItem != null) {
-                    _foundItem.SimulateSelected(false);
-                }
-
-                _foundItem = _mainForm.DoSearch(comboBox1.Text, sc, regex, searchUp.Checked, bookmark);
-
-                if (_foundItem != null) {
-                    // On some monitors, the found item is barely discernable when the main form
-                    // does not have the focus.  Fix this by assigning an explicit backcolor.
-                    _foundItem.SimulateSelected(true);
-                }
+                _mainForm.DoSearch(comboBox1.Text, sc, regex, searchUp.Checked, bookmark);
             } finally {
                 this.Cursor = restoreCursor;
             }
@@ -85,9 +74,9 @@ namespace TracerX.Viewer {
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            if (_foundItem != null) {
-                _foundItem.SimulateSelected(false);
-            }
+            //if (_foundItem != null) {
+            //    _foundItem.SimulateSelected(false);
+            //}
 
             // Persist the list of search strings.
             Settings1.Default.FindStrings = new System.Collections.Specialized.StringCollection();
@@ -102,6 +91,10 @@ namespace TracerX.Viewer {
 
         private void bookmarkAll_Click(object sender, EventArgs e) {
             DoSearch(true);
+        }
+
+        private void close_Click(object sender, EventArgs e) {
+            Close();
         }
     }
 }

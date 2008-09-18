@@ -35,9 +35,9 @@ namespace TracerX.Viewer {
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
 
-            if (_selectedRow != null) {
-                _selectedRow.SimulateSelected(false);
-            }
+            //if (_selectedRow != null) {
+            //    _selectedRow.SimulateSelected(false);
+            //}
         }
 
         // When the user selects an item, scroll the main form to the corresponding row.
@@ -47,17 +47,17 @@ namespace TracerX.Viewer {
                 Record rec = item.Tag as Record;
 
                 if (rec == null) {
-                    if (_selectedRow != null) {
-                        _selectedRow.SimulateSelected(false);
-                    }
+                    //if (_selectedRow != null) {
+                    //    _selectedRow.SimulateSelected(false);
+                    //}
                     _selectedRow = MainForm.TheMainForm.SelectSingleItem(_topStackRow.Index);
-                    _selectedRow.SimulateSelected(true);
+                    //_selectedRow.SimulateSelected(true);
                 } else if (rec.IsVisible) {
-                    if (_selectedRow != null) {
-                        _selectedRow.SimulateSelected(false);
-                    }
+                    //if (_selectedRow != null) {
+                    //    _selectedRow.SimulateSelected(false);
+                    //}
                     _selectedRow = MainForm.TheMainForm.SelectSingleItem(rec.FirstRowIndex);
-                    _selectedRow.SimulateSelected(true);
+                    //_selectedRow.SimulateSelected(true);
                 }
             }
         }

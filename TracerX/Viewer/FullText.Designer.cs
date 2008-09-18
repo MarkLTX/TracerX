@@ -28,6 +28,7 @@ namespace TracerX.Viewer {
             this.Wrap = new System.Windows.Forms.CheckBox();
             this.copy = new System.Windows.Forms.Button();
             this.ok = new System.Windows.Forms.Button();
+            this.follow = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -48,7 +49,7 @@ namespace TracerX.Viewer {
             // 
             this.edit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.edit.AutoSize = true;
-            this.edit.Location = new System.Drawing.Point(13, 155);
+            this.edit.Location = new System.Drawing.Point(188, 153);
             this.edit.Name = "edit";
             this.edit.Size = new System.Drawing.Size(44, 17);
             this.edit.TabIndex = 2;
@@ -60,7 +61,7 @@ namespace TracerX.Viewer {
             // 
             this.Wrap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Wrap.AutoSize = true;
-            this.Wrap.Location = new System.Drawing.Point(82, 155);
+            this.Wrap.Location = new System.Drawing.Point(130, 153);
             this.Wrap.Name = "Wrap";
             this.Wrap.Size = new System.Drawing.Size(52, 17);
             this.Wrap.TabIndex = 3;
@@ -71,7 +72,7 @@ namespace TracerX.Viewer {
             // copy
             // 
             this.copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.copy.Location = new System.Drawing.Point(151, 151);
+            this.copy.Location = new System.Drawing.Point(238, 151);
             this.copy.Name = "copy";
             this.copy.Size = new System.Drawing.Size(75, 23);
             this.copy.TabIndex = 4;
@@ -83,12 +84,25 @@ namespace TracerX.Viewer {
             // 
             this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(232, 151);
+            this.ok.Location = new System.Drawing.Point(319, 151);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 0;
             this.ok.Text = "OK";
             this.ok.UseVisualStyleBackColor = true;
+            this.ok.Click += new System.EventHandler(this.ok_Click);
+            // 
+            // follow
+            // 
+            this.follow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.follow.AutoSize = true;
+            this.follow.Location = new System.Drawing.Point(12, 153);
+            this.follow.Name = "follow";
+            this.follow.Size = new System.Drawing.Size(112, 17);
+            this.follow.TabIndex = 5;
+            this.follow.Text = "Follow current row";
+            this.follow.UseVisualStyleBackColor = true;
+            this.follow.CheckedChanged += new System.EventHandler(this.follow_CheckedChanged);
             // 
             // FullText
             // 
@@ -97,6 +111,7 @@ namespace TracerX.Viewer {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.ok;
             this.ClientSize = new System.Drawing.Size(652, 178);
+            this.Controls.Add(this.follow);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.copy);
             this.Controls.Add(this.Wrap);
@@ -119,6 +134,7 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.CheckBox Wrap;
         private System.Windows.Forms.Button copy;
         private System.Windows.Forms.Button ok;
+        private System.Windows.Forms.CheckBox follow;
 
 
     }

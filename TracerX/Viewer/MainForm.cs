@@ -9,7 +9,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Microsoft.Win32; 
+using Microsoft.Win32;
+using System.Runtime.InteropServices; 
 
 // See http://blogs.msdn.com/cumgranosalis/archive/2006/03/06/VirtualListViewUsage.aspx
 // for a good article on using ListView in virtual mode.
@@ -45,8 +46,9 @@ namespace TracerX.Viewer {
             // Setting the FileState affects many menu items and buttons.
             _FileState = FileState.NoFile;
 
-            relativeTimeButton.Enabled = !Settings1.Default.RelativeTime;
-            absoluteTimeButton.Enabled = Settings1.Default.RelativeTime;
+            // The check state of relativeTimeButton is driven by Settings1.Default.RelativeTime;
+            relativeTimeButton.Checked = Settings1.Default.RelativeTime;
+            Settings1.Default.PropertyChanged += new PropertyChangedEventHandler(Settings_PropertyChanged);
 
             if (args.Length > 0) {
                 StartReading(args[0]);
@@ -165,7 +167,9 @@ namespace TracerX.Viewer {
         }
 
         public void GetVirtualItem(Object sender, RetrieveVirtualItemEventArgs e) {
-            e.Item = GetListItem(e.ItemIndex);
+            bool newItem;
+            e.Item = GetListItem(e.ItemIndex, out newItem);
+            if (!newItem && this != Form.ActiveForm) SetItemColors(e.Item, e.Item.Selected);
             //Row row = (Row)e.Item.Tag;
             //Debug.Print("Got virtual item " +e.ItemIndex + ", index = " + row.Index + ", record num = " + row.Rec.MsgNum + ", line = " + row.Line);
         }
@@ -214,7 +218,7 @@ namespace TracerX.Viewer {
             if (!found) {
                 MessageBox.Show("Did not find: " + needle);
             } else if (bookmark) {
-                bookmarkNextCmd.Enabled = bookmarkPrevCmd.Enabled = true;
+                bookmarkNextCmd.Enabled = bookmarkPrevCmd.Enabled = bookmarkClearCmd.Enabled = true;
                 InvalidateTheListView();
             }
 
@@ -356,6 +360,36 @@ namespace TracerX.Viewer {
                 }
             }
         }
+        
+        // This is supposed to make the listview highlight the selected
+        // item even when it doesn't have the focus, but it doesn't work.
+        //private void SetListViewStyle() {
+        //    const int GWL_STYLE = (-16);
+        //    const long long_LVS_SHOWSELALWAYS = 8;
+        //    const int int_LVS_SHOWSELALWAYS = 8;
+
+        //    if (IntPtr.Size == 8) {
+        //        long style = GetWindowLongPtr(TheListView.Handle, GWL_STYLE);
+        //        long success = SetWindowLongPtr(TheListView.Handle, GWL_STYLE, (style | long_LVS_SHOWSELALWAYS));
+        //        style = GetWindowLongPtr(TheListView.Handle, GWL_STYLE);
+        //    } else {
+        //        int style = GetWindowLong(TheListView.Handle, GWL_STYLE);
+        //        int sucess = SetWindowLong(TheListView.Handle, GWL_STYLE, style | int_LVS_SHOWSELALWAYS);
+        //        style = GetWindowLong(TheListView.Handle, GWL_STYLE);
+        //    }
+        //}
+
+        //[DllImport("user32.dll", SetLastError = true)]
+        //static extern int GetWindowLong(IntPtr hWnd, int nIndex); 
+
+        //[DllImport("user32.dll", SetLastError = true)]
+        //private static extern long GetWindowLongPtr(IntPtr hWnd, int nIndex);
+
+        //[DllImport("user32.dll", SetLastError = true)]
+        //private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        //[DllImport("user32.dll", SetLastError = true)]
+        //private static extern long SetWindowLongPtr(IntPtr hWnd, int nIndex, long dwNewLong);
 
         // Returns true if the specified text matches the current search/find settings.
         private bool IsMatch(string curText, string needle, StringComparison compareType, Regex regex) {
@@ -383,8 +417,11 @@ namespace TracerX.Viewer {
             TheListView.SelectedIndices.Clear();
             TheListView.EnsureVisible(row.Index);
             ListViewItem item = TheListView.Items[row.Index];
-            item.Selected = true;
             item.Focused = true;
+            item.Selected = true;
+
+            //if (this != Form.ActiveForm) 
+            //    SetItemColors(item, true);
         }
 
         #region File loading
@@ -718,19 +755,22 @@ namespace TracerX.Viewer {
             base.OnClosing(e);
         }
 
-        private ListViewItem GetListItem(int i) {
+        private ListViewItem GetListItem(int i, out bool newItem) {
             // If we have the item cached, return it. Otherwise, recreate it.
             if (_itemCache != null &&
                 i >= _firstItemIndex &&
                 i < _firstItemIndex + _itemCache.Length) {
                 //Debug.Print("Returning cached item " + i);
+                newItem = false;
                 return _itemCache[i - _firstItemIndex];
             } else {
-                //Debug.Print("Creating item " + i);
+                // Create a new item.
+                newItem = true;
+
                 if (i == 0) {
                     return _rows[i].MakeItem(null);
                 } else {
-                    return _rows[i].MakeItem(_rows[i-1]);
+                    return _rows[i].MakeItem(_rows[i - 1]);
                 }
             }
         }
@@ -745,10 +785,11 @@ namespace TracerX.Viewer {
             }
 
             Debug.Print("Building item cache " + e.StartIndex + " - " + e.EndIndex);
+            bool newItem;
             ListViewItem[] newCache = new ListViewItem[e.EndIndex - e.StartIndex + 1];
             for (int i = 0; i < newCache.Length; i++) {
                 // This will copy items from the old cache if it overlaps the new one.
-                newCache[i] = GetListItem(e.StartIndex + i);
+                newCache[i] = GetListItem(e.StartIndex + i, out newItem);
             }
 
             _firstItemIndex = e.StartIndex;
@@ -908,7 +949,7 @@ namespace TracerX.Viewer {
         // Display the Find dialog.
         private void ExecuteFind(object sender, EventArgs e) {
             FindDialog dlg = new FindDialog(this);
-            dlg.ShowDialog(this);
+            dlg.Show(this);
         }
 
         // Search down for the current search string.
@@ -1397,7 +1438,6 @@ namespace TracerX.Viewer {
             Row row = _rows[TheListView.SelectedIndices[0]];
             Row.ZeroTime = row.Rec.Time;
             Settings1.Default.RelativeTime = true;
-            InvalidateTheListView();
         }
 
         #region Column header context menu
@@ -1635,20 +1675,78 @@ namespace TracerX.Viewer {
         }
 
         private void TheListView_SelectedIndexChanged(object sender, EventArgs e) {
-            Debug.Print("SelectedIndexChanged " + TheListView.SelectedIndices.Count );
+            Debug.Print("SelectedIndexChanged " + TheListView.SelectedIndices.Count);
             bookmarkToggleCmd.Enabled = TheListView.FocusedItem != null;
+
+            // When the main form is not active, we do our own highlighting of selected items.
+            if (this != Form.ActiveForm) SetItemCacheColors(false);
         }
 
-        private void TimeButton_Click(object sender, EventArgs e) {
-            if (sender == absoluteTimeButton) {
-                Settings1.Default.RelativeTime = false;
-            } else if (sender == relativeTimeButton) {
-                Settings1.Default.RelativeTime = true;
+        private void TheListView_VirtualItemsSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e) {
+            Debug.Print("VirtualItemsSelectionRangeChanged, count = " + TheListView.SelectedIndices.Count);
+
+            // When the main form is not active, we do our own highlighting of selected items.
+            if (this != Form.ActiveForm) SetItemCacheColors(false);
+        }
+
+        // Set the backcolor and forecolor of items in the cache so selected items
+        // remain prominent even when the form loses focus.  I tried just setting
+        // HideSelection to false, but the items become gray instead of highlighted
+        // and the gray is nearly invisible on some monitors.
+        // Called when selection(s) change.
+        private void SetItemCacheColors(bool formActive) {
+            Debug.Print("formActive = " + formActive);
+            if (_itemCache != null) {
+                TheListView.BeginUpdate();
+                foreach (ListViewItem item in _itemCache) SetItemColors(item, item.Selected && !formActive);
+                TheListView.EndUpdate();
+            }
+        }
+
+        private static Color _defaultColor;
+
+        // Set the items colors based on whether it is selected and form is activated.
+        private static void SetItemColors(ListViewItem item, bool highlight) {
+            // When the main form is active, we restore the default colors and let
+            // the framework do the highlighting.
+            if (highlight) {
+                Debug.Print("  Hiliting item " + item.Index + ", selected = " + item.Selected);
+                item.BackColor = SystemColors.Highlight;
+                item.ForeColor = Color.White;
+            } else {
+                item.BackColor = _defaultColor;
+                item.ForeColor = _defaultColor;
+            }
+        }
+
+        void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == "RelativeTime") {
+                relativeTimeButton.Checked = Settings1.Default.RelativeTime;
+                InvalidateTheListView();
+            }
+        }
+
+        private void relativeTimeButton_Click(object sender, EventArgs e) {
+            Settings1.Default.RelativeTime = !Settings1.Default.RelativeTime;
+        }
+
+        private void MainForm_Activated(object sender, EventArgs e) {
+            Debug.Print("MainForm_Activated, " + TheListView.SelectedIndices.Count + " selected");
+            SetItemCacheColors(true);
+        }
+
+        private void closeAllWindowsToolStripMenuItem_Click(object sender, EventArgs e) {
+            List<Form> toClose = new List<Form>();
+
+            foreach (Form form in Application.OpenForms) {
+                if (form != this) toClose.Add(form);
             }
 
-            absoluteTimeButton.Enabled = Settings1.Default.RelativeTime;
-            relativeTimeButton.Enabled = !Settings1.Default.RelativeTime;
-            InvalidateTheListView();
+            foreach (Form form in toClose) form.Close();
+        }
+
+        private void viewToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
+            closeAllWindowsToolStripMenuItem.Enabled = Application.OpenForms.Count > 1;
         }
     }
 }
