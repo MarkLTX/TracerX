@@ -48,6 +48,7 @@ namespace TracerX.Viewer {
 
             // The check state of relativeTimeButton is driven by Settings1.Default.RelativeTime;
             relativeTimeButton.Checked = Settings1.Default.RelativeTime;
+            absoluteTimeButton.Checked = !Settings1.Default.RelativeTime;
             Settings1.Default.PropertyChanged += new PropertyChangedEventHandler(Settings_PropertyChanged);
 
             if (args.Length > 0) {
@@ -1722,12 +1723,17 @@ namespace TracerX.Viewer {
         void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == "RelativeTime") {
                 relativeTimeButton.Checked = Settings1.Default.RelativeTime;
+                absoluteTimeButton.Checked = !Settings1.Default.RelativeTime;
                 InvalidateTheListView();
             }
         }
 
         private void relativeTimeButton_Click(object sender, EventArgs e) {
-            Settings1.Default.RelativeTime = !Settings1.Default.RelativeTime;
+            if (sender == relativeTimeButton && !relativeTimeButton.Checked ||
+                sender == absoluteTimeButton && !absoluteTimeButton.Checked) //
+            {
+                Settings1.Default.RelativeTime = !Settings1.Default.RelativeTime;
+            }
         }
 
         private void MainForm_Activated(object sender, EventArgs e) {

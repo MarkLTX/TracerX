@@ -139,6 +139,7 @@ namespace TracerX.Viewer {
             this.columnsCmd = new Commander.UICommand(this.components);
             this.optionsCmd = new Commander.UICommand(this.components);
             this.refreshCmd = new Commander.UICommand(this.components);
+            this.absoluteTimeButton = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -794,6 +795,7 @@ namespace TracerX.Viewer {
             this.toolStripSeparator11,
             this.openFilters,
             this.clearFilterButton,
+            this.expandAllButton,
             this.toolStripSeparator6,
             this.refreshButton,
             this.startAutoRefresh,
@@ -811,8 +813,8 @@ namespace TracerX.Viewer {
             this.optionsButton,
             this.columnsButton,
             this.toolStripSeparator12,
-            this.expandAllButton,
-            this.relativeTimeButton});
+            this.relativeTimeButton,
+            this.absoluteTimeButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(886, 25);
@@ -1053,7 +1055,6 @@ namespace TracerX.Viewer {
             // 
             // relativeTimeButton
             // 
-            this.relativeTimeButton.CheckOnClick = true;
             this.relativeTimeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.relativeTimeButton.Image = global::TracerX.Properties.Resources.Stopwatch;
             this.relativeTimeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -1189,6 +1190,17 @@ namespace TracerX.Viewer {
             // 
             this.refreshCmd.Enabled = false;
             this.refreshCmd.Execute += new System.EventHandler(this.ExecuteRefresh);
+            // 
+            // absoluteTimeButton
+            // 
+            this.absoluteTimeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.absoluteTimeButton.Image = global::TracerX.Properties.Resources.Date_and_Time;
+            this.absoluteTimeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.absoluteTimeButton.Name = "absoluteTimeButton";
+            this.absoluteTimeButton.Size = new System.Drawing.Size(23, 22);
+            this.absoluteTimeButton.Text = "Absolute date and time";
+            this.commandProvider.SetUICommand(this.absoluteTimeButton, null);
+            this.absoluteTimeButton.Click += new System.EventHandler(this.relativeTimeButton_Click);
             // 
             // MainForm
             // 
@@ -1333,5 +1345,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripMenuItem recentlyViewedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recentlyCreatedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeAllWindowsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton absoluteTimeButton;
     }
 }
