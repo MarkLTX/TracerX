@@ -1,0 +1,109 @@
+CHANGE HISTORY in reverse chronological order.
+
+[assembly: AssemblyVersion("1.8.011209.0")] // V8, 2007/Dec/09
+o Logger
+  o Use the "StandardData" logger to control the logging that is 
+    automatically done when the log file is opened.
+  o Added XML support for setting the destination format strings.
+  o Added EventLogging.InternalEventOffset so users can control
+    the event numbers of internally logged events.
+o Viewer
+  o Added auto-refresh feature with ability to keep the scroll position
+    at the end of the log after every refresh (auto and manual refreshes).
+  o Retain filter setting across refreshes.  
+  o Allow filtering by text.
+  o Support wildcards in text filtering and searching.
+  o Wrap text by default in the full text window.
+  o Changed "Select All" button to "Copy All" button in the full text window.
+  o Pre-select the search text in the Find dialog.
+  o Ensure lines shown in full text window end in "\r\n".
+  o Show file name in title bar.
+  o Show exe directory in about box.
+  o Added ability to view the Apache License from the About dialog.
+  o Fixed bug causing thread names to be duplicated when file is re-loaded.
+  o Fixed bug causing long text messages to be truncated when all columns are copied.
+o General
+  o Added LICENSE.txt and NOTICE.txt to the source files comply with the 
+    Apache License Version 2.0.
+
+[assembly: AssemblyVersion("1.7.011006.0")] // V7, 2007/Oct/06
+o Logger
+  o Added support for logging to Trace.WriteLine, the event log, and the console.
+  o Major code reorganization.  Many items were marked "Obsolete" but should still work.
+  o Now generating XML documentation.
+
+[assembly: AssemblyVersion("1.6.010919.0")] // V6, 2007/Sep/19
+o Viewer
+  o Fixed weird behavior on some dialogs, where the cursor would always
+    change to the resizing cursor in the title bar.  The close button
+    in the title bar could not be clicked.
+
+[assembly: AssemblyVersion("1.6.010918.0")] // V6, 2007/Sep/18
+o Viewer
+  o Added an About dialog.
+o Logger
+  o BUG FIX - Logging very long strings can somtimes corrupt the log file so
+    the viewer cannot read the circular part of the log.
+  o Automatically register the ExceptionRenderer.
+
+[assembly: AssemblyVersion("1.5.010813.0")] // V5, 2007/Aug/13
+o Viewer
+  o Allow thread names and thread numbers to be filtered independently, since
+    the names of thread pool threads can change with each incarnation.
+  o Added an option to use the "thousands separator" char in line numbers.
+    This is on by default.
+  o Save the last 10 search strings in the Find dialog.
+o Logger
+  o Log some standard information at the beginning of the log file, including
+    the EXE's file version, assembly version, and path.  Also the OS version,
+    current directory, and commad line.
+  o Added an option to suppress logging of potentially sensitive information
+    such as the user's domain/account name and machine name.
+  o Added a custom renderer for Exception objects since Exception.ToString()
+    does not render the Data property.  This is disabled by default because
+    SQLdm is about to "code freeze".
+
+[assembly: AssemblyVersion("1.4.010801.0")] // V4, 2007/Aug/01
+o Viewer
+  o Added Filter dialog for selecting Loggers, Trace Levels, and Threads to 
+    filter by.
+  o Added Options dialog with option to show relative or absolute values in
+    the Time column.
+  o Added a context menu to the column headers for column-specific tasks,
+    such as filtering on the selected column.
+  o Added an option to the regular context menu to designate the selected row
+    as the "zero time" row for relative time values.
+  o Added an option to the regular context menu to view the message text in a 
+    text window (handy for long messages).  Also, double-clicking a row 
+    launches the text window, unless the row is expandable/collapsible.
+  o Unnamed threads are given default names based on thread number (e.g.
+    "Thread 1").
+o Logger    
+  o Automatically open an alternate log file if the primary log file is in use 
+    by another process.  This allows you to run multiple instances of the same
+    exe and still get logging for each instance.
+  o Added an option to treat recycled thread pool threads as new threads.  This
+    is based on the fact that a thread's name is reset to null when the thread
+    is returned to the thread pool.
+  o Added an option to limit the number of times TracerX will write an event
+    about unhandled exceptions.  Set this to 0 if you don't want TracerX to
+    log any events about your app's unhandled exceptions (because you have
+    your own code to log them, right?).  
+
+[assembly: AssemblyVersion("1.3.010509.0")] // V3, 2007/May/09
+o Changed application icon from RacerX image due to copyright issue.
+o Never display more than 259 chars in the Text column in the viewer.  Testing 
+  has proven that the viewer (i.e. the ListView control) will render only the
+  first 260 chars.  Longer strings are simply truncated.
+  Strings exactly 260 chars long CRASH the viewer in comctl32.dll!
+  This may not happen depending on which version of comctl32.dll is present,
+  but has been observed on two machines.
+o Added a .tx1 filter to the OpenFileDialog.
+
+[assembly: AssemblyVersion("1.0.010501.0")] // V2, 2007/May/01
+This version fixes a bug in LogInfoCall, LogDebugCall, etc. that was caused by method 
+inlining in X64 release builds.  The code assumed that the appropriate stack frame was always 
+the fourth one on the stack.  The fourth stack frame in X64 release builds may not be
+correct (and may not even exist) due to inlining.  The code was changed
+to search for the first stack frame for a method not in the Logger class.
+    
