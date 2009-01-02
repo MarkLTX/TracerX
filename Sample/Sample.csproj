@@ -45,15 +45,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TracerX\TracerX.csproj">
-      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
-      <Name>TracerX</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="LoggerConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
+      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
+      <Name>TracerX-Logger</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

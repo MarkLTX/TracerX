@@ -12,6 +12,12 @@ namespace TracerX {
         /// <summary> 
         /// A Logger with an Undefined trace level inherits its TraceLevel from its parent. 
         /// </summary>
+        Inherited = 0,
+
+        /// <summary>
+        /// Replaced by Inherited.
+        /// </summary>
+        [Obsolete("Use 'Inherited' instead of 'Undefined'")]
         Undefined = 0,
 
         /// <summary> Turns logging off for the Logger/destination with this level. </summary>

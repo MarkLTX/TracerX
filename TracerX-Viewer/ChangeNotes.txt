@@ -1,0 +1,3 @@
+Fixed bug causing File\Properties to display the properties dialog twice.
+Updated copyright date.
+Removed handler for System.Windows.Forms.Application.ThreadException since it seems to hide the fact that an unhandled exception occurred and it isn't being used anyway.

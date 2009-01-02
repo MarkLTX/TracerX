@@ -98,6 +98,8 @@ namespace TracerX {
         // The top of the call stack for this thread.
         internal StackEntry TopStackEntry;
 
+        internal Logger LastLoggerAnyDest = Logger.Root;
+
         #region File data
         // The curent method name for the thread.
         internal string CurrentFileMethod = string.Empty;

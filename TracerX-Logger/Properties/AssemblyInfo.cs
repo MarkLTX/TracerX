@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TracerX")]
-[assembly: AssemblyDescription("Diagnostic logger and log viewer.")]
+[assembly: AssemblyTitle("TracerX-Logger")]
+[assembly: AssemblyDescription("Diagnostic logger.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("TracerX")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2008")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // The version components are specified manually.
 // major.minor.yymm.ddhht, where yy is two-digit year,
 // mm is two-digit month, dd is two-digit date, hh is two-digit hour, and t is the tens digit of the minutes.
-[assembly: AssemblyVersion("2.1.0809.18205")] // 2008/Sept/18 20:5x
+[assembly: AssemblyVersion("3.0.0901.01212")] // 2009/January/01 21:2x (from TracerXVersion macro)
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion

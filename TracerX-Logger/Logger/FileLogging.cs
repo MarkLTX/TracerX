@@ -603,7 +603,7 @@ namespace TracerX {
                 WriteLine(DataFlags.Message, threadData, logger, lineLevel, msg, false);
             }
 
-            // Log a string message.
+            // Log a string message from TracerX itself.
             private static void Metalog(Logger logger, TraceLevel lineLevel, string msg) {
                 WriteLine(DataFlags.Message, ThreadData.CurrentThreadData, logger, lineLevel, "TracerX: " + msg, true);
             }
@@ -829,7 +829,7 @@ namespace TracerX {
                     // past the max file size.             
                     _maxBlockPosition = _blockLocs[_curBlockNdx];
 
-                    // Since we've reached or exceeded the max size, it's time to wrap and
+                    // Since we've reached or exceeded the max file size, it's time to wrap and
                     // start a new block even if the current block only has one line.  
 
                     // Cause the current block to end and a new block to start.
