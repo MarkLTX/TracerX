@@ -7,8 +7,10 @@ using System.Reflection;
 
 namespace Sample 
 {
+    // Demonstrate basic features of the TracerX logger.
     class Program 
     {
+        // Declare a Logger instance for use by this class.
         private static readonly Logger Log = Logger.GetLogger("Program");
 
         // Just one way to initialize TracerX early.
@@ -21,7 +23,7 @@ namespace Sample
             Logger.Xml.Configure("LoggerConfig.xml");
 
             // Override some settings loaded from LoggerConfig.xml.
-            Logger.FileLogging.Name = "x2";
+            Logger.FileLogging.Name = "SampleLog";
             Logger.FileLogging.MaxSizeMb = 1;
             Logger.FileLogging.CircularStartSizeKb = 1;
 
@@ -31,20 +33,24 @@ namespace Sample
 
         static void Main(string[] args) 
         {
+            Log.Debug("A message logged at stack depth = 0.");
+
             using (Log.InfoCall()) 
             {
-                //Debug.Print("FullName " + AppDomain.CurrentDomain.ApplicationIdentity.FullName); // null reference
-                //Debug.Print("CodeBase " + AppDomain.CurrentDomain.ApplicationIdentity.CodeBase); // null reference
                 Log.Info("FriendlyName = ", AppDomain.CurrentDomain.FriendlyName);
                 Log.Info("BaseDirectory = ", AppDomain.CurrentDomain.BaseDirectory);
+
+                Log.Info("A message \nwith multiple \nembedded \nnewlines.");
 
                 Recurse(0, 10);
                 Helper.Foo();
             }
+
+            Log.Debug("Another message logged at stack depth = 0.");
         }
 
         private static void Recurse(int i, int max) {
-            using (Log.InfoCall(i.ToString())) {
+            using (Log.InfoCall("Recurse " + i)) {
                 Log.Info("Depth = ", i);
                 if (i == max) return;
                 else Recurse(i + 1, max);
@@ -53,12 +59,13 @@ namespace Sample
     }
 
     class Helper {
+        // Declare a Logger instance for use by this class.
         private static readonly Logger Log = Logger.GetLogger("Helper");
         private static string big = new string('x', 1000);
 
         public static void Foo() 
         {
-            using (Log.DebugCall()) 
+            using (Logger.Current.DebugCall()) 
             {
                 for (int i = 0; i < 1000; ++i) {
                     Log.Debug("i = ", i);

@@ -19,8 +19,8 @@ namespace TracerX {
     /// whose names imply the TraceLevel of the output.  The FileTraceLevel property determines 
     /// which calls send output to the log file (other properties control logging to the console,
     /// Trace.WriteLine, and the event log).  Setting FileTraceLevel higher results in more output.
-    /// The default FileTraceLevel of every Logger except Root is Undefined.  Any logger with an 
-    /// Undefined trace level inherits the trace level of its parent, all the way up to Root if needed.
+    /// The default FileTraceLevel of every Logger except Root is Inherited.  Any logger a trace level 
+    /// of Inherited inherits the trace level of its parent, all the way up to Root if needed.
     /// Users can control the logging of whole branches of the hierarchy by setting 
     /// FileTraceLevel to Debug, Info, Off, etc. in upper-Level loggers such as Logger.Root
     /// since the lower-Level loggers will inherit it unless explicitly overridden.
@@ -30,7 +30,7 @@ namespace TracerX {
         #region Logger hierarchy (GetLogger)
         /// <summary>
         /// Gets the logger with the specified name, creating it if necessary.
-        /// Loggers created this way have the Undefined trace Level, causing
+        /// Loggers created this way have the Inherited trace Level, causing
         /// the effective trace Level to be inheritted from the parent 
         /// logger (ultimately the Root logger).
         /// </summary>
@@ -57,7 +57,6 @@ namespace TracerX {
         /// Returns info about all loggers in a string that contains the names, explicit trace levels, and
         /// effective trace levels in a hierarchical representation.  This is a debugging aid.
         /// </summary>
-        /// <returns></returns>
         public static string GetHierarchy() {
             lock (_loggers) {
                 StringBuilder builder = new StringBuilder(500);
@@ -79,11 +78,20 @@ namespace TracerX {
         public static readonly Logger StandardData; // Initialized by static ctor.
 
         /// <summary>
+        /// The Current Logger is the last Logger that generated any output (to
+        /// any destination) for the calling thread.  Use this Logger when you want to use the same Logger as
+        /// earlier code used.  For example, you might use it in common code called from
+        /// many places when you want the common code to use the same Logger as the 
+        /// calling code.  Initialized to Root for each thread.
+        /// </summary>
+        public static Logger Current { get { return ThreadData.CurrentThreadData.LastLoggerAnyDest; } }
+
+        /// <summary>
         /// The maximum number of events TracerX will log to the event log regarding
         /// unhandled exceptions that occur in the application.  TracerX detects these exceptions
-        /// via the Application.ThreadException and AppDomain.CurrentDomain.UnhandledException events.
-        /// If you have your own handlers for these events, you can set this to 0.  Otherwise,
-        /// unhandled exceptions will be very hard to diagnose.
+        /// via the AppDomain.CurrentDomain.UnhandledException event.
+        /// If you set this to zero, TracerX will not log these exeptions but unhandled exceptions 
+        /// will be very hard to diagnose unless you have your own handler.
         /// </summary>
         public static uint MaxUnhandledExceptionsLogged {
             get { return _maxExceptionsLogged; }
@@ -103,7 +111,7 @@ namespace TracerX {
         /// <summary>
         /// This controls which logging calls send output to the file.  Only those calls at levels
         /// less than or equal to FileTraceLevel go to the file.  If FileTraceLevel is set to
-        /// Undefined, the getter returns the trace Level inherited from the parent logger.
+        /// Inherited, the getter returns the trace Level inherited from the parent logger.
         /// </summary>
         public TraceLevel FileTraceLevel {
             get { return FileLevels.EffectiveLevel; }
@@ -707,37 +715,7 @@ namespace TracerX {
             StandardData.FileTraceLevel = TraceLevel.Verbose;
 
             AppDomain.CurrentDomain.UnhandledException += _appDomainExceptionHandler;
-
-//            _webApp = Assembly.GetEntryAssembly() == null;
         }
-
-        //// Sets _winFormsLoaded to true if the the winforms assembly has already been loaded.
-        //// If not, this registers an event handler to detect when it is loaded.
-        //// When winforms is loaded, attaches an event handler to System.Windows.Forms.Application.ThreadException
-        //// so we can log unhandled exceptions in GUI apps.
-        //private static void CheckForWinForms() {
-        //    foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
-        //        if (asm.GetName().Name.ToLower() == "system.windows.forms") {
-        //            RegisterApplicationEventHandler();
-        //            _winFormsLoaded = true;
-        //            return;
-        //        }
-        //    }
-
-        //    // Getting here means winforms has not been loaded yet, so monitor for it with an anonymous delegate.
-        //    AppDomain.CurrentDomain.AssemblyLoad += delegate(object sender, AssemblyLoadEventArgs args) {
-        //        if (args.LoadedAssembly.GetName().Name.ToLower() == "system.windows.forms") {
-        //            RegisterApplicationEventHandler();
-        //            _winFormsLoaded = true;
-        //        }
-        //    };
-        //}
-
-        //// This is only called if System.Windows.Forms is already loaded since 
-        //// we don't want to be the reason for loading such a large assembly.
-        //private static void RegisterApplicationEventHandler() {
-        //    System.Windows.Forms.Application.ThreadException += _threadExceptionHandler;
-        //}
 
         private static string ParseFormatString(string input) {
             StringBuilder builder = new StringBuilder(input);
@@ -817,13 +795,13 @@ namespace TracerX {
 
         #region Trace levels
         // Each logging destination has an explicit trace level and an effective trace level which is
-        // inherited from the parent logger if the explicit trace level is undefined.
+        // inherited from the parent logger if the explicit trace level is Inherited.
         private class LevelPair {
-            public TraceLevel SetLevel = TraceLevel.Undefined;       // The explicitly set trace Level.
-            public TraceLevel EffectiveLevel = TraceLevel.Undefined; // Possibly inherited trace Level.
+            public TraceLevel SetLevel = TraceLevel.Inherited;       // The explicitly set trace Level.
+            public TraceLevel EffectiveLevel = TraceLevel.Inherited; // Possibly inherited trace Level.
 
             public bool MaybeInherit(LevelPair parentLevels) {
-                if (SetLevel == TraceLevel.Undefined) {
+                if (SetLevel == TraceLevel.Inherited) {
                     EffectiveLevel = parentLevels.EffectiveLevel;
                     return true;
                 } else {
@@ -853,14 +831,14 @@ namespace TracerX {
             // the hierarchy of loggers, and the inherited trace levels.
             lock (_loggers) {
                 if (DestinationLevels[index].SetLevel != value) {
-                    if (this == Root && value == TraceLevel.Undefined) {
-                        // The Root logger is not allowed to have the Undefined trace level
+                    if (this == Root && value == TraceLevel.Inherited) {
+                        // The Root logger is not allowed to have the Inherited trace level
                         return;
                     }
 
                     DestinationLevels[index].SetLevel = value;
 
-                    if (value == TraceLevel.Undefined && parent != null) {
+                    if (value == TraceLevel.Inherited && parent != null) {
                         DestinationLevels[index].EffectiveLevel = parent.DestinationLevels[index].EffectiveLevel;
                     } else {
                         DestinationLevels[index].EffectiveLevel = value;
@@ -887,6 +865,8 @@ namespace TracerX {
                 if (ConsoleTraceLevel >= msgLevel) ConsoleLogging.LogMsg(this, threadData, msgLevel, msg);
                 if (DebugTraceLevel >= msgLevel) DebugLogging.LogMsg(this, threadData, msgLevel, msg);
                 if (EventLogTraceLevel >= msgLevel) EventLogging.LogMsg(this, threadData, msgLevel, msg);
+
+                threadData.LastLoggerAnyDest = this;
             } catch (Exception) {
                 // TODO: What?
             }
@@ -1156,7 +1136,7 @@ namespace TracerX {
             logger.parent = this;
         }
 
-        // Push our effective trace levels down to any children that have an undefined trace level.
+        // Push our effective trace levels down to any children that have an Inherited trace level.
         // Called when any trace level changes or a new logger with an explicit trace level is
         // inserted into the hierarchy.
         private void SetInheritedTraceLevels(int destinationIndex) {

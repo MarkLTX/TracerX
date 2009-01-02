@@ -448,7 +448,7 @@ namespace TracerX {
                             } catch {
                                 string msg = "The 'level' element under the 'logger' element with name='{0}' has a missing or invalid 'value' attribute.\n\n";
                                 _warnings += string.Format(msg, name);
-                                level = TraceLevel.Undefined;
+                                level = TraceLevel.Inherited;
                             }
 
                             switch (node.Name.ToLower()) {
