@@ -100,7 +100,7 @@ namespace TracerX {
 
                     string output = string.Format(Logger.EventLogging._internalEventFormatString,
                         _lineCount,
-                        msgLevel,
+                        Enum.GetName(typeof(TraceLevel), msgLevel),
                         logger.Name,
                         threadData.TracerXID,
                         Thread.CurrentThread.Name == null ? "<null>" : Thread.CurrentThread.Name,
@@ -134,7 +134,8 @@ namespace TracerX {
             internal const int TooLateForCircular = 103; // Circular logging started too late.
             internal const int MaxFileSizeReached = 104; // Reached max size before circular logging started.
             internal const int XmlConfigWarning = 105; // The TracerX element was loaded from XML with warnings.
-            internal const int ExceptionInArchive = 106; // An  exception occurred while archiving the old output file.
+            internal const int ExceptionInArchive = 106; // An exception occurred while archiving the old output file.
+            internal const int AppendVersionConflict = 107; // Could not append to existing log file because it had an old version.
             internal const int UnhandledExceptionInApp = 120; // An unhandled exception occurred somewhere in the app.
 
             // 201-300 = info
@@ -142,6 +143,7 @@ namespace TracerX {
             internal const int CircularLogStarted = 202;
             internal const int FirstWrap = 203;
             internal const int ConfigFileChanged = 204;
+            internal const int LogFileReopening = 205; // Text file reached max size and is being restarted.
 
             internal static void Log(string msg, int num) {
                 if (num <= Logger.EventLogging.MaxInternalEventNumber) {

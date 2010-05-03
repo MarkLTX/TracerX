@@ -36,6 +36,14 @@ namespace TracerX.Viewer {
             this.loggerListView = new System.Windows.Forms.ListView();
             this.loggerCheckCol = new System.Windows.Forms.ColumnHeader();
             this.loggerNameCol = new System.Windows.Forms.ColumnHeader();
+            this.methodPage = new System.Windows.Forms.TabPage();
+            this.calledMethodsChk = new System.Windows.Forms.CheckBox();
+            this.invertMethods = new System.Windows.Forms.Button();
+            this.uncheckAllMethods = new System.Windows.Forms.Button();
+            this.checkAllMethods = new System.Windows.Forms.Button();
+            this.methodListView = new System.Windows.Forms.ListView();
+            this.methodCheckCol = new System.Windows.Forms.ColumnHeader();
+            this.methodNameCol = new System.Windows.Forms.ColumnHeader();
             this.threadNamePage = new System.Windows.Forms.TabPage();
             this.invertThreadNames = new System.Windows.Forms.Button();
             this.uncheckAllThreadNames = new System.Windows.Forms.Button();
@@ -51,10 +59,11 @@ namespace TracerX.Viewer {
             this.threadCheckCol = new System.Windows.Forms.ColumnHeader();
             this.threadIdCol = new System.Windows.Forms.ColumnHeader();
             this.textPage = new System.Windows.Forms.TabPage();
-            this.chkRegex = new System.Windows.Forms.CheckBox();
+            this.radRegex = new System.Windows.Forms.RadioButton();
+            this.radWildcard = new System.Windows.Forms.RadioButton();
+            this.radNormal = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.chkCase = new System.Windows.Forms.CheckBox();
-            this.chkWild = new System.Windows.Forms.CheckBox();
             this.txtDoesNotContain = new System.Windows.Forms.TextBox();
             this.chkDoesNotContain = new System.Windows.Forms.CheckBox();
             this.txtContains = new System.Windows.Forms.TextBox();
@@ -62,12 +71,21 @@ namespace TracerX.Viewer {
             this.ok = new System.Windows.Forms.Button();
             this.apply = new System.Windows.Forms.Button();
             this.close = new System.Windows.Forms.Button();
+            this.sessionPage = new System.Windows.Forms.TabPage();
+            this.invertSessions = new System.Windows.Forms.Button();
+            this.uncheckAllSessions = new System.Windows.Forms.Button();
+            this.checkAllSessions = new System.Windows.Forms.Button();
+            this.sessionListView = new System.Windows.Forms.ListView();
+            this.sessionCheckCol = new System.Windows.Forms.ColumnHeader();
+            this.sessionCol = new System.Windows.Forms.ColumnHeader();
             this.tabControl1.SuspendLayout();
             this.traceLevelPage.SuspendLayout();
             this.loggerPage.SuspendLayout();
+            this.methodPage.SuspendLayout();
             this.threadNamePage.SuspendLayout();
             this.threadIdPage.SuspendLayout();
             this.textPage.SuspendLayout();
+            this.sessionPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -76,14 +94,16 @@ namespace TracerX.Viewer {
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.traceLevelPage);
+            this.tabControl1.Controls.Add(this.sessionPage);
             this.tabControl1.Controls.Add(this.loggerPage);
+            this.tabControl1.Controls.Add(this.methodPage);
             this.tabControl1.Controls.Add(this.threadNamePage);
             this.tabControl1.Controls.Add(this.threadIdPage);
             this.tabControl1.Controls.Add(this.textPage);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(361, 202);
+            this.tabControl1.Size = new System.Drawing.Size(437, 202);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
@@ -97,7 +117,7 @@ namespace TracerX.Viewer {
             this.traceLevelPage.Location = new System.Drawing.Point(4, 22);
             this.traceLevelPage.Name = "traceLevelPage";
             this.traceLevelPage.Padding = new System.Windows.Forms.Padding(3);
-            this.traceLevelPage.Size = new System.Drawing.Size(353, 176);
+            this.traceLevelPage.Size = new System.Drawing.Size(429, 176);
             this.traceLevelPage.TabIndex = 0;
             this.traceLevelPage.Text = "Trace Levels";
             this.traceLevelPage.UseVisualStyleBackColor = true;
@@ -105,7 +125,7 @@ namespace TracerX.Viewer {
             // invertTraceLevels
             // 
             this.invertTraceLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertTraceLevels.Location = new System.Drawing.Point(270, 64);
+            this.invertTraceLevels.Location = new System.Drawing.Point(346, 64);
             this.invertTraceLevels.Name = "invertTraceLevels";
             this.invertTraceLevels.Size = new System.Drawing.Size(75, 23);
             this.invertTraceLevels.TabIndex = 4;
@@ -116,7 +136,7 @@ namespace TracerX.Viewer {
             // clearAllTraceLevels
             // 
             this.clearAllTraceLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearAllTraceLevels.Location = new System.Drawing.Point(270, 35);
+            this.clearAllTraceLevels.Location = new System.Drawing.Point(346, 35);
             this.clearAllTraceLevels.Name = "clearAllTraceLevels";
             this.clearAllTraceLevels.Size = new System.Drawing.Size(75, 23);
             this.clearAllTraceLevels.TabIndex = 3;
@@ -127,7 +147,7 @@ namespace TracerX.Viewer {
             // selectAllTraceLevels
             // 
             this.selectAllTraceLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.selectAllTraceLevels.Location = new System.Drawing.Point(270, 6);
+            this.selectAllTraceLevels.Location = new System.Drawing.Point(346, 6);
             this.selectAllTraceLevels.Name = "selectAllTraceLevels";
             this.selectAllTraceLevels.Size = new System.Drawing.Size(75, 23);
             this.selectAllTraceLevels.TabIndex = 2;
@@ -141,12 +161,14 @@ namespace TracerX.Viewer {
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.traceLevelListBox.CheckOnClick = true;
+            this.traceLevelListBox.FormattingEnabled = true;
             this.traceLevelListBox.IntegralHeight = false;
             this.traceLevelListBox.Location = new System.Drawing.Point(3, 3);
             this.traceLevelListBox.Name = "traceLevelListBox";
-            this.traceLevelListBox.Size = new System.Drawing.Size(261, 168);
+            this.traceLevelListBox.Size = new System.Drawing.Size(337, 167);
             this.traceLevelListBox.TabIndex = 1;
             this.traceLevelListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.traceLevelListBox_ItemCheck);
+            this.traceLevelListBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.traceLevelListBox_Format);
             // 
             // loggerPage
             // 
@@ -156,7 +178,7 @@ namespace TracerX.Viewer {
             this.loggerPage.Controls.Add(this.loggerListView);
             this.loggerPage.Location = new System.Drawing.Point(4, 22);
             this.loggerPage.Name = "loggerPage";
-            this.loggerPage.Size = new System.Drawing.Size(353, 176);
+            this.loggerPage.Size = new System.Drawing.Size(429, 176);
             this.loggerPage.TabIndex = 2;
             this.loggerPage.Text = "Loggers";
             this.loggerPage.UseVisualStyleBackColor = true;
@@ -164,7 +186,7 @@ namespace TracerX.Viewer {
             // invertLoggers
             // 
             this.invertLoggers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertLoggers.Location = new System.Drawing.Point(270, 64);
+            this.invertLoggers.Location = new System.Drawing.Point(346, 64);
             this.invertLoggers.Name = "invertLoggers";
             this.invertLoggers.Size = new System.Drawing.Size(75, 23);
             this.invertLoggers.TabIndex = 11;
@@ -175,7 +197,7 @@ namespace TracerX.Viewer {
             // uncheckAllLoggers
             // 
             this.uncheckAllLoggers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uncheckAllLoggers.Location = new System.Drawing.Point(270, 35);
+            this.uncheckAllLoggers.Location = new System.Drawing.Point(346, 35);
             this.uncheckAllLoggers.Name = "uncheckAllLoggers";
             this.uncheckAllLoggers.Size = new System.Drawing.Size(75, 23);
             this.uncheckAllLoggers.TabIndex = 10;
@@ -186,7 +208,7 @@ namespace TracerX.Viewer {
             // checkAllLoggers
             // 
             this.checkAllLoggers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkAllLoggers.Location = new System.Drawing.Point(270, 6);
+            this.checkAllLoggers.Location = new System.Drawing.Point(346, 6);
             this.checkAllLoggers.Name = "checkAllLoggers";
             this.checkAllLoggers.Size = new System.Drawing.Size(75, 23);
             this.checkAllLoggers.TabIndex = 9;
@@ -206,7 +228,7 @@ namespace TracerX.Viewer {
             this.loggerListView.FullRowSelect = true;
             this.loggerListView.Location = new System.Drawing.Point(3, 3);
             this.loggerListView.Name = "loggerListView";
-            this.loggerListView.Size = new System.Drawing.Size(261, 170);
+            this.loggerListView.Size = new System.Drawing.Size(337, 170);
             this.loggerListView.TabIndex = 8;
             this.loggerListView.UseCompatibleStateImageBehavior = false;
             this.loggerListView.View = System.Windows.Forms.View.Details;
@@ -216,12 +238,100 @@ namespace TracerX.Viewer {
             // loggerCheckCol
             // 
             this.loggerCheckCol.Text = "";
-            this.loggerCheckCol.Width = 19;
+            this.loggerCheckCol.Width = 24;
             // 
             // loggerNameCol
             // 
             this.loggerNameCol.Text = "Logger Name";
             this.loggerNameCol.Width = 198;
+            // 
+            // methodPage
+            // 
+            this.methodPage.Controls.Add(this.calledMethodsChk);
+            this.methodPage.Controls.Add(this.invertMethods);
+            this.methodPage.Controls.Add(this.uncheckAllMethods);
+            this.methodPage.Controls.Add(this.checkAllMethods);
+            this.methodPage.Controls.Add(this.methodListView);
+            this.methodPage.Location = new System.Drawing.Point(4, 22);
+            this.methodPage.Name = "methodPage";
+            this.methodPage.Size = new System.Drawing.Size(429, 176);
+            this.methodPage.TabIndex = 5;
+            this.methodPage.Text = "Methods";
+            this.methodPage.UseVisualStyleBackColor = true;
+            // 
+            // calledMethodsChk
+            // 
+            this.calledMethodsChk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.calledMethodsChk.AutoSize = true;
+            this.calledMethodsChk.Location = new System.Drawing.Point(8, 154);
+            this.calledMethodsChk.Name = "calledMethodsChk";
+            this.calledMethodsChk.Size = new System.Drawing.Size(302, 17);
+            this.calledMethodsChk.TabIndex = 16;
+            this.calledMethodsChk.Text = "Also show methods called by the methods selected above.";
+            this.calledMethodsChk.UseVisualStyleBackColor = true;
+            this.calledMethodsChk.CheckedChanged += new System.EventHandler(this.calledMethodsChk_CheckedChanged);
+            // 
+            // invertMethods
+            // 
+            this.invertMethods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.invertMethods.Location = new System.Drawing.Point(346, 64);
+            this.invertMethods.Name = "invertMethods";
+            this.invertMethods.Size = new System.Drawing.Size(75, 23);
+            this.invertMethods.TabIndex = 15;
+            this.invertMethods.Text = "Invert";
+            this.invertMethods.UseVisualStyleBackColor = true;
+            this.invertMethods.Click += new System.EventHandler(this.invertMethods_Click);
+            // 
+            // uncheckAllMethods
+            // 
+            this.uncheckAllMethods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.uncheckAllMethods.Location = new System.Drawing.Point(346, 35);
+            this.uncheckAllMethods.Name = "uncheckAllMethods";
+            this.uncheckAllMethods.Size = new System.Drawing.Size(75, 23);
+            this.uncheckAllMethods.TabIndex = 14;
+            this.uncheckAllMethods.Text = "Uncheck All";
+            this.uncheckAllMethods.UseVisualStyleBackColor = true;
+            this.uncheckAllMethods.Click += new System.EventHandler(this.uncheckAllMethods_Click);
+            // 
+            // checkAllMethods
+            // 
+            this.checkAllMethods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkAllMethods.Location = new System.Drawing.Point(346, 6);
+            this.checkAllMethods.Name = "checkAllMethods";
+            this.checkAllMethods.Size = new System.Drawing.Size(75, 23);
+            this.checkAllMethods.TabIndex = 13;
+            this.checkAllMethods.Text = "Check All";
+            this.checkAllMethods.UseVisualStyleBackColor = true;
+            this.checkAllMethods.Click += new System.EventHandler(this.checkAllMethodss_Click);
+            // 
+            // methodListView
+            // 
+            this.methodListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.methodListView.CheckBoxes = true;
+            this.methodListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.methodCheckCol,
+            this.methodNameCol});
+            this.methodListView.FullRowSelect = true;
+            this.methodListView.Location = new System.Drawing.Point(3, 3);
+            this.methodListView.Name = "methodListView";
+            this.methodListView.Size = new System.Drawing.Size(337, 145);
+            this.methodListView.TabIndex = 12;
+            this.methodListView.UseCompatibleStateImageBehavior = false;
+            this.methodListView.View = System.Windows.Forms.View.Details;
+            this.methodListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.AnyListView_ItemChecked);
+            this.methodListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.methodListView_ColumnClick);
+            // 
+            // methodCheckCol
+            // 
+            this.methodCheckCol.Text = "";
+            this.methodCheckCol.Width = 24;
+            // 
+            // methodNameCol
+            // 
+            this.methodNameCol.Text = "Method Name";
+            this.methodNameCol.Width = 287;
             // 
             // threadNamePage
             // 
@@ -231,7 +341,7 @@ namespace TracerX.Viewer {
             this.threadNamePage.Controls.Add(this.threadNameListView);
             this.threadNamePage.Location = new System.Drawing.Point(4, 22);
             this.threadNamePage.Name = "threadNamePage";
-            this.threadNamePage.Size = new System.Drawing.Size(353, 176);
+            this.threadNamePage.Size = new System.Drawing.Size(429, 176);
             this.threadNamePage.TabIndex = 3;
             this.threadNamePage.Text = "Thread Names";
             this.threadNamePage.UseVisualStyleBackColor = true;
@@ -239,7 +349,7 @@ namespace TracerX.Viewer {
             // invertThreadNames
             // 
             this.invertThreadNames.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertThreadNames.Location = new System.Drawing.Point(270, 64);
+            this.invertThreadNames.Location = new System.Drawing.Point(346, 64);
             this.invertThreadNames.Name = "invertThreadNames";
             this.invertThreadNames.Size = new System.Drawing.Size(75, 23);
             this.invertThreadNames.TabIndex = 11;
@@ -250,7 +360,7 @@ namespace TracerX.Viewer {
             // uncheckAllThreadNames
             // 
             this.uncheckAllThreadNames.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uncheckAllThreadNames.Location = new System.Drawing.Point(270, 35);
+            this.uncheckAllThreadNames.Location = new System.Drawing.Point(346, 35);
             this.uncheckAllThreadNames.Name = "uncheckAllThreadNames";
             this.uncheckAllThreadNames.Size = new System.Drawing.Size(75, 23);
             this.uncheckAllThreadNames.TabIndex = 10;
@@ -261,7 +371,7 @@ namespace TracerX.Viewer {
             // checkAllThreadNames
             // 
             this.checkAllThreadNames.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkAllThreadNames.Location = new System.Drawing.Point(270, 6);
+            this.checkAllThreadNames.Location = new System.Drawing.Point(346, 6);
             this.checkAllThreadNames.Name = "checkAllThreadNames";
             this.checkAllThreadNames.Size = new System.Drawing.Size(75, 23);
             this.checkAllThreadNames.TabIndex = 9;
@@ -281,7 +391,7 @@ namespace TracerX.Viewer {
             this.threadNameListView.FullRowSelect = true;
             this.threadNameListView.Location = new System.Drawing.Point(3, 3);
             this.threadNameListView.Name = "threadNameListView";
-            this.threadNameListView.Size = new System.Drawing.Size(261, 167);
+            this.threadNameListView.Size = new System.Drawing.Size(337, 167);
             this.threadNameListView.TabIndex = 8;
             this.threadNameListView.UseCompatibleStateImageBehavior = false;
             this.threadNameListView.View = System.Windows.Forms.View.Details;
@@ -291,7 +401,7 @@ namespace TracerX.Viewer {
             // threadNameCheckCol
             // 
             this.threadNameCheckCol.Text = "";
-            this.threadNameCheckCol.Width = 19;
+            this.threadNameCheckCol.Width = 24;
             // 
             // threadNameNameCol
             // 
@@ -307,7 +417,7 @@ namespace TracerX.Viewer {
             this.threadIdPage.Location = new System.Drawing.Point(4, 22);
             this.threadIdPage.Name = "threadIdPage";
             this.threadIdPage.Padding = new System.Windows.Forms.Padding(3);
-            this.threadIdPage.Size = new System.Drawing.Size(353, 176);
+            this.threadIdPage.Size = new System.Drawing.Size(429, 176);
             this.threadIdPage.TabIndex = 1;
             this.threadIdPage.Text = "Thread IDs";
             this.threadIdPage.UseVisualStyleBackColor = true;
@@ -316,18 +426,18 @@ namespace TracerX.Viewer {
             // 
             this.invertThreadIds.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.invertThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertThreadIds.Location = new System.Drawing.Point(270, 64);
+            this.invertThreadIds.Location = new System.Drawing.Point(346, 64);
             this.invertThreadIds.Name = "invertThreadIds";
             this.invertThreadIds.Size = new System.Drawing.Size(75, 23);
             this.invertThreadIds.TabIndex = 7;
             this.invertThreadIds.Text = "Invert";
             this.invertThreadIds.UseVisualStyleBackColor = true;
-            this.invertThreadIds.Click += new System.EventHandler(this.invertThreads_Click);
+            this.invertThreadIds.Click += new System.EventHandler(this.invertThreadIDs_Click);
             // 
             // uncheckAllThreadIds
             // 
             this.uncheckAllThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uncheckAllThreadIds.Location = new System.Drawing.Point(270, 35);
+            this.uncheckAllThreadIds.Location = new System.Drawing.Point(346, 35);
             this.uncheckAllThreadIds.Name = "uncheckAllThreadIds";
             this.uncheckAllThreadIds.Size = new System.Drawing.Size(75, 23);
             this.uncheckAllThreadIds.TabIndex = 6;
@@ -338,7 +448,7 @@ namespace TracerX.Viewer {
             // checkAllThreadIds
             // 
             this.checkAllThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkAllThreadIds.Location = new System.Drawing.Point(270, 6);
+            this.checkAllThreadIds.Location = new System.Drawing.Point(346, 6);
             this.checkAllThreadIds.Name = "checkAllThreadIds";
             this.checkAllThreadIds.Size = new System.Drawing.Size(75, 23);
             this.checkAllThreadIds.TabIndex = 5;
@@ -358,7 +468,7 @@ namespace TracerX.Viewer {
             this.threadIdListView.FullRowSelect = true;
             this.threadIdListView.Location = new System.Drawing.Point(3, 3);
             this.threadIdListView.Name = "threadIdListView";
-            this.threadIdListView.Size = new System.Drawing.Size(261, 167);
+            this.threadIdListView.Size = new System.Drawing.Size(337, 167);
             this.threadIdListView.TabIndex = 0;
             this.threadIdListView.UseCompatibleStateImageBehavior = false;
             this.threadIdListView.View = System.Windows.Forms.View.Details;
@@ -368,7 +478,7 @@ namespace TracerX.Viewer {
             // threadCheckCol
             // 
             this.threadCheckCol.Text = "";
-            this.threadCheckCol.Width = 19;
+            this.threadCheckCol.Width = 24;
             // 
             // threadIdCol
             // 
@@ -377,31 +487,56 @@ namespace TracerX.Viewer {
             // 
             // textPage
             // 
-            this.textPage.Controls.Add(this.chkRegex);
+            this.textPage.Controls.Add(this.radRegex);
+            this.textPage.Controls.Add(this.radWildcard);
+            this.textPage.Controls.Add(this.radNormal);
             this.textPage.Controls.Add(this.label1);
             this.textPage.Controls.Add(this.chkCase);
-            this.textPage.Controls.Add(this.chkWild);
             this.textPage.Controls.Add(this.txtDoesNotContain);
             this.textPage.Controls.Add(this.chkDoesNotContain);
             this.textPage.Controls.Add(this.txtContains);
             this.textPage.Controls.Add(this.chkContain);
             this.textPage.Location = new System.Drawing.Point(4, 22);
             this.textPage.Name = "textPage";
-            this.textPage.Size = new System.Drawing.Size(353, 176);
+            this.textPage.Size = new System.Drawing.Size(429, 176);
             this.textPage.TabIndex = 4;
             this.textPage.Text = "Text";
             this.textPage.UseVisualStyleBackColor = true;
             // 
-            // chkRegex
+            // radRegex
             // 
-            this.chkRegex.AutoSize = true;
-            this.chkRegex.Location = new System.Drawing.Point(102, 152);
-            this.chkRegex.Name = "chkRegex";
-            this.chkRegex.Size = new System.Drawing.Size(138, 17);
-            this.chkRegex.TabIndex = 7;
-            this.chkRegex.Text = "Use regular expressions";
-            this.chkRegex.UseVisualStyleBackColor = true;
-            this.chkRegex.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
+            this.radRegex.AutoSize = true;
+            this.radRegex.Location = new System.Drawing.Point(141, 152);
+            this.radRegex.Name = "radRegex";
+            this.radRegex.Size = new System.Drawing.Size(115, 17);
+            this.radRegex.TabIndex = 10;
+            this.radRegex.Text = "Regular expression";
+            this.radRegex.UseVisualStyleBackColor = true;
+            this.radRegex.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
+            // 
+            // radWildcard
+            // 
+            this.radWildcard.AutoSize = true;
+            this.radWildcard.Location = new System.Drawing.Point(68, 151);
+            this.radWildcard.Name = "radWildcard";
+            this.radWildcard.Size = new System.Drawing.Size(67, 17);
+            this.radWildcard.TabIndex = 9;
+            this.radWildcard.Text = "Wildcard";
+            this.radWildcard.UseVisualStyleBackColor = true;
+            this.radWildcard.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
+            // 
+            // radNormal
+            // 
+            this.radNormal.AutoSize = true;
+            this.radNormal.Checked = true;
+            this.radNormal.Location = new System.Drawing.Point(4, 152);
+            this.radNormal.Name = "radNormal";
+            this.radNormal.Size = new System.Drawing.Size(58, 17);
+            this.radNormal.TabIndex = 8;
+            this.radNormal.TabStop = true;
+            this.radNormal.Text = "Normal";
+            this.radNormal.UseVisualStyleBackColor = true;
+            this.radNormal.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
             // 
             // label1
             // 
@@ -423,17 +558,6 @@ namespace TracerX.Viewer {
             this.chkCase.UseVisualStyleBackColor = true;
             this.chkCase.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
             // 
-            // chkWild
-            // 
-            this.chkWild.AutoSize = true;
-            this.chkWild.Location = new System.Drawing.Point(4, 152);
-            this.chkWild.Name = "chkWild";
-            this.chkWild.Size = new System.Drawing.Size(92, 17);
-            this.chkWild.TabIndex = 4;
-            this.chkWild.Text = "Use wildcards";
-            this.chkWild.UseVisualStyleBackColor = true;
-            this.chkWild.CheckedChanged += new System.EventHandler(this.Text_CheckboxChanged);
-            // 
             // txtDoesNotContain
             // 
             this.txtDoesNotContain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -441,7 +565,7 @@ namespace TracerX.Viewer {
             this.txtDoesNotContain.Enabled = false;
             this.txtDoesNotContain.Location = new System.Drawing.Point(23, 97);
             this.txtDoesNotContain.Name = "txtDoesNotContain";
-            this.txtDoesNotContain.Size = new System.Drawing.Size(322, 20);
+            this.txtDoesNotContain.Size = new System.Drawing.Size(398, 20);
             this.txtDoesNotContain.TabIndex = 3;
             this.txtDoesNotContain.TextChanged += new System.EventHandler(this.Text_FilterTextChanged);
             // 
@@ -463,7 +587,7 @@ namespace TracerX.Viewer {
             this.txtContains.Enabled = false;
             this.txtContains.Location = new System.Drawing.Point(23, 48);
             this.txtContains.Name = "txtContains";
-            this.txtContains.Size = new System.Drawing.Size(322, 20);
+            this.txtContains.Size = new System.Drawing.Size(398, 20);
             this.txtContains.TabIndex = 1;
             this.txtContains.TextChanged += new System.EventHandler(this.Text_FilterTextChanged);
             // 
@@ -483,7 +607,7 @@ namespace TracerX.Viewer {
             this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.ok.Enabled = false;
-            this.ok.Location = new System.Drawing.Point(112, 212);
+            this.ok.Location = new System.Drawing.Point(188, 212);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 1;
@@ -495,7 +619,7 @@ namespace TracerX.Viewer {
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.Enabled = false;
-            this.apply.Location = new System.Drawing.Point(193, 212);
+            this.apply.Location = new System.Drawing.Point(269, 212);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 2;
@@ -507,18 +631,95 @@ namespace TracerX.Viewer {
             // 
             this.close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.close.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.close.Location = new System.Drawing.Point(274, 212);
+            this.close.Location = new System.Drawing.Point(350, 212);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 3;
             this.close.Text = "Cancel";
             this.close.UseVisualStyleBackColor = true;
             // 
+            // sessionPage
+            // 
+            this.sessionPage.Controls.Add(this.invertSessions);
+            this.sessionPage.Controls.Add(this.uncheckAllSessions);
+            this.sessionPage.Controls.Add(this.checkAllSessions);
+            this.sessionPage.Controls.Add(this.sessionListView);
+            this.sessionPage.Location = new System.Drawing.Point(4, 22);
+            this.sessionPage.Name = "sessionPage";
+            this.sessionPage.Padding = new System.Windows.Forms.Padding(3);
+            this.sessionPage.Size = new System.Drawing.Size(429, 176);
+            this.sessionPage.TabIndex = 7;
+            this.sessionPage.Text = "Sessions";
+            this.sessionPage.UseVisualStyleBackColor = true;
+            // 
+            // invertSessions
+            // 
+            this.invertSessions.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.invertSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.invertSessions.Location = new System.Drawing.Point(346, 64);
+            this.invertSessions.Name = "invertSessions";
+            this.invertSessions.Size = new System.Drawing.Size(75, 23);
+            this.invertSessions.TabIndex = 7;
+            this.invertSessions.Text = "Invert";
+            this.invertSessions.UseVisualStyleBackColor = true;
+            this.invertSessions.Click += new System.EventHandler(this.invertSessions_Click);
+            // 
+            // uncheckAllSessions
+            // 
+            this.uncheckAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.uncheckAllSessions.Location = new System.Drawing.Point(346, 35);
+            this.uncheckAllSessions.Name = "uncheckAllSessions";
+            this.uncheckAllSessions.Size = new System.Drawing.Size(75, 23);
+            this.uncheckAllSessions.TabIndex = 6;
+            this.uncheckAllSessions.Text = "Uncheck All";
+            this.uncheckAllSessions.UseVisualStyleBackColor = true;
+            this.uncheckAllSessions.Click += new System.EventHandler(this.uncheckAllSessionss_Click);
+            // 
+            // checkAllSessions
+            // 
+            this.checkAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkAllSessions.Location = new System.Drawing.Point(346, 6);
+            this.checkAllSessions.Name = "checkAllSessions";
+            this.checkAllSessions.Size = new System.Drawing.Size(75, 23);
+            this.checkAllSessions.TabIndex = 5;
+            this.checkAllSessions.Text = "Check All";
+            this.checkAllSessions.UseVisualStyleBackColor = true;
+            this.checkAllSessions.Click += new System.EventHandler(this.checkAllSessions_Click);
+            // 
+            // sessionListView
+            // 
+            this.sessionListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.sessionListView.CheckBoxes = true;
+            this.sessionListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.sessionCheckCol,
+            this.sessionCol});
+            this.sessionListView.FullRowSelect = true;
+            this.sessionListView.Location = new System.Drawing.Point(3, 3);
+            this.sessionListView.Name = "sessionListView";
+            this.sessionListView.Size = new System.Drawing.Size(337, 167);
+            this.sessionListView.TabIndex = 0;
+            this.sessionListView.UseCompatibleStateImageBehavior = false;
+            this.sessionListView.View = System.Windows.Forms.View.Details;
+            this.sessionListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.AnyListView_ItemChecked);
+            this.sessionListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.sessionListView_ColumnClick);
+            // 
+            // sessionCheckCol
+            // 
+            this.sessionCheckCol.Text = "";
+            this.sessionCheckCol.Width = 24;
+            // 
+            // sessionCol
+            // 
+            this.sessionCol.Text = "Session";
+            this.sessionCol.Width = 63;
+            // 
             // FilterDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(361, 247);
+            this.ClientSize = new System.Drawing.Size(437, 247);
             this.Controls.Add(this.close);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.ok);
@@ -532,10 +733,13 @@ namespace TracerX.Viewer {
             this.tabControl1.ResumeLayout(false);
             this.traceLevelPage.ResumeLayout(false);
             this.loggerPage.ResumeLayout(false);
+            this.methodPage.ResumeLayout(false);
+            this.methodPage.PerformLayout();
             this.threadNamePage.ResumeLayout(false);
             this.threadIdPage.ResumeLayout(false);
             this.textPage.ResumeLayout(false);
             this.textPage.PerformLayout();
+            this.sessionPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -578,8 +782,24 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.TextBox txtContains;
         private System.Windows.Forms.CheckBox chkContain;
         private System.Windows.Forms.CheckBox chkCase;
-        private System.Windows.Forms.CheckBox chkWild;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox chkRegex;
+        private System.Windows.Forms.TabPage methodPage;
+        private System.Windows.Forms.Button invertMethods;
+        private System.Windows.Forms.Button uncheckAllMethods;
+        private System.Windows.Forms.Button checkAllMethods;
+        private System.Windows.Forms.ListView methodListView;
+        private System.Windows.Forms.ColumnHeader methodCheckCol;
+        private System.Windows.Forms.ColumnHeader methodNameCol;
+        private System.Windows.Forms.CheckBox calledMethodsChk;
+        private System.Windows.Forms.RadioButton radRegex;
+        private System.Windows.Forms.RadioButton radWildcard;
+        private System.Windows.Forms.RadioButton radNormal;
+        private System.Windows.Forms.TabPage sessionPage;
+        private System.Windows.Forms.Button invertSessions;
+        private System.Windows.Forms.Button uncheckAllSessions;
+        private System.Windows.Forms.Button checkAllSessions;
+        private System.Windows.Forms.ListView sessionListView;
+        private System.Windows.Forms.ColumnHeader sessionCheckCol;
+        private System.Windows.Forms.ColumnHeader sessionCol;
     }
 }

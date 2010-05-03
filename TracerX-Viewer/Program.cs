@@ -9,9 +9,8 @@ namespace TracerX.Viewer {
     class Program {
         [STAThread()]
         static void Main(string[] args) {
-            //Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-            //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-                Application.Run(new MainForm(args));
+            Application.EnableVisualStyles();
+            Application.Run(new MainForm(args));
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {

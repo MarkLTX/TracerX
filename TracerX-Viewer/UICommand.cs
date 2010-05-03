@@ -39,6 +39,7 @@ namespace Commander {
             }
         }
 
+        // Sets/gets the Image property of the attached controls.
         public Image Image {
             get { return _image; }
             set {
@@ -47,6 +48,7 @@ namespace Commander {
             }
         }
 
+        // Sets/gets the ToolTipText property of the attached controls.
         public string ToolTipText {
             get { return _toolTipText; }
             set {
@@ -55,8 +57,17 @@ namespace Commander {
             }
         }
 
+        public bool Checked {
+            get {return _checked;}
+            set {
+                _checked = value;
+                foreach (Component c in _components) SetProperty(c, "Checked", _checked);
+            }
+        }
+
         private string _toolTipText;
         private Image _image;
+        private bool _checked;
         private bool _enabled;
 
         // The list of UI contols attached to this UICommand.  Since menu items and toolbar
@@ -66,7 +77,6 @@ namespace Commander {
         // If the component has a property named propName whose type is compatible with propVal
         // (or any type if propVal is null), set the property.
         private bool SetProperty(Component component, string propName, object propVal) {
-            //Type type = component.GetType();
             PropertyInfo pi = component.GetType().GetProperty(propName);
 
             if (pi != null) {
@@ -85,6 +95,7 @@ namespace Commander {
 
         private bool GetProperty<T>(Component component, string propName, out T target) {
             PropertyInfo pi = component.GetType().GetProperty(propName);
+            bool result = true;
 
             if (pi != null) {
                 if (typeof(T).IsAssignableFrom(pi.PropertyType)) {
@@ -100,9 +111,10 @@ namespace Commander {
                 }
             } else {
                 target = default(T);
+                result = false;
             }
 
-            return pi != null;
+            return result;
         }
 
         // The attached controls have their Click events mapped to this, which

@@ -47,7 +47,7 @@ namespace TracerX {
 
                     msg = string.Format(Logger.DebugLogging._internalDebugFormatString,
                         _lineCount,
-                        msgLevel,
+                        Enum.GetName(typeof(TraceLevel), msgLevel),
                         logger.Name,
                         threadData.TracerXID,
                         Thread.CurrentThread.Name == null ? "<null>" : Thread.CurrentThread.Name,

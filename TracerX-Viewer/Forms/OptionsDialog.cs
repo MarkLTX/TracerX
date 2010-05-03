@@ -63,7 +63,7 @@ namespace TracerX.Viewer {
         }
 
         private bool ApplyChanges() {
-            if (VerifyText(true) && VerifyAutoRefresh(true) && VerifyVersionCheck(true)) {
+            if (VerifyText(true) && VerifyVersionCheck(true)) {
                 ApplyLine();
                 ApplyTime();
                 ApplyText();
@@ -89,7 +89,7 @@ namespace TracerX.Viewer {
             if (e.TabPage == textPage) {
                 e.Cancel = !VerifyText(true);
             } else if (e.TabPage == autoRefreshPage) {
-                e.Cancel = !VerifyAutoRefresh(true);
+                e.Cancel = false;
             } else if (e.TabPage == versionPage) {
                 e.Cancel = !VerifyVersionCheck(true);
             }
@@ -152,30 +152,14 @@ namespace TracerX.Viewer {
 
         #region Auto refresh
         private void InitAutoRefresh() {
-            refreshSeconds.Text = Settings.Default.AutoRefreshInterval.ToString();
             reapplyFilter.Checked = Settings.Default.KeepFilter;
+            autoUpdate.Checked = Settings.Default.AutoUpdate;
         }
 
-        private bool VerifyAutoRefresh(bool showErrors) {
-            int temp;
-            bool ret = true;
-
-            if (int.TryParse(refreshSeconds.Text, out temp)) {
-                if (temp <= 0) {
-                    ret = false;
-                    if (showErrors) MessageBox.Show("The refresh interval must be greater than zero.");
-                }
-            } else {
-                ret = false;
-                if (showErrors) MessageBox.Show("The refresh interval must be a number.");
-            }
-
-            return ret;
-        }
 
         private void ApplyAutoRefresh() {
-            Settings.Default.AutoRefreshInterval = int.Parse(refreshSeconds.Text);
             Settings.Default.KeepFilter = reapplyFilter.Checked;
+            Settings.Default.AutoUpdate = autoUpdate.Checked;
         }
         #endregion Auto refresh
 

@@ -32,13 +32,13 @@ namespace TracerX {
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Location = new System.Drawing.Point(15, 0);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(55, 13);
             this.linkLabel1.TabIndex = 0;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "linkLabel1";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            this.linkLabel1.Resize += new System.EventHandler(this.CrumbBar_Resize);
             // 
             // leftBtn
             // 
@@ -73,14 +73,14 @@ namespace TracerX {
             this.rightBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Btn_MouseUp);
             this.rightBtn.EnabledChanged += new System.EventHandler(this.leftBtn_EnabledChanged);
             // 
-            // CrumbBar
+            // CrumbBar2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.rightBtn);
             this.Controls.Add(this.leftBtn);
             this.Controls.Add(this.linkLabel1);
-            this.Name = "CrumbBar";
+            this.Name = "CrumbBar2";
             this.Size = new System.Drawing.Size(791, 15);
             this.Resize += new System.EventHandler(this.CrumbBar_Resize);
             this.ResumeLayout(false);

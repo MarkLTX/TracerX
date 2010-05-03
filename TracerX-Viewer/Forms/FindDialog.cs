@@ -49,9 +49,9 @@ namespace TracerX.Viewer {
             try {
                 MatchType matchType = MatchType.Simple;
 
-                if (useWildcards.Checked) {
+                if (wildcardRad.Checked) {
                     matchType = MatchType.Wildcard;
-                } else if (useRegex.Checked) {
+                } else if (regexRad.Checked) {
                     matchType = MatchType.RegularExpression;
                 }
 
@@ -97,26 +97,6 @@ namespace TracerX.Viewer {
             Close();
         }
 
-        private void useWildcards_CheckedChanged(object sender, EventArgs e) {
-            if (useWildcards.Checked) {
-                wildHelpLabel.Visible = true;
-                useRegex.Checked = false;
-                useRegex.Enabled = false;
-            } else {
-                wildHelpLabel.Visible = false;
-                useRegex.Enabled = true;
-            }
-        }
-
-        private void useRegex_CheckedChanged(object sender, EventArgs e) {
-            if (useRegex.Checked) {
-                useWildcards.Checked = false;
-                useWildcards.Enabled = false;
-            } else {
-                useWildcards.Enabled = true;
-            }
-        }
-
         private void wildHelpLabel_VisibleChanged(object sender, EventArgs e) {
             int newHeight = this.Height;
             Size min = MinimumSize;
@@ -143,6 +123,11 @@ namespace TracerX.Viewer {
                 max.Height = newHeight;
                 MaximumSize = max;
             }
+        }
+
+        private void wildcardRad_CheckedChanged(object sender, EventArgs e)
+        {
+            wildHelpLabel.Visible = wildcardRad.Checked;
         }
     }
 }

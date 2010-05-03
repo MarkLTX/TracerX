@@ -302,9 +302,6 @@
   <metadata name="editColors.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>819, 91</value>
   </metadata>
-  <metadata name="disableColors.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>132, 128</value>
-  </metadata>
   <metadata name="enableColors.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 128</value>
   </metadata>
@@ -346,19 +343,12 @@
         JepwZTaUhIUrQ2HPjWiipGgGANhNe367xR4tAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="startAutoRefresh.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="autoUpdate.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAEZJREFUOE9jYBg0
         YCaD8X8QJttBMAPINgjdAJINwmUA0QYRMoCgQcQagNMguhmAM5oJuYBg+qB6NBK0EV0BwWgi2UR6aQAA
         tImWnbiTmY4AAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="stopAutoRefresh.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAACRJREFUOE9jYBhe
-        YCaD8X9iME5fE6MZpGbUgNEwwJsOhma+AgAGCrNNUHkcuQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="expandAllButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

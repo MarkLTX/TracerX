@@ -1,49 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TracerX>
-	<LogFile>
-		<!-- This specifies the directory where the log file will be written. -->
-		<!-- Note that the log file name cannot be configured here.  The application should set it internally. -->
-		<!-- Also, %LOCAL_APPDATA% is specific to each user.  The user is likely to have write access there. -->
-		<LogDirectory value="%LOCAL_APPDATA%\Idera\Logs" />
+    <LogFile>
+        <!-- This specifies the directory where the log file will be written. -->
+        <!-- Note that the log file name cannot be configured here.  The application should set it internally. -->
+        <!-- Also, %LOCAL_APPDATA% is specific to each user.  The user is likely to have write access there. -->
+        <Directory value="%LOCAL_APPDATA%\TracerX\Logs" />
 
-		<!-- This specifies the approximate maximum size the file can grow to in Mb (1 Mb = 2**20). -->
-		<!-- Anything over 4095 is coerced to 4095 (i.e. 4,293,918,720 bytes). -->
-		<!-- Use 0 to prevent the file from being opened at all (disables all logging). -->
-		<MaxSizeMb value="5" />
+        <!-- This specifies the approximate maximum size the file can grow to in Mb (1 Mb = 2**20). -->
+        <!-- Anything over 4095 is coerced to 4095 (i.e. 4,293,918,720 bytes). -->
+        <!-- Use 0 to prevent the file from being opened at all (disables all logging). -->
+        <MaxSizeMb value="5" />
 
-		<!-- This specifies the number of archived log files to keep.  Anything over 9 is coerced to 9. -->
-		<Archives value="3" />
+        <!-- If the log file is smaller than this many Mb when opened, it is opened in append mode. -->
+        <!-- If the file is this large or larger, it is archived and replaced. -->
+        <AppendIfSmallerThanMb value="0" />
 
-		<!-- This specifies the file size in Kb at which circular logging begins if it hasn't already begun (1 Kb = 2**10). -->
-		<!-- Output generated before this point is preserved when the log wraps. -->
-		<!-- Anything over 4,193,300 is coerced to 4,193,300 (i.e 4,293,939,200 bytes). -->
-		<!-- Use 0 to prevent circular logging from starting based on file size. -->
-		<CircularStartSizeKb value="300" />
+        <!-- This specifies the number of archived log files to keep.  Anything over 9 is coerced to 9. -->
+        <Archives value="3" />
 
-		<!-- This specifies the number of seconds after opening the log file when circular logging begins if it hasn't already begun. -->
-		<!-- Output generated before this point is preserved when the log wraps. -->
-		<!-- Use 0 to prevent circular logging from starting based on time. -->
-		<CircularStartDelaySeconds value="60" />
-	</LogFile>
+        <!-- This specifies the file size in Kb at which circular logging begins if it hasn't already begun (1 Kb = 2**10). -->
+        <!-- Output generated before this point is preserved when the log wraps. -->
+        <!-- Anything over 4,193,300 is coerced to 4,193,300 (i.e 4,293,939,200 bytes). -->
+        <!-- Use 0 to prevent circular logging from starting based on file size. -->
+        <CircularStartSizeKb value="300" />
 
-	<!-- This controls the application event logging performed by TracerX. -->
-	<!-- Events 1-100 are errors (e.g. the file can't be opened). -->
-	<!-- Events 101-200 are warnings (e.g. max file size reached without starting circular logging). -->
-	<!-- Events 201-300 are information (e.g. the output file was opened successfully). -->
-	<!-- Generally, there should be no errors or warnings and you want to know about them if they occur, -->
-	<!-- so 200 is the recommended value. -->
-	<MaxEventNumber value="200" />
+        <!-- This specifies the number of seconds after opening the log file when circular logging begins if it hasn't already begun. -->
+        <!-- Output generated before this point is preserved when the log wraps. -->
+        <!-- Use 0 to prevent circular logging from starting based on time. -->
+        <CircularStartDelaySeconds value="60" />
+    </LogFile>
 
-	<!-- Create a Logger element for each Logger object whose TraceLevels you want to set. -->
-	<!-- Child loggers whose trace levels aren't explicitly set will inherit their parent's trace levels. -->
-	<!-- Parent-child relationships are determined by the "dotted" substrings with logger names, -->
-	<!-- much like C# namespaces. -->
-	<!-- The "Root" logger is the ultimate ancestor of all loggers. Other loggers will inherit the root -->
-	<!-- trace levels unless they are explicitly set here or programatically. -->
-	<Logger name="Root">
-		<FileLevel value="DEBUG" />
-		<ConsoleLevel value="OFF" />
-		<DebugOutLevel value="OFF" />
-		<EventLogLevel value="OFF" />
-	</Logger>
+    <TextFile>
+        <Directory value="%LOCAL_APPDATA%\TracerX\Logs" />
+        <MaxSizeMb value="5" />
+        <AppendIfSmallerThanMb value="1" />
+        <Archives value="12" />
+        <CircularStartSizeKb value="1" />
+        <CircularStartDelaySeconds value="0" />
+        <FormatString value="{line}, {time}, {thname}, {msg}" />
+    </TextFile>
+
+    <!-- This controls the application event logging performed by TracerX. -->
+    <!-- Events 1-100 are errors (e.g. the file can't be opened). -->
+    <!-- Events 101-200 are warnings (e.g. max file size reached without starting circular logging). -->
+    <!-- Events 201-300 are information (e.g. the output file was opened successfully). -->
+    <!-- Generally, there should be no errors or warnings and you want to know about them if they occur, -->
+    <!-- so 200 is the recommended value. -->
+    <MaxEventNumber value="200" />
+
+    <!-- Create a Logger element for each Logger object whose TraceLevels you want to set. -->
+    <!-- Child loggers whose trace levels aren't explicitly set will inherit their parent's trace levels. -->
+    <!-- Parent-child relationships are determined by the "dotted" substrings with logger names, -->
+    <!-- much like C# namespaces. -->
+    <!-- The "Root" logger is the ultimate ancestor of all loggers. Other loggers will inherit the root -->
+    <!-- trace levels unless they are explicitly set here or programatically. -->
+    <Logger name="Root">
+        <FileLevel value="DEBUG" />
+        <TextFileLevel value="OFF" />
+        <ConsoleLevel value="OFF" />
+        <DebugOutLevel value="OFF" />
+        <EventLogLevel value="OFF" />
+    </Logger>
 </TracerX>

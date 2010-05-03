@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Text;
 using System;
-using FileLogging = TracerX.Logger.FileLogging;
+//using FileLogging = TracerX.Logger.FileLogging;
 using ConsoleLogging = TracerX.Logger.ConsoleLogging;
 using DebugLogging = TracerX.Logger.DebugLogging;
 
@@ -12,9 +12,10 @@ namespace TracerX {
     internal enum Destination {
         None = 0,
         File = 1,
-        Console = 2,
-        Debug = 4,
-        EventLog = 8
+        TextFile = 2,
+        Console = 4,
+        Debug = 8,
+        EventLog = 16
     }
 
     // Instances of StackEntry are used to keep track of the call stack
@@ -29,7 +30,7 @@ namespace TracerX {
             Caller = caller;
         }
 
-        internal uint EntryLine; // Line number of method entry in log file.
+        internal ulong EntryLine; // Line number of method entry in log file.
         internal Destination Destinations; // Flags that indicate which destinations this was logged for.
         internal string MethodName; // The method that was called.
         internal TraceLevel Level;  // TraceLevel at which the call was called.
@@ -123,6 +124,14 @@ namespace TracerX {
         internal uint LastBlock = 0;        
         #endregion
 
+        #region TextFile data
+        // The last method logged to the text file by LogCallEntry.
+        internal string CurrentTextFileMethod = string.Empty;
+
+        // The stack depth of method calls logged to the text file.
+        internal byte TextFileStackDepth;
+        #endregion
+
         #region Console data
         // The last method logged to the console by LogCallEntry.
         internal string CurrentConsoleMethod = string.Empty;
@@ -172,8 +181,14 @@ namespace TracerX {
                 
                 if ((destinations & Destination.File) == Destination.File) {
                     CurrentFileMethod = method;
-                    FileLogging.LogEntry(this, stackEntry);
+                    Logger.FileLogging.LogEntry(this, stackEntry);
                     ++FileStackDepth;
+                }
+
+                if ((destinations & Destination.TextFile) == Destination.TextFile) {
+                    CurrentTextFileMethod = method;
+                    Logger.TextFileLogging.LogMsg(logger, this, level, method + " entered");
+                    ++TextFileStackDepth;
                 }
 
                 if ((destinations & Destination.Console) == Destination.Console) {
@@ -212,9 +227,15 @@ namespace TracerX {
             
             if ((TopStackEntry.Destinations & Destination.File) == Destination.File) {
                 // FileStackDepth depth is decremented after logging so any meta-logging has the right depth.
-                FileLogging.LogExit(this, TopStackEntry);
+                Logger.FileLogging.LogExit(this, TopStackEntry);
                 --FileStackDepth;
                 CurrentFileMethod = newMethod;
+            }
+
+            if ((TopStackEntry.Destinations & Destination.TextFile) == Destination.TextFile) {
+                --TextFileStackDepth;
+                Logger.TextFileLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                CurrentTextFileMethod = newMethod;
             }
 
             if ((TopStackEntry.Destinations & Destination.Console) == Destination.Console) {

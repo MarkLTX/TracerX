@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using TracerX.Properties;
+using TracerX.Forms;
 
 namespace TracerX.Viewer {
     /// <summary>
@@ -20,7 +21,7 @@ namespace TracerX.Viewer {
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static int MaxViewableChars = 259;
 
-        public Record(DataFlags dataflags, uint msgNum, DateTime time, ReaderThreadInfo threadInfo, string msg) {
+        public Record(DataFlags dataflags, ulong msgNum, DateTime time, ReaderThreadInfo threadInfo, Reader.Session session, string msg) {
             MsgNum = msgNum;
             Time = time;
             Thread = threadInfo.Thread;
@@ -30,15 +31,16 @@ namespace TracerX.Viewer {
             StackDepth = threadInfo.Depth;
             MethodName = threadInfo.MethodName;
             Caller = threadInfo.StackTop;
+            Session = session;
 
             if ((dataflags & DataFlags.MethodEntry) != DataFlags.None) {
                 // This is a method entry record.  It always contains exactly one line of text.
                 IsEntry = true;
-                Lines = new string[] { string.Format("{{{0}: entered", MethodName) };
+                Lines = new string[] { string.Format("{{{0}: entered", MethodName.Name) };
             } else if ((dataflags & DataFlags.MethodExit) != DataFlags.None) {
                 // Method exit records always contain exactly one line of text.
                 IsExit = true;
-                Lines = new string[] { string.Format("}}{0}: exiting", MethodName) };
+                Lines = new string[] { string.Format("}}{0}: exiting", MethodName.Name) };
             } else {
                 // The message text for this record may contain newlines.  Split the
                 // message into one or more lines.
@@ -67,8 +69,9 @@ namespace TracerX.Viewer {
             Logger = counterpart.Logger;
             StackDepth = counterpart.StackDepth;
             MethodName = counterpart.MethodName;
-            Lines = new string[] { string.Format("}}{0}: exiting (replaces record lost due to wrapping)", MethodName) };
+            Lines = new string[] { string.Format("}}{0}: exiting (replaces record lost due to wrapping)", MethodName.Name) };
             Caller = counterpart;
+            Session = counterpart.Session;
 
             // Each record also has a bool to indicate if it is bookmarked
             // and a row index it may map to.
@@ -78,7 +81,7 @@ namespace TracerX.Viewer {
 
         // This constructs a missing MethodEntry Record from the given ReaderStackEntry.
         // This is for MethodEntry records lost due to wrapping.
-        public Record(ReaderThreadInfo threadInfo, ExplicitStackEntry methodEntry) {
+        public Record(ReaderThreadInfo threadInfo, ExplicitStackEntry methodEntry, Reader.Session session) {
             IsEntry = true;
             //IsExit = false;
             MsgNum = 0; // TBD
@@ -90,7 +93,8 @@ namespace TracerX.Viewer {
             Logger = methodEntry.Logger;
             StackDepth = methodEntry.Depth;
             MethodName = methodEntry.Method;
-            Lines = new string[] { string.Format("{{{0}: entered (replaces record lost due to wrapping)", MethodName) };
+            Lines = new string[] { string.Format("{{{0}: entered (replaces record lost due to wrapping)", MethodName.Name) };
+            Session = session;
 
             // Each record also has a bool to indicate if it is bookmarked
             // and a row index it may map to.
@@ -124,50 +128,84 @@ namespace TracerX.Viewer {
         // -1 if no lines are visible.
         public int FirstRowIndex;
 
-        // True if this Record has any visible lines.  Set by CalculateVisibility().
+        // True if this Record has any visible lines.  Set by SetVisibleRows().
         public bool IsVisible { get { return FirstRowIndex != -1; } }
 
         // Which row indices do the Lines map to?
         // A given element is -1 if the corresponding Line is not visible.
-        // Only valid if IsVisible.  Set by CalculateVisibility().
+        // Only valid if IsVisible.  Set by SetVisibleRows().
         public int[] RowIndices;
+
+        // Index is this record's index in the array of all records.
+        public int Index;
 
         public int ThreadId {
             get { return Thread.Id; }
         }
 
-        // Index is this record's index in the array of all records.
-        public int Index;
+        // Gets the IFilterable object whose Colors property determines
+        // this Record's colors. 
+        public IFilterable ColorDriver
+        {
+            get
+            {
+                switch (ColorRulesDialog.CurrentTab)
+                {
+                    case ColorRulesDialog.ColorTab.Loggers:
+                        return this.Logger;
+                    case ColorRulesDialog.ColorTab.Methods:
+                        return this.MethodName;
+                    case ColorRulesDialog.ColorTab.ThreadIDs:
+                        return this.Thread;
+                    case ColorRulesDialog.ColorTab.Sessions:
+                        return this.Session;
+                    case ColorRulesDialog.ColorTab.ThreadNames:
+                        return this.ThreadName;
+                    case ColorRulesDialog.ColorTab.Custom:
+                    case ColorRulesDialog.ColorTab.TraceLevels:
+                        return null;
+                    default:
+                        return null;
+                }
+            }
+        }
 
-        // MsgNum is the message number from the log file.  This will be equal to Index
-        // unless the log has wrapped.
-        public uint MsgNum ; 
+        // MsgNum is the message number from the log file.  
+        // This may not be equal to Index if the log has wrapped.
+        public ulong MsgNum ; 
         public DateTime Time ;
         public ThreadObject Thread;
         public ThreadName ThreadName;
         public TraceLevel Level;
         public LoggerObject Logger ;
+        public MethodObject MethodName ;
         public byte StackDepth ;
-        public string MethodName ;
+        public Reader.Session Session;
 
         // When collapsing nested methods, this indicate the nesting depth.
         // 0 means the record is visible as far as collapsing goes, but it could
         // still be invisible due to filtering.
         public short CollapsedDepth = 0;
 
+        public override string ToString() {
+            return MsgNum.ToString() + ": " + (Lines[0] ?? "");
+        }
+
         // Sets FirstRowIndex, IsVisible and RowIndices based on current filter settings and collapsed depth.
         // Creates or sets an element in the rows array for each visible line in this Record.
         // Parameter curRowIndex will be the row index of the first visible
         // line in this record, if there is one.  If any lines are visible, this increments
         // curRowIndex and returns the index of the next row to be set.
-        public int SetVisibleRows(Row[] rows, int curRowIndex) {
+        public int SetVisibleRows(List<Row> rows, int curRowIndex) {
             int firstRowIndex = curRowIndex;
             FirstRowIndex = -1; // None visible for now.
 
             if (CollapsedDepth == 0 && 
+                Session.Visible &&
                 ThreadName.Visible && 
                 Thread.Visible && 
                 Logger.Visible && 
+                (MethodName.Visible || CallerIsVisible()) &&
                 (Level & MainForm.TheMainForm.VisibleTraceLevels) != 0) //
             {
                 if (HasNewlines && IsCollapsed) {
@@ -198,10 +236,46 @@ namespace TracerX.Viewer {
             return curRowIndex;
         }
 
+        private bool CallerIsVisible() {
+            bool result = false;
+
+            if (Settings.Default.ShowCalledMethods) {
+                Record caller = Caller;
+
+                while (caller != null) {
+                    if (caller.MethodName.Visible) {
+                        result = true;
+                        break;
+                    }
+
+                    caller = caller.Caller;
+                }
+            }
+
+            return result;
+        }
+
+        public int LastRowIndex {
+            get {
+                if (IsCollapsed || !HasNewlines) {
+                    return FirstRowIndex;
+                } else {
+                    int result = -1;
+                    for (int lineNum = Lines.Length - 1; result == -1 && lineNum >= 0; --lineNum) {
+                            result = RowIndices[lineNum];
+                    }
+
+                    return result;
+                }
+            }
+        }
+
         // Assign the record to the specified row, reusing the
         // Row object or creating a new one if needed.
-        private void SetRow(Row[] rows, int rowNum, int lineNum) {
-            if (rows[rowNum] == null) {
+        private void SetRow(List<Row> rows, int rowNum, int lineNum) {
+            if (rowNum >= rows.Count) {
+                rows.Add(new Row(this, rowNum, lineNum));
+            } else if (rows[rowNum] == null) {
                 rows[rowNum] = new Row(this, rowNum, lineNum);
             } else {
                 rows[rowNum].Init(this, lineNum);

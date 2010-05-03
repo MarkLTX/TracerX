@@ -168,6 +168,16 @@ namespace TracerX.Forms {
                 fields[mainForm.headerText.DisplayIndex] = EscapeForCSV(temp, true);
             }
 
+            if (mainForm.headerSession.ListView != null) {
+                if (previousRec != null && previousRec.Session == Rec.Session) {
+                    // Same value as previous record.
+                    // Just leave the previous string value in place.
+                } else {
+                    // Value is different from previous record.
+                    fields[mainForm.headerSession.DisplayIndex] = Rec.Session.Name;
+                }
+            }
+
             if (mainForm.headerLine.ListView != null) {
                 temp = Rec.GetRecordNum(row.Line, separatorChk.Checked);
                 if (separatorChk.Checked) temp = EscapeForCSV(temp, false);
@@ -180,14 +190,14 @@ namespace TracerX.Forms {
                         // Just leave the previous string value in place.
                 } else {
                     // Value is different from previous record.
-                    fields[mainForm.headerLevel.DisplayIndex] = Rec.Level.ToString();
+                    fields[mainForm.headerLevel.DisplayIndex] = Enum.GetName(typeof(TraceLevel), Rec.Level);
                 }
             }
 
             if (mainForm.headerLogger.ListView != null) {
                 if (previousRec != null && previousRec.Logger == Rec.Logger) {
                     // Same value as previous record.
-                        // Just leave the previous string value in place.
+                    // Just leave the previous string value in place.
                 } else {
                     // Value is different from previous record.
                     fields[mainForm.headerLogger.DisplayIndex] = EscapeForCSV(Rec.Logger.Name, false);
@@ -220,7 +230,7 @@ namespace TracerX.Forms {
                         // Just leave the previous string value in place.
                 } else {
                     // Value is different from previous record.
-                    fields[mainForm.headerMethod.DisplayIndex] = EscapeForCSV(Rec.MethodName, false);
+                    fields[mainForm.headerMethod.DisplayIndex] = EscapeForCSV(Rec.MethodName.Name, false);
                 }
             }
 

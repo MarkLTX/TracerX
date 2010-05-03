@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace TracerX.Viewer {
+    // This form displays the call stack.
     internal partial class CallStack : Form {
         public CallStack() {
             InitializeComponent();
@@ -20,7 +21,7 @@ namespace TracerX.Viewer {
 
             foreach (Record rec in stack) {
                 item = new ListViewItem(rec.MsgNum.ToString());
-                if (rec.IsEntry) item.SubItems.Add(rec.MethodName);
+                if (rec.IsEntry) item.SubItems.Add(rec.MethodName.Name);
                 else item.SubItems.Add(rec.Lines[0]);
                 item.Tag = rec;
                 if (!rec.IsVisible) item.BackColor = Color.LightGray;
@@ -28,7 +29,7 @@ namespace TracerX.Viewer {
             }
 
             item = new ListViewItem(top.Rec.GetRecordNum(top.Line));
-            if (top.Rec.IsEntry) item.SubItems.Add(top.Rec.MethodName);
+            if (top.Rec.IsEntry) item.SubItems.Add(top.Rec.MethodName.Name);
             else item.SubItems.Add(top.ToString());
             listView1.Items.Add(item);
         }        

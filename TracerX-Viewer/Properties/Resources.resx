@@ -172,13 +172,22 @@
   <data name="Stopwatch" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\stopwatch.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="colors_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\colors_edit.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="colors_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\colors_off.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="colors_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\colors_on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="colorwheel_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\colorwheel_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnyThreadNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\anythreadnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnyThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\anythreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SameThreadNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\samethreadnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SameThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\samethreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

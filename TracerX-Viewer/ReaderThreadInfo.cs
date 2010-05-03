@@ -8,17 +8,12 @@ namespace TracerX.Viewer {
         public ThreadObject Thread;
         public ThreadName ThreadName;
         public LoggerObject Logger;
-        public string MethodName;
+        public MethodObject MethodName;
         public TraceLevel Level;
         public byte Depth;
         public Record StackTop;
 
-        // Missing entry and exit records are generated when we enter the circular part of the log by
-        // comparing the call stack from the noncircular part of the log to the actual call
-        // stack recorded in the circular part of the log with the first line of output
-        // for each thread.
-        public List<Record> MissingEntryRecords;
-        public List<Record> MissingExitRecords;
+        private bool _missingRecsGenerated;
 
         // Called when a MethodEntry line is read.
         public void Push(Record entryRec) {
@@ -35,12 +30,12 @@ namespace TracerX.Viewer {
         // Called when we read the first line for this thread in the circular part of the log.
         // The thread's true call stack (logged with each thread's first record in each block) 
         // was just read from the log and is passed via the actualStack parameter.  
-        internal void MakeMissingRecords(ExplicitStackEntry[] actualStack) {
+        internal void MakeMissingRecords(ExplicitStackEntry[] actualStack, List<Record> generatedRecs, Reader.Session session) {
             // We only do this once per thread, for the first record in the circular log for each
             // thread.  If MissingEntryRecords is not null, we already did it.
-            if (MissingEntryRecords == null) {
-                MissingEntryRecords = new List<Record>();
-                MissingExitRecords = new List<Record>();
+            if (!_missingRecsGenerated) {
+                _missingRecsGenerated = true;
+                var MissingEntryRecords = new List<Record>();
 
                 // StackTop is the "top" entry in the stack determined by 
                 // pushing MethodEntry records and then popping 
@@ -57,42 +52,53 @@ namespace TracerX.Viewer {
                 // but not the actualStack).  We also "fix" the StackTop stack.
 
                 // this.Depth was set to actualStack.Length before this method was called.
-                // The top stack entry comes first in actualStack.
                 // If this.Depth is 0, actualStack is null.
+                // The top stack entry comes first in actualStack.
                 int actualStackIndex = 0;
 
                 // The key property of each stack entry is the line number where
-                // each method call starts in the log.  For example, the StackTop
-                // stack and the actualStack may contain entries with the 
+                // each method call starts in the log.  For example, suppose the StackTop
+                // stack and the actualStack contain entries with the 
                 // following line numbers.
-                // StackTop:    100 200 300 400
-                // actualStack: 100 500 600
-                // In the example, the method call at line 100 occurred before the lost
-                // part of the log and still has not exited (because it also appears
-                // in actualStack).  The calls at 200, 300, and 400 must have exited 
-                // in the lost part of the log, so we generate MethodExit records to
-                // replace those that were lost.  We also pop the entries for 200, 300, 
-                // and 400 off the StackTop stack.  The calls at 500 and 600 occurred
-                // in the lost part of the log and have not exited yet, so we generate
-                // MethodEntry records to replace those lost records.  We also push
-                // the generated MethodEntry records onto the StackTop stack.
+                //
+                // StackTop:    400 300 200 100
+                // actualStack: 600 500 100
+                //
+                // In the example, the StackTop calls at 400, 300, and 200 must have exited 
+                // in the lost part of the log (because they don't appear in actualStack),
+                // so we generate MethodExit records to replace those that were lost.  
+                // We also pop the entries for 400, 300, and 200 off the StackTop stack.  
+                //
+                // The calls at 600 and 500 occurred in the lost part of the log and have 
+                // not exited yet, so we generate MethodEntry records to replace those lost 
+                // records.  We also push the generated MethodEntry records onto the 
+                // StackTop stack.
+                //
+                // The method call at line 100 occurred before the lost part of the log and 
+                // still has not exited (because it appears in both stacks). 
+                //
                 // All the generated MethodExit records will be inserted before all the
                 // generated MethodEntry records, and all pops must be done before all pushes.
 
                 // We start at the top of each stack and loop until all entries are examined or
                 // we find the point where both stacks match.
                 while (StackTop != null || actualStackIndex < Depth) {
+                    // At least one of the stacks is not exhausted.
                     if (StackTop == null) {
-                        MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex]));
+                        // Only the actualStack has entries remaining, all of which represent
+                        // methods whose method entry records were lost.
+                        MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex], session));
                         ++actualStackIndex;
-                    } else if (actualStackIndex == -1) {
-                        MissingExitRecords.Add(new Record(StackTop));
+                    } else if (actualStackIndex == Depth) {
+                        // Only the StackTop stack has entries remaining, all of which represent
+                        // methods whose exits were lost.
+                        generatedRecs.Add(new Record(StackTop));
                         Pop();
                     } else if (StackTop.MsgNum > actualStack[actualStackIndex].EntryLineNum) {
-                        MissingExitRecords.Add(new Record(StackTop));
+                        generatedRecs.Add(new Record(StackTop));
                         Pop();
                     } else if (StackTop.MsgNum < actualStack[actualStackIndex].EntryLineNum) {
-                        MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex]));
+                        MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex], session));
                         ++actualStackIndex;
                     } else {
                         // Once they are equal, all others will be equal.
@@ -106,6 +112,8 @@ namespace TracerX.Viewer {
                     entryRec.Caller = StackTop;
                     Push(entryRec);
                 }
+
+                generatedRecs.AddRange(MissingEntryRecords);
             }
         }
     }
@@ -113,11 +121,11 @@ namespace TracerX.Viewer {
     // An array of these, representing the current call stack, is read from the
     // first record for each thread in each block in the circular log.
     internal class ExplicitStackEntry {
-        public uint EntryLineNum;
+        public ulong EntryLineNum;
         public byte Depth;
         public TraceLevel Level;
         public LoggerObject Logger;
-        public string Method;
+        public MethodObject Method;
     }
 
 }

@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E301635B-84D6-4A08-9856-B7D5C0BCD918}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -20,6 +20,27 @@
     <StartupObject>
     </StartupObject>
     <ApplicationIcon>Resources\scroll_view.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,7 +68,13 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -62,6 +89,7 @@
       <DependentUpon>CrumbBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Enumerations.cs" />
+    <Compile Include="FileWatcher.cs" />
     <Compile Include="Forms\ColorRulesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +102,14 @@
     <Compile Include="Forms\ExportCSVForm.Designer.cs">
       <DependentUpon>ExportCSVForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\PaletteViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PaletteViewer.Designer.cs">
+      <DependentUpon>PaletteViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IFilterable.cs" />
+    <Compile Include="MethodObject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -158,6 +194,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Session.cs" />
     <Compile Include="StringMatcher.cs" />
     <Compile Include="ThreadName.cs" />
     <Compile Include="ThreadObject.cs" />
@@ -191,9 +228,10 @@
     <Content Include="Icons\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
     <None Include="Resources\ExpandAll.png" />
-    <Content Include="Resources\colors_edit.png" />
-    <Content Include="Resources\colors_off.png" />
+    <Content Include="Resources\AnyThreadNext.png" />
+    <Content Include="Resources\AnyThreadPrev.png" />
     <Content Include="Resources\colors_on.png" />
+    <Content Include="Resources\colorwheel_16x16_plain.png" />
     <Content Include="Resources\Date and Time.png" />
     <Content Include="Resources\FilterNot.png" />
     <Content Include="Resources\Filter.png" />
@@ -208,6 +246,8 @@
     <Content Include="Resources\Refresh.png" />
     <Content Include="Icons\Stop.bmp" />
     <Content Include="Icons\Play.bmp" />
+    <Content Include="Resources\SameThreadNext.png" />
+    <Content Include="Resources\SameThreadPrev.png" />
     <Content Include="Resources\scroll_view.ico" />
     <Content Include="Resources\Stopwatch.png" />
     <Content Include="Icons\Subline.ico" />
@@ -220,8 +260,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CrumbBar.resx">
-      <SubType>Designer</SubType>
       <DependentUpon>CrumbBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ColorRulesDialog.resx">
       <SubType>Designer</SubType>
@@ -230,6 +270,10 @@
     <EmbeddedResource Include="Forms\ExportCSVForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExportCSVForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PaletteViewer.resx">
+      <DependentUpon>PaletteViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -288,6 +332,33 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -300,4 +371,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
