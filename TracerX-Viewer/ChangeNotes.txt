@@ -1,3 +1,10 @@
-Fixed bug causing File\Properties to display the properties dialog twice.
-Updated copyright date.
-Removed handler for System.Windows.Forms.Application.ThreadException since it seems to hide the fact that an unhandled exception occurred and it isn't being used anyway.
+Now a Visual Studio 2008 project targeting the 3.5 framework.
+Fixed exception thrown by crumb-bar if method calls get too deep.
+Fixed bug that occurs if method exit line is lost due to wrapping.
+Enabled visual styles.
+Added auto-update feature (new lines appear in view when written by logger).
+Use only one button for relative vs. absolute time.
+Added option to automatically color-code lines by thread, loggger, method, or trace level.
+Added ability to filter by method.
+Added buttons to find next/previous block of output from current/different thread.
+Added support for multi-session (appended) log files.

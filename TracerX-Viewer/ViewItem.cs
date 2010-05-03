@@ -13,7 +13,7 @@ namespace TracerX {
 
         // The background color and text color from ColoringRule, or the
         // default colors if no rule applies.
-        public Color BColor, TColor;
+        public Color BColor, FColor;
 
         public Row Row;
 
@@ -25,12 +25,12 @@ namespace TracerX {
             if (formActive | !Selected) {
                 //Debug.Print("Resetting color for item " + item.Index + " " + item.Text);
                 if (BackColor != BColor) BackColor = BColor;
-                if (ForeColor != TColor) ForeColor = TColor;
+                if (ForeColor != FColor) ForeColor = FColor;
             } else {
                 // When the form is not active, the blue highlighting of selected items
                 // disappears for some reason.  Here we explicitly set the colors to
                 // indicate the selected items.
-                Debug.Print("Hiliting selected item " + Index);
+                //Debug.Print("Hiliting selected item " + Index);
                 if (BackColor != SystemColors.Highlight) BackColor = SystemColors.Highlight;
                 if (ForeColor != Color.White) ForeColor = Color.White;
             }

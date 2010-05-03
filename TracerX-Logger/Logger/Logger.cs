@@ -67,6 +67,17 @@ namespace TracerX {
         #endregion
 
         #region Static properties
+
+        /// <summary>
+        /// Methods and configuration for logging to the full-featured binary file supported by the viewer
+        /// </summary>
+        public static BinaryFile FileLogging { get { return BinaryFile.Singleton; } }
+
+        /// <summary>
+        /// Methods and configuration for logging to the text file (preferred by real men).
+        /// </summary>
+        public static TextFile TextFileLogging { get { return TextFile.Singleton; } }
+
         /// <summary>
         /// The parent/ancestor of all Loggers.  If desired, all logging can be done through this logger.
         /// </summary>
@@ -97,9 +108,11 @@ namespace TracerX {
             get { return _maxExceptionsLogged; }
             set { _maxExceptionsLogged = value; }
         }
+
         #endregion
 
         #region Instance properties
+
         /// <summary>
         /// The name of the logger determines how the logger fits in the hierarchy based on
         /// it's dotted notation (e.g. A.B.C is a child or grandchild of A).
@@ -116,6 +129,14 @@ namespace TracerX {
         public TraceLevel FileTraceLevel {
             get { return FileLevels.EffectiveLevel; }
             set { SetTraceLevel(value, FileIndex); }
+        }
+
+        /// <summary>
+        /// Similar to FileTraceLevel, but applies to console output.
+        /// </summary>
+        public TraceLevel TextFileTraceLevel {
+            get { return TextFileLevels.EffectiveLevel; }
+            set { SetTraceLevel(value, TextFileIndex); }
         }
 
         /// <summary>
@@ -172,13 +193,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Fatal(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Fatal, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Fatal(params object[] items) {
@@ -198,14 +212,6 @@ namespace TracerX {
         /// </summary>
         public void FatalFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Fatal, fmt, obj0, obj1);
-        }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void FatalFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Fatal, fmt, obj0, obj1, obj2);
         }
 
 
@@ -261,13 +267,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Error(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Error, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Error(params object[] items) {
@@ -288,15 +287,6 @@ namespace TracerX {
         public void ErrorFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Error, fmt, obj0, obj1);
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void ErrorFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Error, fmt, obj0, obj1, obj2);
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -351,13 +341,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Warn(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Warn, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Warn(params object[] items) {
@@ -378,15 +361,6 @@ namespace TracerX {
         public void WarnFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Warn, fmt, obj0, obj1);
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void WarnFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Warn, fmt, obj0, obj1, obj2);
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -441,13 +415,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Info(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Info, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Info(params object[] items) {
@@ -468,15 +435,6 @@ namespace TracerX {
         public void InfoFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Info, fmt, obj0, obj1);
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void InfoFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Info, fmt, obj0, obj1, obj2);
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -531,13 +489,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Debug(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Debug, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Debug(params object[] items) {
@@ -558,15 +509,6 @@ namespace TracerX {
         public void DebugFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Debug, fmt, obj0, obj1);
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void DebugFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Debug, fmt, obj0, obj1, obj2);
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -621,13 +563,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        public void Verbose(object arg0, object arg1, object arg2) {
-            MaybeLog(TraceLevel.Verbose, arg0, arg1, arg2);
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         public void Verbose(params object[] items) {
@@ -648,15 +583,6 @@ namespace TracerX {
         public void VerboseFormat(string fmt, object obj0, object obj1) {
             MaybeLogFormat(TraceLevel.Verbose, fmt, obj0, obj1);
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// </summary>
-        public void VerboseFormat(string fmt, object obj0, object obj1, object obj2) {
-            MaybeLogFormat(TraceLevel.Verbose, fmt, obj0, obj1, obj2);
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -697,7 +623,7 @@ namespace TracerX {
         /// </summary>
         private Logger(string name) {
             _name = name;
-            DestinationLevels = new LevelPair[] { FileLevels, ConsoleLevels, DebugOutLevels, EventLogLevels };
+            DestinationLevels = new LevelPair[] { FileLevels, TextFileLevels, ConsoleLevels, DebugOutLevels, EventLogLevels };
             _loggers.Add(name, this);
         }
         
@@ -705,6 +631,7 @@ namespace TracerX {
         static Logger() {
             Root = new Logger("Root");
             Root.FileTraceLevel = TraceLevel.Info;
+            Root.TextFileTraceLevel = TraceLevel.Off;
             Root.ConsoleTraceLevel = TraceLevel.Off;
             Root.DebugTraceLevel = TraceLevel.Off;
             Root.EventLogTraceLevel = TraceLevel.Off;
@@ -731,34 +658,6 @@ namespace TracerX {
             builder.Replace("{msg", "{8");
 
             return builder.ToString();
-        }
-
-        // Get the directory the EXE or website is in.
-        private static string GetAppDir() {
-            try {
-                // This throws an exception in web apps and sometimes in
-                // the winforms designer.
-                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            } catch (Exception) {
-                try {
-                    // This SEEMS to return the correct value for both web apps
-                    // and winforms apps.
-                    return AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
-                } catch (Exception) {
-                    try {
-                        // Expect an exception if we're not a web app.
-                        return GetWebAppDir();
-                    } catch (Exception) {
-                        try {
-                            // Punt.
-                            return Environment.CurrentDirectory;
-                        } catch (Exception) {
-                            // Give up.  Return something to avoid an exception.
-                            return "C:\\";
-                        }
-                    }
-                }
-            }
         }
 
         // If we are not a web app, this will throw an exception the
@@ -794,7 +693,7 @@ namespace TracerX {
         }
 
         #region Trace levels
-        // Each logging destination has an explicit trace level and an effective trace level which is
+        // Each logging destination has an explicit trace level and an effective trace level that is
         // inherited from the parent logger if the explicit trace level is Inherited.
         private class LevelPair {
             public TraceLevel SetLevel = TraceLevel.Inherited;       // The explicitly set trace Level.
@@ -814,15 +713,17 @@ namespace TracerX {
 
         // The trace levels for each destination.
         private LevelPair FileLevels = new LevelPair();
+        private LevelPair TextFileLevels = new LevelPair();
         private LevelPair ConsoleLevels = new LevelPair();
         private LevelPair DebugOutLevels = new LevelPair();
         private LevelPair EventLogLevels = new LevelPair();
 
         LevelPair[] DestinationLevels;
         const int FileIndex = 0;
-        const int ConsoleIndex = 1;
-        const int DebugIndex = 2;
-        const int EventIndex = 3;
+        const int TextFileIndex = 1;
+        const int ConsoleIndex = 2;
+        const int DebugIndex = 3;
+        const int EventIndex = 4;
 
         private TraceLevel _maxLevel; // Max effective trace level of all destinations.
 
@@ -862,6 +763,7 @@ namespace TracerX {
         private void LogToDestinations(ThreadData threadData, TraceLevel msgLevel, string msg) {
             try {
                 if (FileTraceLevel >= msgLevel) FileLogging.LogMsg(this, threadData, msgLevel, msg);
+                if (TextFileTraceLevel >= msgLevel) TextFileLogging.LogMsg(this, threadData, msgLevel, msg);
                 if (ConsoleTraceLevel >= msgLevel) ConsoleLogging.LogMsg(this, threadData, msgLevel, msg);
                 if (DebugTraceLevel >= msgLevel) DebugLogging.LogMsg(this, threadData, msgLevel, msg);
                 if (EventLogTraceLevel >= msgLevel) EventLogging.LogMsg(this, threadData, msgLevel, msg);
@@ -908,20 +810,6 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Log three objects concatenated together using the RendererMap.
-        /// </summary>
-        private void MaybeLog(TraceLevel msgLevel, object arg0, object arg1, object arg2) {
-            ThreadData threadData = ThreadData.CurrentThreadData;
-            if (IsLevelEnabled(msgLevel)) {
-                RendererMap.FindAndRender(arg0, threadData.StringWriter);
-                RendererMap.FindAndRender(arg1, threadData.StringWriter);
-                RendererMap.FindAndRender(arg2, threadData.StringWriter);
-                string msg = threadData.ResetStringWriter();
-                LogToDestinations(threadData, msgLevel, msg);
-            }
-        }
-
-        /// <summary>
         /// Log many objects concatenated together using the RendererMap.
         /// </summary>
         private void MaybeLog(TraceLevel msgLevel, params object[] items) {
@@ -945,7 +833,6 @@ namespace TracerX {
             }
         }
 
-
         /// <summary>
         /// Log a message with the semantics of string.Format.
         /// This does NOT use the RendererMap.
@@ -955,18 +842,6 @@ namespace TracerX {
                 LogToDestinations(ThreadData.CurrentThreadData, msgLevel, string.Format(fmt, obj0, obj1));
             }
         }
-
-
-        /// <summary>
-        /// Log a message with the semantics of string.Format.
-        /// This does NOT use the RendererMap.
-        /// </summary>
-        private void MaybeLogFormat(TraceLevel msgLevel, string fmt, object obj0, object obj1, object obj2) {
-            if (IsLevelEnabled(msgLevel)) {
-                LogToDestinations(ThreadData.CurrentThreadData, msgLevel, string.Format(fmt, obj0, obj1, obj2));
-            }
-        }
-
 
         /// <summary>
         /// Log a message with the semantics of string.Format.
@@ -985,6 +860,7 @@ namespace TracerX {
             Destination destinations = Destination.None;
 
             if (FileTraceLevel >= level) destinations |= Destination.File;
+            if (TextFileTraceLevel >= level) destinations |= Destination.TextFile;
             if (ConsoleTraceLevel >= level) destinations |= Destination.Console;
             if (DebugTraceLevel >= level) destinations |= Destination.Debug;
             if (EventLogTraceLevel >= level) destinations |= Destination.EventLog;
@@ -1021,6 +897,8 @@ namespace TracerX {
             }
         }
 
+        private static int _callerDepth = 1;
+
         /// <summary>
         /// Searches the call stack for the first StackFrame that is not
         /// for a method from this class.  We can't hard-code the depth
@@ -1028,12 +906,13 @@ namespace TracerX {
         /// from this class.
         /// </summary>
         private static string GetCaller() {
-            for (int depth = 1; depth < 4; ++depth) {
+            for (int depth =_callerDepth; depth < 4; ++depth) {
                 StackFrame frame = new StackFrame(depth);
                 System.Reflection.MethodBase method = frame.GetMethod();
                 Type type = method.DeclaringType;
 
                 if (type != typeof(TracerX.Logger)) {
+                    _callerDepth = depth;
                     return type.Name + '.' + method.Name;
                 }
             }
@@ -1159,10 +1038,11 @@ namespace TracerX {
 
         // Append our information and our children's information to the builder.
         private void AppendHierarchy(int indent, StringBuilder builder) {
-            builder.AppendFormat("{0}{1} {2}/{3}, {4}/{5}, {6}/{7}, {8}/{9} \n",
+            builder.AppendFormat("{0}{1} {2}/{3}, {4}/{5}, {6}/{7}, {8}/{9} , {10}/{11} \n",
                 new string(' ', indent),     
                 Name,
                 FileLevels.SetLevel, FileLevels.EffectiveLevel,
+                TextFileLevels.SetLevel, TextFileLevels.EffectiveLevel,
                 ConsoleLevels.SetLevel, ConsoleLevels.EffectiveLevel,
                 DebugOutLevels.SetLevel, DebugOutLevels.EffectiveLevel,
                 EventLogLevels.SetLevel, EventLogLevels.EffectiveLevel

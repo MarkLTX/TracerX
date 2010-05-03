@@ -6,8 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-
-// TODO: Add support for methods.
+using TracerX.Properties;
 
 namespace TracerX.Viewer {
     public partial class FilterDialog : Form {
@@ -15,17 +14,21 @@ namespace TracerX.Viewer {
         private ColumnHeader _clickedHeader;
         private bool _suppressEvents = true;
         private ListViewItemSorter _threadIdSorter;
+        private ListViewItemSorter _sessionSorter;
         private ListViewItemSorter _threadNameSorter;
         private ListViewItemSorter _loggerSorter;
+        private ListViewItemSorter _methodSorter;
 
         public FilterDialog() {
             InitializeComponent();
 
             this.Icon = Properties.Resources.scroll_view;
             InitTraceLevels();
+            InitSessions();
             InitThreadIds();
             InitThreadNames();
             InitLoggers();
+            InitMethods();
             InitText();
         }
 
@@ -34,8 +37,12 @@ namespace TracerX.Viewer {
 
             if (_clickedHeader == _mainForm.headerLevel) {
                 tabControl1.SelectedTab = traceLevelPage;
+            } else if (_clickedHeader == _mainForm.headerSession) {
+                tabControl1.SelectedTab = sessionPage;
             } else if (_clickedHeader == _mainForm.headerLogger) {
                 tabControl1.SelectedTab = loggerPage;
+            } else if (_clickedHeader == _mainForm.headerMethod) {
+                tabControl1.SelectedTab = methodPage;
             } else if (_clickedHeader == _mainForm.headerThreadId) {
                 tabControl1.SelectedTab = threadIdPage;
             } else if (_clickedHeader == _mainForm.headerThreadName) {
@@ -84,18 +91,20 @@ namespace TracerX.Viewer {
 
         private void apply_Click(object sender, EventArgs e) {
             _mainForm.VisibleTraceLevels = SelectedTraceLevels;
+            ApplySessionSelection();
             ApplyThreadIdSelection();
             ApplyThreadNameSelection();
             ApplyLoggerSelection();
-            ApplyTextSelection();
-            // TODO: Apply other pages.
+            ApplyMethodSelection();
+            ApplyTextSelection();            
 
             ok.Enabled = false;
             apply.Enabled = false; 
             _mainForm.RebuildAllRows();
         }
 
-        #region Trace Levels        
+        #region Trace Levels   
+     
         private void InitTraceLevels() {
             // Display only the trace levels that actually exist in the file.
             int index = 0;
@@ -145,18 +154,95 @@ namespace TracerX.Viewer {
                 traceLevelListBox.SetItemChecked(i, !x);
             }
         }
+
+        private void traceLevelListBox_Format(object sender, ListControlConvertEventArgs e) {
+            e.Value = Enum.GetName(typeof(TraceLevel), e.ListItem);
+        }
         #endregion Trace Levels
 
+        #region Sessions
+
+        private void InitSessions() {
+            sessionListView.BeginUpdate();
+
+            // Populate the session listview from SessionObjects.AllSessions.
+            lock (SessionObjects.Lock) {
+                foreach (Reader.Session ses in SessionObjects.AllSessionObjects) {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, ses.Name });
+                    item.Checked = ses.Visible;
+                    item.Tag = ses;
+                    this.sessionListView.Items.Add(item);
+                }
+            }
+
+            sessionCheckCol.Width = -1;
+            sessionListView.EndUpdate();
+        }
+
+        private void ApplySessionSelection() {
+            foreach (ListViewItem item in sessionListView.Items) {
+                Reader.Session ses = (Reader.Session)item.Tag;
+                ses.Visible = item.Checked;
+            }
+        }
+
+        private void checkAllSessions_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in sessionListView.Items) {
+                item.Checked = true;
+            }
+        }
+
+        private void uncheckAllSessionss_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in sessionListView.Items) {
+                item.Checked = false;
+            }
+        }
+
+        private void invertSessions_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in sessionListView.Items) {
+                item.Checked = !item.Checked;
+            }
+        }
+
+        private void sessionListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+            _suppressEvents = true;
+            // Create the sorting objects the first time they are required.
+            if (_sessionSorter == null) {
+                // Create a delegate for comparing the IDs of the Session objects that
+                // correspond to two ListViewItems.
+                ListViewItemSorter.RowComparer idComparer = delegate(ListViewItem x, ListViewItem y) {
+                    // The ListViewItem tags are ThreadObjects.
+                    int xint = ((Reader.Session)x.Tag).Index;
+                    int yint = ((Reader.Session)y.Tag).Index;
+
+                    return xint - yint;
+                };
+
+                sessionCol.Tag = idComparer;
+                sessionCheckCol.Tag = _checkComparer;
+                _sessionSorter = new ListViewItemSorter(sessionListView);
+            }
+
+            _sessionSorter.Sort(e);
+            _suppressEvents = false;
+        }
+        #endregion Sessions
+
         #region Thread Ids
+
         private void InitThreadIds() {
             threadIdListView.BeginUpdate();
 
-            // Populate the thread ID listview from ThreadObject.AllThreads.
-            foreach (ThreadObject thread in ThreadObject.AllThreads) {
-                ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Id.ToString() });
-                item.Checked = thread.Visible;
-                item.Tag = thread;
-                this.threadIdListView.Items.Add(item);
+            // Populate the thread ID listview from ThreadObjects.AllThreads.
+            lock (ThreadObjects.Lock)
+            {
+                foreach (ThreadObject thread in ThreadObjects.AllThreadObjects)
+                {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Id.ToString() });
+                    item.Checked = thread.Visible;
+                    item.Tag = thread;
+                    this.threadIdListView.Items.Add(item);
+                }
             }
 
             threadCheckCol.Width = -1;
@@ -183,7 +269,7 @@ namespace TracerX.Viewer {
             }
         }
 
-        private void invertThreads_Click(object sender, EventArgs e) {
+        private void invertThreadIDs_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in threadIdListView.Items) {
                 item.Checked = !item.Checked;
             }
@@ -217,12 +303,16 @@ namespace TracerX.Viewer {
         private void InitThreadNames() {
             threadNameListView.BeginUpdate();
 
-            // Populate the thread name listview from ThreadName.AllThreads.
-            foreach (ThreadName thread in ThreadName.AllThreadNames) {
-                ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Name });
-                item.Checked = thread.Visible;
-                item.Tag = thread;
-                this.threadNameListView.Items.Add(item);
+            // Populate the thread name listview from ThreadNames.AllThreads.
+            lock (ThreadNames.Lock)
+            {
+                foreach (ThreadName thread in ThreadNames.AllThreadNames)
+                {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Name });
+                    item.Checked = thread.Visible;
+                    item.Tag = thread;
+                    this.threadNameListView.Items.Add(item);
+                }
             }
 
             threadNameCheckCol.Width = -1;
@@ -270,12 +360,15 @@ namespace TracerX.Viewer {
         #endregion Thread Names
 
         #region Loggers
+
         private void InitLoggers() {
-            foreach (LoggerObject logger in LoggerObject.AllLoggers) {
-                ListViewItem item = new ListViewItem(new string[] { string.Empty, logger.Name });
-                item.Checked = logger.Visible;
-                item.Tag = logger;
-                this.loggerListView.Items.Add(item);
+            lock (LoggerObjects.Lock) {
+                foreach (LoggerObject logger in LoggerObjects.AllLoggers) {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, logger.Name });
+                    item.Checked = logger.Visible;
+                    item.Tag = logger;
+                    this.loggerListView.Items.Add(item);
+                }
             }
         }
 
@@ -288,7 +381,7 @@ namespace TracerX.Viewer {
         private void uncheckAllLoggers_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in loggerListView.Items) {
                 item.Checked = false;
-            }  
+            }
         }
 
         private void invertLoggers_Click(object sender, EventArgs e) {
@@ -308,17 +401,77 @@ namespace TracerX.Viewer {
             _suppressEvents = true;
             // Create the sorter object the first time it is required.
             if (_loggerSorter == null) {
-                // Create a delegate for comparing the IDs of the ThreadObjects that
-                // correspond to two ListViewItems.
                 loggerCheckCol.Tag = _checkComparer;
-                _loggerSorter = new ListViewItemSorter(loggerListView); 
+                _loggerSorter = new ListViewItemSorter(loggerListView);
             }
 
             _loggerSorter.Sort(e);
             _suppressEvents = false;
 
         }
+
         #endregion Loggers
+
+        #region Methods
+
+        private void InitMethods() {
+            lock (MethodObjects.Lock) {
+                foreach (MethodObject method in MethodObjects.AllMethods) {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, method.Name });
+                    item.Checked = method.Visible;
+                    item.Tag = method;
+                    this.methodListView.Items.Add(item);
+                }
+
+                calledMethodsChk.Checked = Settings.Default.ShowCalledMethods;
+            }
+        }
+
+        private void checkAllMethodss_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in methodListView.Items) {
+                item.Checked = true;
+            }
+        }
+
+        private void uncheckAllMethods_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in methodListView.Items) {
+                item.Checked = false;
+            }
+        }
+
+        private void invertMethods_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in methodListView.Items) {
+                item.Checked = !item.Checked;
+            }
+        }
+
+        private void ApplyMethodSelection() {
+            foreach (ListViewItem item in methodListView.Items) {
+                MethodObject method = (MethodObject)item.Tag;
+                method.Visible = item.Checked;
+            }
+
+            Settings.Default.ShowCalledMethods = calledMethodsChk.Checked;
+        }
+
+        private void methodListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+            _suppressEvents = true;
+            // Create the sorter object the first time it is required.
+            if (_methodSorter == null) {
+                methodCheckCol.Tag = _checkComparer;
+                _methodSorter = new ListViewItemSorter(methodListView);
+            }
+
+            _methodSorter.Sort(e);
+            _suppressEvents = false;
+        }
+
+        private void calledMethodsChk_CheckedChanged(object sender, EventArgs e) {
+            ok.Enabled = true;
+            apply.Enabled = true;
+        }
+
+        #endregion Methods
 
         #region Text
 
@@ -378,8 +531,9 @@ namespace TracerX.Viewer {
             chkDoesNotContain.Checked = _excludeChecked;
 
             chkCase.Checked = _caseChecked;
-            chkWild.Checked = _wildChecked;
-            chkRegex.Checked = _regexChecked;
+            radWildcard.Checked = _wildChecked;            
+            radRegex.Checked = _regexChecked;
+            //TODO: radNormal.Checked:
         }
 
         // Set the static properties based on the controls.
@@ -394,8 +548,10 @@ namespace TracerX.Viewer {
             _excludeText = txtDoesNotContain.Text;
             
             _caseChecked = chkCase.Checked;
-            _wildChecked = chkWild.Checked;
-            _regexChecked = chkRegex.Checked;
+            _wildChecked = radWildcard.Checked;
+            _regexChecked = radRegex.Checked;
+
+            // TODO: radNormal.Checked?
 
             if (_regexChecked) {
                 matchType = MatchType.RegularExpression;
@@ -421,24 +577,6 @@ namespace TracerX.Viewer {
         private void Text_CheckboxChanged(object sender, EventArgs e) {
             txtContains.Enabled = chkContain.Checked;
             txtDoesNotContain.Enabled = chkDoesNotContain.Checked;
-
-            if (sender == chkWild) {
-                if (chkWild.Checked) {
-                    chkRegex.Enabled = false;
-                    chkRegex.Checked = false;
-                } else {
-                    chkRegex.Enabled = true;
-                }
-            }
-
-            if (sender == chkRegex) {
-                if (chkRegex.Checked) {
-                    chkWild.Enabled = false;
-                    chkWild.Checked = false;
-                } else {
-                    chkWild.Enabled = true;
-                }
-            }
 
             if (_suppressEvents) return;
             

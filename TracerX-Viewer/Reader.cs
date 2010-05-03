@@ -8,95 +8,17 @@ using System.ComponentModel;
 
 namespace TracerX.Viewer {
     // This class reads the log file into Record objects.
-    internal class Reader {
+    internal partial class Reader {
         // The minimum and maximum file format versions supported
         // by the viewer/reader.
         private const int _minVersion = 2;
-        private const int _maxVersion = 5;
+        private const int _maxVersion = 6;
 
-        private static int _lastHash;
+        public int FormatVersion { get; private set; }
 
-        [Browsable(false)]
-        public static int MinFormatVersion { get { return _minVersion; } }
+        // File name passed to Open()
+        public string FileName { get; private set; }
 
-        // Stuff read from the preamble.
-        public int FormatVersion;
-        private string _loggerVersion;
-        public int MaxMb;
-        public DateTime OpenTimeUtc;
-        public DateTime OpenTimeLocal;
-        public bool IsDST;
-        public string TzStandard;
-        public string TzDaylight;
-
-        private string LoggerTimeZone {
-            get {
-                if (IsDST) {
-                    return TzDaylight;
-                } else {
-                    return TzStandard;
-                }
-            }
-            set { }
-        }
-
-        #region Properties for PropertyGrid
-        [DisplayName("Creation time (logger's TZ)")]
-        public string Log_CreationTimeInAppsTZ {
-            get { return OpenTimeLocal.ToString() + " " + LoggerTimeZone; }
-            set { }
-        }
-
-        [DisplayName("Creation time (local TZ)")]
-        public DateTime Log_CreationTimeInViewersTZ {
-            get { 
-                return OpenTimeUtc.ToLocalTime();
-            }
-            set { }
-        }
-
-        [DisplayName("Loggers assembly version")]
-        public string Logger_AssemblyVersion {
-            get { return _loggerVersion; }
-            set {  }
-        }
-
-        [DisplayName("Elapsed time")]
-        public TimeSpan File_Timespan {
-            get { return Records_LastTimestamp - OpenTimeUtc; }
-            set { }
-        }
-
-        [DisplayName("Last record number")]
-        public uint Records_LastNumber {
-            get { return _recordNumber; }
-            set { }
-        }
-
-        [DisplayName("Last timestamp")]
-        public DateTime Records_LastTimestamp {
-            get { return _time; }
-            set { }
-        }
-
-        [DisplayName("Circular logging started")]
-        public bool InCircularPart { 
-            get { return _circularStartPos != 0; }
-            set { }
-        }
-
-        /// <summary>
-        /// Number of records lost due to wrapping in the circular part of the log.
-        /// </summary>
-        [DisplayName("Records lost by wrapping")]
-        public uint Records_LostViaWrapping {
-            get { return Records_LastNumber - RecordsRead; }
-            set { }
-        }
-        #endregion
-
-        public uint RecordsRead;
-	
         // File size in bytes.
         public long Size;
 
@@ -105,13 +27,6 @@ namespace TracerX.Viewer {
 
         // Bitmap indicating all TraceLevels found in the file.
         public TraceLevel LevelsFound;
-
-        // These members hold the most recently read data.
-        public uint _recordNumber = 0;
-        public DateTime _time;
-        public int _threadId;
-        public string _msg;
-        public ReaderThreadInfo _curThread;
 
         // Keeps track of thread IDs we have found while reading the file.  Each ReaderThreadInfo object
         // stores the "per thread" info that is not usually written to the log when a thread switch occurs.
@@ -127,44 +42,83 @@ namespace TracerX.Viewer {
         private Dictionary<string, LoggerObject> _foundLoggers = new Dictionary<string, LoggerObject>();
         private Dictionary<string, LoggerObject> _oldLoggers = new Dictionary<string, LoggerObject>();
 
-        private long _circularStartPos;
+        private Dictionary<string, MethodObject> _foundMethods = new Dictionary<string, MethodObject>();
+        private Dictionary<string, MethodObject> _oldMethods = new Dictionary<string, MethodObject>();
 
-        [Browsable(false)]
-        public BinaryReader FileReader { get { return _fileReader; } }
-        private BinaryReader _fileReader;
+        // Used for checking password.
+        private static int _lastHash;
+
+        public BinaryReader _fileReader;
+
+        // The session currently being read.  
+        public Session CurrentSession;
+
+        // The file position of the next session in the log file.  This is used
+        // by NextSession() to read the session preamble that should be found there.
+        private long _nextSessionPos;
+
+        // This is added to the thread IDs of the current session so they are unique
+        // from the thread IDs of all previous sessions.
+        private int _maxThreadIDFromPrevSession;
 
         public void ReuseFilters() {
-            // Save off the old thread IDs and reuse any that are also found in the new file.
-            // Do the same for thread names and loggers.
-            foreach (ThreadObject threadObject in ThreadObject.AllThreads) _oldThreadIds.Add(threadObject.Id, threadObject);
-            foreach (ThreadName threadName in ThreadName.AllThreadNames) _oldThreadNames.Add(threadName.Name, threadName);
-            foreach (LoggerObject logger in LoggerObject.AllLoggers) _oldLoggers.Add(logger.Name, logger);
+            // Save off the old filter objects (thread IDs, thread names, methods, and loggers) and 
+            // reuse any that are also found in the new file.  We don't reuse the session filter.
+            lock (ThreadObjects.Lock) {
+                foreach (ThreadObject threadObject in ThreadObjects.AllThreadObjects) _oldThreadIds.Add(threadObject.Id, threadObject);
+            }
+
+            lock (ThreadNames.Lock) {
+                foreach (ThreadName threadName in ThreadNames.AllThreadNames) _oldThreadNames.Add(threadName.Name, threadName);
+            }
+
+            lock (LoggerObjects.Lock) {
+                foreach (LoggerObject logger in LoggerObjects.AllLoggers) _oldLoggers.Add(logger.Name, logger);
+            }
+
+            lock (MethodObjects.Lock) {
+                foreach (MethodObject method in MethodObjects.AllMethods) _oldMethods.Add(method.Name, method);
+            }
         }
 
         // Open the file, read the format version and preamble.
-        // Return null if an error occurs, such as encountering an unsupported file version.
-        public  bool OpenLogFile(string filename) {
-            try {
-                _fileReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-                if (_fileReader == null) {
-                    MessageBox.Show("Could not open log file " + filename);
-                } else {
-                    Size = _fileReader.BaseStream.Length;
+        // Return false if an error occurs, such as encountering an unsupported file version.
+        public bool OpenLogFile(string filename) {
+            FileName = filename;
+
+            InternalOpen(FileName);
+
+            if (_fileReader != null) {
+                try {
                     FormatVersion = _fileReader.ReadInt32();
 
                     if (FormatVersion > _maxVersion || FormatVersion < _minVersion) {
                         MessageBox.Show("The file has a format version of " + FormatVersion + ".  This program only supports format version " + _maxVersion + ".");
-                        _fileReader.Close();
-                        _fileReader = null;
+                        CloseLogFile();
                     } else if (FormatVersion == 4 && !PromptUserForPassword()) {
-                        _fileReader.Close();
-                        _fileReader = null;
+                        CloseLogFile();
                     } else if (FormatVersion >= 5 && _fileReader.ReadBoolean() && !PromptUserForPassword()) {
-                        _fileReader.Close();
-                        _fileReader = null;
+                        CloseLogFile();
                     } else {
-                        ReadPreamble();
+                        _nextSessionPos = _fileReader.BaseStream.Position;
                     }
+                } catch (Exception ex) {
+                    MessageBox.Show("Error reading log file '" + filename + "':\n\n" + ex.ToString());
+                    _fileReader = null;
+                }
+            }
+            return _fileReader != null;
+        }
+
+        private bool InternalOpen(string filename) {
+            try {
+                _fileReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                if (_fileReader == null) {
+                    MessageBox.Show("Could not open log file " + filename);
+                } else {
+                    Debug.Print("Viewer opened log file.");
+                    Size = _fileReader.BaseStream.Length;
                 }
             } catch (Exception ex) {
                 MessageBox.Show("Error opening log file '" + filename + "':\n\n" + ex.ToString());
@@ -172,6 +126,51 @@ namespace TracerX.Viewer {
             }
 
             return _fileReader != null;
+        }
+
+        public Session NextSession() {
+            Session session = null;
+            
+            if (_nextSessionPos != 0) {
+                // Create a Session and read the session's preamble.
+                // Open the file if necessary, but leave the file
+                // in the same state (open or closed) as now.
+
+                bool alreadyOpen = _fileReader != null ;
+                var tempPos = _nextSessionPos;
+                _nextSessionPos = 0;
+
+                if (alreadyOpen || InternalOpen(FileName)) {
+                    try {
+                        lock (SessionObjects.Lock) {
+                            session = new Session(this);
+                            session.ReadPreamble(tempPos); // Exception likely here.
+
+                            // The thread IDs in the log file start at 1 for each session, but they're really separate
+                            // threads, so the IDs read from each session are incremented by max ID from the previous session.
+                            // Ignore sessions with no threads/records.
+                            if (CurrentSession != null && CurrentSession.MaxThreadID > 0) {
+                                _maxThreadIDFromPrevSession = CurrentSession.MaxThreadID;
+                            }
+
+                            CurrentSession = session;
+                            CurrentSession.Index = SessionObjects.AllSessionObjects.Count;
+                            SessionObjects.AllSessionObjects.Add(CurrentSession);
+                            CurrentSession.Name = SessionObjects.AllSessionObjects.Count.ToString();
+                        }
+                    } catch (Exception ex) {
+                        MessageBox.Show("Error opening log file session " + (SessionObjects.AllSessionObjects.Count + 1) + ":\n\n" + ex.ToString());
+                        session = null;
+                    }
+
+                    if (!alreadyOpen) {
+                        _fileReader.Close();
+                        _fileReader = null;
+                    }
+                }
+            }
+
+            return session;
         }
 
         // Called if the file has a password.  Reads the password hash from the file
@@ -197,57 +196,12 @@ namespace TracerX.Viewer {
             }
         }
 
-        // This gets exit records that were generated to replace those
-        // lost when the log wrapped.  Should be called after all records are read
-        // and before calling CloseLogFile().  Should be called only once.
-        public List<Record> GetMissingExitRecords() {
-            List<Record> list = new List<Record>();
-            foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
-                if (threadInfo.MissingExitRecords != null) list.AddRange(threadInfo.MissingExitRecords);
-            }
-
-            return list;
-        }
-
-        // This gets entry records that were generated to replace those
-        // lost when the log wrapped.  Should be called after all records are read
-        // and before calling CloseLogFile().  Should be called only once.
-        public List<Record> GetMissingEntryRecords() {
-            List<Record> list = new List<Record>();
-            foreach (ReaderThreadInfo threadInfo in _foundThreadIds.Values) {
-                if (threadInfo.MissingEntryRecords != null) list.AddRange(threadInfo.MissingEntryRecords);
-            }
-
-            return list;
-        }
-
         public void CloseLogFile() {
-            _fileReader.Close();
-            _fileReader = null;
-            _curThread = null;
-            _foundThreadIds = null;
-            _foundThreadNames = null;
-            _oldThreadNames = null; 
-            _oldThreadIds = null;
-            _foundLoggers = null;
-            _oldLoggers = null;
-        }
-
-        private void ReadPreamble() {
-            long ticks;
-
-            if (FormatVersion >= 3) {
-                // Logger version was added to the preamble in version 3.
-                _loggerVersion = _fileReader.ReadString();
+            if (_fileReader != null) {
+                Debug.Print("Viewer is closing log file.");
+                _fileReader.Close();
+                _fileReader = null;
             }
-            MaxMb = _fileReader.ReadInt32();
-            ticks = _fileReader.ReadInt64();
-            OpenTimeUtc = new DateTime(ticks);
-            ticks = _fileReader.ReadInt64();
-            OpenTimeLocal = new DateTime(ticks);
-            IsDST = _fileReader.ReadBoolean();
-            TzStandard = _fileReader.ReadString();
-            TzDaylight = _fileReader.ReadString();
         }
 
         private ThreadName FindOrCreateThreadName(string name) {
@@ -260,158 +214,13 @@ namespace TracerX.Viewer {
                 }
 
                 _foundThreadNames.Add(name, threadName);
-                ThreadName.AllThreadNames.Add(threadName);
+
+                lock (ThreadNames.Lock) {
+                    ThreadNames.AllThreadNames.Add(threadName);
+                }
             }
 
             return threadName;
-        }
-
-        public  Record ReadRecord() {
-            // Read the DataFlags, then the data the Flags indicate is there.
-            // Data must be read in the same order it was written (see FileLogging.WriteData in the logger).
-            try {
-                DataFlags flags = GetFlags();
-
-                if (flags == DataFlags.None) {
-                    return null;
-                }
-
-                long startPos = _fileReader.BaseStream.Position;
-
-                if ((flags & DataFlags.LineNumber) != DataFlags.None) {
-                    _recordNumber = _fileReader.ReadUInt32();
-                } else if (!InCircularPart) {
-                    ++_recordNumber;
-                } else {
-                    // _recordNumber was incremented by GetFlags.
-                }
-
-                if ((flags & DataFlags.Time) != DataFlags.None) {
-                    _time = new DateTime(_fileReader.ReadInt64());
-                }
-
-                if ((flags & DataFlags.ThreadId) != DataFlags.None) {
-                    _threadId = _fileReader.ReadInt32();
-
-                    // Look up or add the entry for this ThreadId.
-                    if (!_foundThreadIds.TryGetValue(_threadId, out _curThread)) {
-                        // First occurrence of this id.
-                        _curThread = new ReaderThreadInfo();
-
-                        if (!_oldThreadIds.TryGetValue(_threadId, out _curThread.Thread)) {
-                            _curThread.Thread = new ThreadObject();
-                        }
-
-                        _curThread.Thread.Id = _threadId;
-                        ThreadObject.AllThreads.Add(_curThread.Thread);
-                        _foundThreadIds[_threadId] = _curThread;
-                    }
-                }
-
-                if ((flags & DataFlags.ThreadName) != DataFlags.None) {
-                    // A normal thread's name can only change from null to non-null.  
-                    // ThreadPool threads can alternate between null and non-null.
-                    // If a thread's name changes from non-null to null, the logger
-                    // writes string.Empty for the thread name.  
-                    string threadNameStr = _fileReader.ReadString();
-                    if (threadNameStr == string.Empty) _curThread.ThreadName = FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
-                    else _curThread.ThreadName = FindOrCreateThreadName(threadNameStr);
-                } else if (_curThread.ThreadName == null) {
-                    _curThread.ThreadName = FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
-                }
-
-                if ((flags & DataFlags.TraceLevel) != DataFlags.None) {
-                    _curThread.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
-                    LevelsFound |= _curThread.Level;
-                }
-
-                if (FormatVersion < 5) {
-                    if ((flags & DataFlags.StackDepth) != DataFlags.None) {
-                        _curThread.Depth = _fileReader.ReadByte();
-                    } else if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                        --_curThread.Depth;
-                    }
-                } else {
-                    if ((flags & DataFlags.StackDepth) != DataFlags.None) {
-                        _curThread.Depth = _fileReader.ReadByte();
-
-                        if (InCircularPart) {
-                            if (_curThread.Depth > 0) {
-                                // In format version 5, we began logging each thread's current call
-                                // stack on the thread's first line in each block (i.e. when the
-                                // StackDepth flag is set). This is the thread's true call stack at
-                                // this point in the log. It reflects MethodEntry and MethodExit
-                                // records that may have been lost when the log wrapped (as well
-                                // as those that weren't lost).
-
-                                ExplicitStackEntry[] trueStack = new ExplicitStackEntry[_curThread.Depth];
-                                for (int i = 0; i < _curThread.Depth; ++i) {
-                                    ExplicitStackEntry entry = new ExplicitStackEntry();
-                                    entry.EntryLineNum = _fileReader.ReadUInt32();
-                                    entry.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
-                                    entry.Logger = GetLogger(_fileReader.ReadString());
-                                    entry.Method = _fileReader.ReadString();
-                                    entry.Depth = (byte)(_curThread.Depth - i - 1);
-                                    trueStack[i] = entry;
-                                }
-
-                                _curThread.MakeMissingRecords(trueStack);
-                            } else {
-                                _curThread.MakeMissingRecords(null);
-                            }
-                        }
-                    }
-
-                    // Starting in format version 5, the viewer decrements the depth on MethodExit
-                    // lines even if it was included on the line.
-                    if ((flags & DataFlags.MethodExit) != DataFlags.None) {
-                        --_curThread.Depth;
-                    }
-                }
-
-                if ((flags & DataFlags.LoggerName) != DataFlags.None) {
-                    string loggerName = _fileReader.ReadString();
-                    _curThread.Logger = GetLogger(loggerName);
-                }
-
-                if ((flags & DataFlags.MethodName) != DataFlags.None) {
-                    _curThread.MethodName = _fileReader.ReadString();
-                }
-
-                if ((flags & DataFlags.Message) != DataFlags.None) {
-                    _msg = _fileReader.ReadString();
-                }
-
-                // Construct the Record before incrementing depth.
-                Record record = new Record(flags, _recordNumber, _time, _curThread, _msg);
-
-                if ((flags & DataFlags.MethodEntry) != DataFlags.None) {
-                    // Cause future records to be indented until a MethodExit is encountered.
-                    ++_curThread.Depth;
-
-                    // In format version 5+, we keep track of the call stack
-                    // by "pushing" MethodEntry records and "popping" MethodExit records
-                    if (FormatVersion >= 5) {
-                        _curThread.Push(record);
-                    }
-                } else if (FormatVersion >= 5 && (flags & DataFlags.MethodExit) != DataFlags.None) {
-                    _curThread.Pop();
-                }
-
-                BytesRead += _fileReader.BaseStream.Position - startPos;
-
-                if (InCircularPart && _fileReader.BaseStream.Position >= MaxMb << 20) {
-                    // We've read to the max file size in circular mode.  Wrap.
-                    _fileReader.BaseStream.Position = _circularStartPos;
-                }
-
-                ++RecordsRead;
-                return record;
-            } catch (Exception ex) {
-                // The exception is either end-of-file or a corrupt file.
-                // Either way, we're done.  Returning null tells the caller to give up.
-                return null;
-            }
         }
 
         // Gets or makes the LoggerObject with the specified name.
@@ -425,135 +234,33 @@ namespace TracerX.Viewer {
                 }
 
                 _foundLoggers.Add(loggerName, logger);
-                LoggerObject.AllLoggers.Add(logger);
+
+                lock (LoggerObjects.Lock) {
+                    LoggerObjects.AllLoggers.Add(logger);
+                }
             }
 
             return logger;
         }
 
-        // This is called when reading the circular part of the log to 
-        // double check that we have a valid record.
-        private static bool FlagsAreValid(DataFlags flags) {
-            if ((flags & DataFlags.InvalidOnes) != DataFlags.None) {
-                return false;
-            }
+        // Gets or makes the MethodObject with the specified name.
+        private MethodObject GetMethod(string methodName) {
+            MethodObject method;
 
-            if ((flags & DataFlags.CircularStart) != DataFlags.None) {
-                // Circular flag should never appear twice.
-                return false;
-            }
+            if (!_foundMethods.TryGetValue(methodName, out method)) {
+                if (!_oldMethods.TryGetValue(methodName, out method)) {
+                    method = new MethodObject();
+                    method.Name = methodName;
+                }
 
-            if ((flags & DataFlags.LineNumber) != DataFlags.None) {
-                // LineNumber should never be set in the circular because
-                // every record has a record in the circular part includes the line number.
-                return false;
-            }
+                _foundMethods.Add(methodName, method);
 
-            if ((flags & DataFlags.MethodEntry) == DataFlags.MethodEntry &&
-                (flags & DataFlags.MethodExit) == DataFlags.MethodExit) {
-                // These two should never appear together.
-                return false;
-            }
-
-            return true;
-        }
-
-        // Gets the DataFlags for next record, possibly entering the circular part of the log.
-        // Returns DataFlags.None or throws an exception if the last record has been read.
-        private DataFlags GetFlags() {
-            DataFlags flags = DataFlags.None;
-            bool firstCircular = false;
-
-            if (_circularStartPos == 0) {
-                // Not in circular part yet
-                flags = (DataFlags)_fileReader.ReadUInt16();
-                BytesRead += sizeof(DataFlags);
-
-                if ((flags & DataFlags.CircularStart) != DataFlags.None) {
-                    BeginCircular(); // Will set _circularStartPos to non-zero.
-                    firstCircular = true;
+                lock (MethodObjects.Lock) {
+                    MethodObjects.AllMethods.Add(method);
                 }
             }
 
-            if (_circularStartPos != 0) {
-                // We're in the circular part, where every record starts with its
-                // UInt32 record number, before the data flags.
-                UInt32 num = _fileReader.ReadUInt32();
-                BytesRead += sizeof(UInt32);
-                if (firstCircular) {
-                    // This is the first chronological record in the circular part,
-                    // so accept the record number as-is.
-                    _recordNumber = num;
-                    flags = (DataFlags)_fileReader.ReadUInt16();
-                    BytesRead += sizeof(DataFlags);
-                } else {
-                    // Num must equal _recordNumber + 1 or we've read past the last record.
-                    // If it's a good record, we need to increment _recordNumber.
-                    if (num == ++_recordNumber) {
-                        flags = (DataFlags)_fileReader.ReadUInt16();
-                        BytesRead += sizeof(DataFlags);
-
-                        // There's a slim chance we a read random data that contained the expected
-                        // value. Therefore, also check for invalid flags.
-                        if (!FlagsAreValid(flags)) {
-                            flags = DataFlags.None;
-                        }
-                    } else {
-                        // We've already read the last (newest) record, and now we're reading garbage.
-                        flags = DataFlags.None;
-                    }
-                }
-            }
-
-            return flags;
-        }
-
-        // Called immediately after finding the CircularStart marker.
-        private void BeginCircular() {
-            // Used to track total bytes read.
-            long temp = _fileReader.BaseStream.Position;
-
-            // The oldArea contains data about the position of the oldest record in the circular part.
-            // Start by getting the size of the old area.
-            uint oldAreaSize = _fileReader.ReadUInt32();
-            uint unusedData = _fileReader.ReadUInt32(); 
-            long start = _fileReader.BaseStream.Position;
-
-            // Set the file position to that of the oldest record.  The caller will
-            // begin reading there.
-            _fileReader.BaseStream.Position = FindLastFilePos(oldAreaSize);
-
-            // Remember the file position of the first physical record in the circular part.
-            _circularStartPos = start + oldAreaSize;
-            BytesRead += _circularStartPos - temp;
-        }
-
-        // Starting at the current file position, there is an area of the specified size
-        // containing a series of 6-byte records.  Each record consists of a uint16 counter
-        // followed by an UInt32 file position.  Use the counters to find the last record
-        // written and return the corresponding file position.  This area was written in
-        // a circular fashion allowing the counter to wrap.
-        private long FindLastFilePos(uint areaSize) {
-            long stopPos = _fileReader.BaseStream.Position + areaSize;
-            UInt16 curNum, lastNum = _fileReader.ReadUInt16();
-            UInt32 curVal, lastVal = _fileReader.ReadUInt32();
-            Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
-
-            while (_fileReader.BaseStream.Position != stopPos) {
-                curNum = _fileReader.ReadUInt16();
-                curVal = _fileReader.ReadUInt32();
-
-                if (curNum == lastNum + 1) {
-                    lastNum = curNum;
-                    lastVal = curVal;
-                    Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
-                } else {
-                    Debug.Print("curNum = " + curNum + ", curVal = " + curVal);
-                    break;
-                }
-            }
-
-            return lastVal;
+            return method;
         }
     }
 

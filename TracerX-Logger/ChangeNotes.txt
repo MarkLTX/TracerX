@@ -1,21 +1,6 @@
-Removed handler for System.Windows.Forms.Application.ThreadException since it seems to hide the fact that an unhandled exception occurred and it isn't being used anyway.
-
-Made "Find" and "Full Text" dialogs non-modal.
-
-Added "Recently Created" and "Recently Viewed" to the File menu.
-
-Added option to have the Full Text dialog follow the currently selected record.
-
-Added a crumb-bar showing the call stack leading to the currently selected line.
-
-Added support for coloring (highlighting) rules that set the background and foreground colors of lines that match specified criteria.
-
-Added regular expression support to the Find dialog.
-
-Added static Logger property (Logger.Current) that returns the last Logger that sent any output to any destination for the calling thread.
-
-Split the TracerX.exe assembly into two: TracerX-Logger.dll and TracerX-Viewer.exe
-
-Changed version checking algorithm.  Added feature to disable and hide version checking.
-
-Added CSV export feature.
+Now a Visual Studio 2008 project targeting the 3.5 framework.
+Binary file format version is now 6 (supports tail feature, uses one file handle instead of two).
+Grant all users permission to read and write the list of recently created files.
+Support up to 99 archives.
+Support appending to log file.
+Added TextFile destination.

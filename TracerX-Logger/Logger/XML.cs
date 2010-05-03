@@ -230,6 +230,9 @@ namespace TracerX {
                                     case "logfile":
                                         ParseLogFile(e);
                                         break;
+                                    case "textfile":
+                                        ParseTextFile(e);
+                                        break;
                                     case "maxeventnumber":
                                     case "maxinternaleventnumber":
                                         Logger.EventLogging.MaxInternalEventNumber = GetUintVal(e, "value", Logger.EventLogging.MaxInternalEventNumber);
@@ -381,6 +384,9 @@ namespace TracerX {
                                 case "logdirectory":
                                     Logger.FileLogging.Directory = subElement.GetAttribute("value");
                                     break;
+                                case "appendifsmallerthanmb":
+                                    Logger.FileLogging.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.FileLogging.AppendIfSmallerThanMb);
+                                    break;
                                 case "maxsizemb":
                                     Logger.FileLogging.MaxSizeMb = GetUintVal(subElement, "value", Logger.FileLogging.MaxSizeMb);
                                     break;
@@ -399,6 +405,56 @@ namespace TracerX {
                                 case "logpotentiallysensitivedataatstartup":
                                     _warnings += "LogPotentiallySensitiveDataAtStartup is deprecated.\n\n";
                                     System.Diagnostics.Debug.Print("LogPotentiallySensitiveDataAtStartup is deprecated.");
+                                    break;
+                                default:
+                                    // Unexpected element.
+                                    string msg = "XML element '{0}' contains unexpected sub-element '{1}'.\n\n";
+                                    _warnings += string.Format(msg, element.Name, subElement.Name);
+                                    System.Diagnostics.Debug.Print("Unexpected XML element in FileLogging element: " + node.Name);
+                                    break;
+                            }
+                            break;
+                        case XmlNodeType.EndElement:
+                        case XmlNodeType.Comment:
+                            break;
+                        default:
+                            // Unexpected node type.
+                            string msg2 = "XML element '{0}' contains unexpected child '{1}' of type '{2}'.\n\n";
+                            _warnings += string.Format(msg2, element.Name, node.Name, node.NodeType);
+                            System.Diagnostics.Debug.Print("Unexpected XML node type " + node.NodeType + " with name " + node.Name);
+                            break;
+                    } // switch (NodeType)
+                } // foreach node in TracerX.
+            }
+
+            // Parse the TextFileLogging element.
+            static private void ParseTextFile(XmlElement element) {
+                foreach (XmlNode node in element.ChildNodes) {
+                    //System.Diagnostics.Debug.Print("Node type " + node.NodeType + " with name " + node.Name);
+                    switch (node.NodeType) {
+                        case XmlNodeType.Element:
+                            XmlElement subElement = (XmlElement)node;
+                            switch (node.Name.ToLower()) {
+                                case "directory":
+                                    Logger.TextFileLogging.Directory = subElement.GetAttribute("value");
+                                    break;
+                                case "appendifsmallerthanmb":
+                                    Logger.TextFileLogging.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.TextFileLogging.AppendIfSmallerThanMb);
+                                    break;
+                                case "maxsizemb":
+                                    Logger.TextFileLogging.MaxSizeMb = GetUintVal(subElement, "value", Logger.TextFileLogging.MaxSizeMb);
+                                    break;
+                                case "archives":
+                                    Logger.TextFileLogging.Archives = GetUintVal(subElement, "value", Logger.TextFileLogging.Archives);
+                                    break;
+                                case "circularstartsizekb":
+                                    Logger.TextFileLogging.CircularStartSizeKb = GetUintVal(subElement, "value", Logger.TextFileLogging.CircularStartSizeKb);
+                                    break;
+                                case "circularstartdelayseconds":
+                                    Logger.TextFileLogging.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.TextFileLogging.CircularStartDelaySeconds);
+                                    break;
+                                case "formatstring" :
+                                    Logger.TextFileLogging.FormatString = subElement.GetAttribute("value");
                                     break;
                                 default:
                                     // Unexpected element.
@@ -455,6 +511,9 @@ namespace TracerX {
                                 case "level":
                                 case "filetracelevel":
                                     logger.FileTraceLevel = level;
+                                    break;
+                                case "textfiletracelevel":
+                                    logger.TextFileTraceLevel = level;
                                     break;
                                 case "consoletracelevel":
                                     logger.ConsoleTraceLevel = level;
