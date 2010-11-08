@@ -24,7 +24,7 @@ using System.IO;
 
 namespace TracerX {
     /// <summary>
-    /// Maps object types to <see cref="IObjectRenderer"/>s that render objects of each registered
+    /// This static class maps object types to <see cref="IObjectRenderer"/>s that render objects of each registered
     /// type as strings for logging.
     /// </summary>
     /// <remarks>

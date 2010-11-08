@@ -6,17 +6,17 @@ using System.Text;
 
 namespace TracerX {
     /// <summary>
-    /// Renders an Exception object and its inner exceptions.  
+    /// Renders an Exception object and its inner exceptions recursively.  
     /// This includes the key:value pairs in Exception.Data, which
-    /// Exception.ToString() does not.  Exception.Message is typically
-    /// overridden in derived classes as necessary to render additional information
-    /// that is not present in the base Exception class (e.g. ArgumentException.ParamName).
+    /// Exception.ToString() does not (the last time I checked). 
     /// </summary>
-    public class ExceptionRenderer : IObjectRenderer {
+    internal class ExceptionRenderer : IObjectRenderer {
         public ExceptionRenderer() {}
         /// <summary>
-        /// Render the object <paramref name="obj"/> to a string
+        /// Renders the object <paramref name="obj"/>, which must be derived from System.Exception, to a string.
         /// </summary>
+        /// <param name="obj">An Exception to be rendered as text.</param>
+        /// <param name="writer">TextWriter to which the rendered text is written.</param>
         public void RenderObject(object obj, TextWriter writer) {
             Exception ex = (Exception)obj;
 

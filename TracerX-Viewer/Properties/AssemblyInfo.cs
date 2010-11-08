@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // major.minor.yymm.ddhht, where yy is two-digit year,
 // mm is two-digit month, dd is two-digit date, 
 // hh is two-digit hour, and t is the tens digit of the minutes.
-[assembly: AssemblyVersion("4.0.1005.1163")]
+[assembly: AssemblyVersion("5.0.1011.7135")]
 
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion

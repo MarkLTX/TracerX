@@ -13,10 +13,11 @@ namespace TracerX.Viewer {
             InitializeComponent();
 
             this.Icon = Properties.Resources.scroll_view;
-            InitLine();
+            InitMisc();
             InitTime();
             InitText();
-            InitAutoRefresh();
+            InitAutoUpdate();
+            InitThreads();
             InitVersionCheck();
 
             if (!Settings.Default.VersionCheckingAllowed) {
@@ -28,9 +29,11 @@ namespace TracerX.Viewer {
             if (header == MainForm.TheMainForm.headerTime) {
                 tabControl1.SelectedTab = timePage;
             } else if (header == MainForm.TheMainForm.headerLine) {
-                tabControl1.SelectedTab = linePage;
+                tabControl1.SelectedTab = miscPage;
             } else if (header == MainForm.TheMainForm.headerText) {
                 tabControl1.SelectedTab = textPage;
+            } else if (header == MainForm.TheMainForm.headerThreadId || header == MainForm.TheMainForm.headerThreadName) {
+                tabControl1.SelectedTab = threadsPage;
             }
         }
 
@@ -63,11 +66,13 @@ namespace TracerX.Viewer {
         }
 
         private bool ApplyChanges() {
-            if (VerifyText(true) && VerifyVersionCheck(true)) {
-                ApplyLine();
+            if (VerifyMisc() && VerifyText(true) && VerifyTime(true) && VerifyAutoUpdate() && VerifyVersionCheck(true)) 
+            {
+                ApplyMisc();
                 ApplyTime();
                 ApplyText();
-                ApplyAutoRefresh();
+                ApplyAutoUpdate();
+                ApplyThreads();
                 ApplyVersionCheck();
 
                 // We're not hiding or showing anything, so don't call RebuildRows.
@@ -88,34 +93,86 @@ namespace TracerX.Viewer {
             // Currently, only the text page requires verification.
             if (e.TabPage == textPage) {
                 e.Cancel = !VerifyText(true);
-            } else if (e.TabPage == autoRefreshPage) {
+            } else if (e.TabPage == autoUpdatePage) {
                 e.Cancel = false;
             } else if (e.TabPage == versionPage) {
                 e.Cancel = !VerifyVersionCheck(true);
             }
         }
 
-        #region Line number
-        private void InitLine() {
-            checkBox1.Checked = Settings.Default.LineNumSeparator;
+        #region Line numbers
+        private void InitMisc() {
+            chkDigitGrouping.Checked = Settings.Default.LineNumSeparator;
+            chkReapplyFilter.Checked = Settings.Default.KeepFilter;
+            txtFileSize.Text = Settings.Default.MaxNetworkKB.ToString();
         }
 
-        private void ApplyLine() {
-            Settings.Default.LineNumSeparator = checkBox1.Checked;
+        private bool VerifyMisc()
+        {
+            int converted;
+            bool result = true;
+
+            txtFileSize.Text = txtFileSize.Text.Trim();
+
+            if (int.TryParse(txtFileSize.Text, out converted))
+            {
+                if (converted < 0)
+                {
+                    result = false;
+                    tabControl1.SelectedTab = miscPage;
+                    txtFileSize.Focus();
+                    MessageBox.Show(this, "The file size value must not be negative.", "TracerX-Viewer");
+                }
+            }
+            else
+            {
+                result = false;
+                tabControl1.SelectedTab = miscPage;
+                txtFileSize.Focus();
+                MessageBox.Show(this, "The file size value is invalid.", "TracerX-Viewer");
+            }
+
+            return result;
+        }
+
+        private void ApplyMisc() {
+            Settings.Default.LineNumSeparator = chkDigitGrouping.Checked;
+            Settings.Default.KeepFilter = chkReapplyFilter.Checked;
+            Settings.Default.MaxNetworkKB = int.Parse(txtFileSize.Text);
         }
         #endregion Line number
 
         #region Time
         private void InitTime() {
-            showDuplicateTimes.Checked = Settings.Default.DuplicateTimes;
-            dontShowDuplicateTimes.Checked = !Settings.Default.DuplicateTimes;
+            chkDuplicateTimes.Checked = Settings.Default.DuplicateTimes;
             showRelative.Checked = Settings.Default.RelativeTime;
             showAbsolute.Checked = !Settings.Default.RelativeTime;
+            chkUseCustomTime.Checked = Settings.Default.UseCustomTimeFormat;
+            txtCustomTimeFormat.Text = Settings.Default.CustomTimeFormat;
+        }
+
+        private bool VerifyTime(bool showErrors) {
+            bool result = false;
+
+            try {
+                string s = DateTime.Now.ToString(txtCustomTimeFormat.Text);
+                result = true;
+            } catch (Exception ex) {
+                if (showErrors) {
+                    tabControl1.SelectedTab = timePage;
+                    txtCustomTimeFormat.Focus();
+                    MessageBox.Show(this, "The custom time format string is invalid.", "TracerX-Viewer");
+                }
+            }
+
+            return result;
         }
 
         private void ApplyTime() {
-            Settings.Default.DuplicateTimes = showDuplicateTimes.Checked;
+            Settings.Default.DuplicateTimes = chkDuplicateTimes.Checked;
             Settings.Default.RelativeTime = showRelative.Checked;
+            Settings.Default.UseCustomTimeFormat = chkUseCustomTime.Checked;
+            Settings.Default.CustomTimeFormat = txtCustomTimeFormat.Text;
         }
         #endregion Time
 
@@ -130,14 +187,29 @@ namespace TracerX.Viewer {
             bool verified = true;
 
             if (indentChar.Text == string.Empty) {
-                if (showErrors) MessageBox.Show("Indentation character required.");
                 verified = false;
+                if (showErrors)
+                {
+                    tabControl1.SelectedTab = textPage;
+                    indentChar.Focus();
+                    MessageBox.Show("Indentation character required.");
+                }
             } else if (indentAmount.Text == string.Empty) {
-                if (showErrors) MessageBox.Show("Indentation amount required.");
                 verified = false;
+                if (showErrors)
+                {
+                    tabControl1.SelectedTab = textPage;
+                    indentAmount.Focus();
+                    MessageBox.Show("Indentation amount required.");
+                }
             } else if (indentAmount.Text[0] < '0' || indentAmount.Text[0] > '9') {
-                if (showErrors) MessageBox.Show("Indentation amount must be a number.");
                 verified = false;
+                if (showErrors)
+                {
+                    tabControl1.SelectedTab = textPage;
+                    indentAmount.Focus();
+                    MessageBox.Show("Indentation amount must be a number.");
+                }
             }
 
             return verified;
@@ -150,18 +222,61 @@ namespace TracerX.Viewer {
         }
         #endregion Text
 
-        #region Auto refresh
-        private void InitAutoRefresh() {
-            reapplyFilter.Checked = Settings.Default.KeepFilter;
+        #region Auto-Update
+        private void InitAutoUpdate() {
             autoUpdate.Checked = Settings.Default.AutoUpdate;
+            txtMaxRecords.Text = Settings.Default.MaxRecords.ToString();
         }
 
+        private bool VerifyAutoUpdate()
+        {
+            int converted;
+            bool result = true;
 
-        private void ApplyAutoRefresh() {
-            Settings.Default.KeepFilter = reapplyFilter.Checked;
+            txtMaxRecords.Text = txtMaxRecords.Text.Trim();
+
+            if (int.TryParse(txtMaxRecords.Text, out converted))
+            {
+                if (converted < 0)
+                {
+                    result = false;
+                    tabControl1.SelectedTab = autoUpdatePage;
+                    txtMaxRecords.Focus();
+                    MessageBox.Show(this, "The number of records must not be negative.", "TracerX-Viewer");
+                }
+            }
+            else
+            {
+                result = false;
+                tabControl1.SelectedTab = autoUpdatePage;
+                txtMaxRecords.Focus();
+                MessageBox.Show(this, "The number of records is invalid.", "TracerX-Viewer");
+            }
+
+            return result;
+        }
+
+        private void ApplyAutoUpdate() {
+            // Set MaxRecords first, because auto-update will resume in the event handler that
+            // gets called when AutoUpdate is set to true.
+            Settings.Default.MaxRecords = int.Parse(txtMaxRecords.Text);
             Settings.Default.AutoUpdate = autoUpdate.Checked;
         }
-        #endregion Auto refresh
+        #endregion Auto-Update
+
+        #region Threads
+
+        private void InitThreads() {
+            radThreadName.Checked = Settings.Default.SearchThreadsByName;
+            radThreadNumber.Checked = !Settings.Default.SearchThreadsByName;
+        }
+
+        private void ApplyThreads()
+        {
+            Settings.Default.SearchThreadsByName = radThreadName.Checked;
+        }
+
+        #endregion
 
         #region Version Check
         private void InitVersionCheck() {
@@ -178,11 +293,21 @@ namespace TracerX.Viewer {
                 if (int.TryParse(txtVersionInterval.Text, out temp)) {
                     if (temp < 0) {
                         ret = false;
-                        if (showErrors) MessageBox.Show("The version checking interval must not be negative.");
+                        if (showErrors)
+                        {
+                            tabControl1.SelectedTab = versionPage;
+                            txtVersionInterval.Focus();
+                            MessageBox.Show("The version checking interval must not be negative.");
+                        }
                     }
                 } else {
                     ret = false;
-                    if (showErrors) MessageBox.Show("The version checking interval must be a number.");
+                    if (showErrors)
+                    {
+                        tabControl1.SelectedTab = versionPage;
+                        txtVersionInterval.Focus();
+                        MessageBox.Show("The version checking interval must be a number.");
+                    }
                 }
             }
 

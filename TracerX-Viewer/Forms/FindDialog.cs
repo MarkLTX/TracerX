@@ -21,7 +21,7 @@ namespace TracerX.Viewer {
                 }
             }
 
-            comboBox1.Text = mainForm.FocusedRow.ToString();
+            if (mainForm.FocusedRow != null) comboBox1.Text = mainForm.FocusedRow.ToString();
             comboBox1.SelectAll();
             comboBox1.Focus();
             comboBox1.Select();

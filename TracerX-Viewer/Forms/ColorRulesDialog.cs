@@ -14,7 +14,7 @@ using TracerX.Viewer;
 using System.IO;
 
 namespace TracerX.Forms {
-    public partial class ColorRulesDialog : Form {
+    internal partial class ColorRulesDialog : Form {
 
         // ColorTab identifies each of the tabs on the ColorRulesDialog.
         public enum ColorTab { Custom, TraceLevels, Loggers, ThreadNames, ThreadIDs, Methods, Sessions };
@@ -706,7 +706,7 @@ namespace TracerX.Forms {
                 _traceLevelSorter = new ListViewItemSorter(traceLevelListView);
             }
 
-            _traceLevelSorter.Sort(e);
+            _traceLevelSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -830,7 +830,7 @@ namespace TracerX.Forms {
                 _sessionSorter = new ListViewItemSorter(sessionListView);
             }
 
-            _sessionSorter.Sort(e);
+            _sessionSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -945,7 +945,7 @@ namespace TracerX.Forms {
                 _threadIdSorter = new ListViewItemSorter(threadIdListView);
             }
 
-            _threadIdSorter.Sort(e);
+            _threadIdSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -1049,7 +1049,7 @@ namespace TracerX.Forms {
                 threadNameCheckCol.Tag = _checkComparer;
             }
 
-            _threadNameSorter.Sort(e);
+            _threadNameSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -1153,7 +1153,7 @@ namespace TracerX.Forms {
                 loggerCheckCol.Tag = _checkComparer;
             }
 
-            _loggerSorter.Sort(e);
+            _loggerSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -1261,7 +1261,7 @@ namespace TracerX.Forms {
                 methodCheckCol.Tag = _checkComparer;
             }
 
-            _methodSorter.Sort(e);
+            _methodSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 

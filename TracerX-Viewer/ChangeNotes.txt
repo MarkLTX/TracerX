@@ -1,10 +1,8 @@
-Now a Visual Studio 2008 project targeting the 3.5 framework.
-Fixed exception thrown by crumb-bar if method calls get too deep.
-Fixed bug that occurs if method exit line is lost due to wrapping.
-Enabled visual styles.
-Added auto-update feature (new lines appear in view when written by logger).
-Use only one button for relative vs. absolute time.
-Added option to automatically color-code lines by thread, loggger, method, or trace level.
-Added ability to filter by method.
-Added buttons to find next/previous block of output from current/different thread.
-Added support for multi-session (appended) log files.
+Added a user control called TracerXViewerControl that allows the viewer to be hosted as a UserControl in other applications.
+When loading large files over the network, make a temporary local copy for faster loading.
+Added File menu item "Recent Folders".
+Eliminated flickering that occurs when file is updated by the logger and new records are read by the viewer.
+Added option to specify whether next/prev thread buttons should search by name or by number.
+Added option for bold font.
+Fixed bug in crumb bar that (rarely) crashes the viewer when launched.
+Fixed bug in file watcher code that sometimes crashes when loading a file that's still being updated.

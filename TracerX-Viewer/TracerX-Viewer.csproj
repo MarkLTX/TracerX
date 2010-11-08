@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E301635B-84D6-4A08-9856-B7D5C0BCD918}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -66,6 +66,7 @@
     </CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -88,7 +89,7 @@
     <Compile Include="CrumbBar.Designer.cs">
       <DependentUpon>CrumbBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Enumerations.cs" />
+    <Compile Include="Enums-Viewer.cs" />
     <Compile Include="FileWatcher.cs" />
     <Compile Include="Forms\ColorRulesDialog.cs">
       <SubType>Form</SubType>
@@ -109,6 +110,12 @@
       <DependentUpon>PaletteViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="IFilterable.cs" />
+    <Compile Include="ListViewTx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ListViewTx.Designer.cs">
+      <DependentUpon>ListViewTx.cs</DependentUpon>
+    </Compile>
     <Compile Include="MethodObject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -198,6 +205,12 @@
     <Compile Include="StringMatcher.cs" />
     <Compile Include="ThreadName.cs" />
     <Compile Include="ThreadObject.cs" />
+    <Compile Include="TracerXViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TracerXViewerControl.Designer.cs">
+      <DependentUpon>TracerXViewerControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UICommand.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -230,8 +243,12 @@
     <None Include="Resources\ExpandAll.png" />
     <Content Include="Resources\AnyThreadNext.png" />
     <Content Include="Resources\AnyThreadPrev.png" />
+    <Content Include="Resources\Bold.png" />
+    <Content Include="Resources\clockPlus.png" />
+    <Content Include="Resources\clockPrev.png" />
     <Content Include="Resources\colors_on.png" />
     <Content Include="Resources\colorwheel_16x16_plain.png" />
+    <Content Include="Resources\clockNext.png" />
     <Content Include="Resources\Date and Time.png" />
     <Content Include="Resources\FilterNot.png" />
     <Content Include="Resources\Filter.png" />
@@ -323,6 +340,10 @@
     <EmbeddedResource Include="Forms\PasswordDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PasswordDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TracerXViewerControl.resx">
+      <DependentUpon>TracerXViewerControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

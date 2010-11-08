@@ -60,12 +60,14 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enumerations.cs" />
-    <Compile Include="Logger\ConsoleLogging.cs" />
-    <Compile Include="Logger\DebugLogging.cs" />
-    <Compile Include="Logger\EventLogging.cs" />
-    <Compile Include="Logger\Logger.BinaryFile.cs" />
-    <Compile Include="Logger\Logger.FileBase.cs" />
+    <Compile Include="Enums-Logger.cs" />
+    <Compile Include="Logger\CallEnder.cs" />
+    <Compile Include="Logger\Logger.ConsoleLogging.cs" />
+    <Compile Include="Logger\Logger.DebugLogging.cs" />
+    <Compile Include="Logger\Logger.EventHandlerLogging.cs" />
+    <Compile Include="Logger\Logger.EventLogging.cs" />
+    <Compile Include="Logger\BinaryFile.cs" />
+    <Compile Include="Logger\FileBase.cs" />
     <Compile Include="Logger\Logger.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,9 +75,9 @@
     <Compile Include="Logger\Object Rendering\ExceptionRenderer.cs" />
     <Compile Include="Logger\Object Rendering\IObjectRenderer.cs" />
     <Compile Include="Logger\Object Rendering\RendererMap.cs" />
-    <Compile Include="Logger\Logger.TextFile.cs" />
+    <Compile Include="Logger\TextFile.cs" />
     <Compile Include="Logger\ThreadData.cs" />
-    <Compile Include="Logger\Xml.cs" />
+    <Compile Include="Logger\Logger.Xml.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -110,7 +112,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

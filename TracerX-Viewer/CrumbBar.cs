@@ -13,8 +13,8 @@ namespace TracerX {
     internal partial class CrumbBar : UserControl {
         public CrumbBar() {
             InitializeComponent();
-            _linkLabels.Add(linkLabel1);
             _lastLinkLabel = linkLabel1;
+            _linkLabels.Add(linkLabel1);
             _autoRepeatTimer.Tick += _autoRepeatTimer_Tick;
             _autoRepeatTimer.Interval = 15;
             _delayTimer.Tick += new EventHandler(_delayTimer_Tick);
@@ -137,6 +137,8 @@ namespace TracerX {
         }
 
         private void CrumbBar_Resize(object sender, EventArgs e) {
+            if (_lastLinkLabel == null) return;
+
             var allWidth = _lastLinkLabel.Right - linkLabel1.Left;
             
             if (allWidth > this.Width) {
@@ -306,7 +308,7 @@ namespace TracerX {
         void CrumbBarMenuItemClicked(object sender, EventArgs e) {
             ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
             Record rec = (Record)menuItem.Tag;
-            MainForm.TheMainForm.SelectSingleRow(rec.RowIndices[0]);
+            MainForm.TheMainForm.SelectRowIndex(rec.RowIndices[0]);
         }
 
         // Called when the user clicks a method name in the crumbBar.  This
@@ -322,9 +324,9 @@ namespace TracerX {
                 Record linkRecord = (Record)clickedLink.LinkData;
 
                 if (linkRecord == _crumbBarRow.Rec) {
-                    MainForm.TheMainForm.SelectSingleRow(_crumbBarRow.Index);
+                    MainForm.TheMainForm.SelectRowIndex(_crumbBarRow.Index);
                 } else {
-                    MainForm.TheMainForm.SelectSingleRow(linkRecord.RowIndices[0]);
+                    MainForm.TheMainForm.SelectRowIndex(linkRecord.RowIndices[0]);
                 }
 
                 if (_visited != null) _visited.Enabled = true;

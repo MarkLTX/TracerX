@@ -24,7 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             this.emptyBtn = new System.Windows.Forms.Button();
-            this.viewerBtn = new System.Windows.Forms.Button();
             this.oneLineBtn = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -38,8 +37,8 @@
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
+            this.btnTimeOneMillionWithWrapping = new System.Windows.Forms.Button();
+            this.btnTimeOneMillionWithoutWrapping = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.createAppendBtn = new System.Windows.Forms.Button();
             this.appendToFileBtn = new System.Windows.Forms.Button();
@@ -49,6 +48,8 @@
             this.circularWrapsRad = new System.Windows.Forms.RadioButton();
             this.emptyRad = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkUseKb = new System.Windows.Forms.CheckBox();
+            this.use00Chk = new System.Windows.Forms.CheckBox();
             this.exceedMaxMbRad = new System.Windows.Forms.RadioButton();
             this.textFileChk = new System.Windows.Forms.CheckBox();
             this.circularStartSizeBox = new System.Windows.Forms.TextBox();
@@ -59,44 +60,47 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textWriterTraceListenerBtn = new System.Windows.Forms.Button();
             this.readConfigBtn = new System.Windows.Forms.Button();
+            this.button16 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button17 = new System.Windows.Forms.Button();
+            this.button18 = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.changingThreadNameBtn = new System.Windows.Forms.Button();
+            this.btnCrossAppDomains = new System.Windows.Forms.Button();
+            this.btnReopenNoncircular = new System.Windows.Forms.Button();
+            this.btnReopenCircular = new System.Windows.Forms.Button();
+            this.viewerWrapper1 = new TestApp.ViewerWrapper();
+            this.btnAutoReopen = new System.Windows.Forms.Button();
+            this.btnEventHandler = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // emptyBtn
             // 
             this.emptyBtn.Location = new System.Drawing.Point(13, 39);
             this.emptyBtn.Name = "emptyBtn";
-            this.emptyBtn.Size = new System.Drawing.Size(75, 23);
+            this.emptyBtn.Size = new System.Drawing.Size(145, 23);
             this.emptyBtn.TabIndex = 0;
-            this.emptyBtn.Text = "Empty File";
+            this.emptyBtn.Text = "Make Empty File";
             this.emptyBtn.UseVisualStyleBackColor = true;
             this.emptyBtn.Click += new System.EventHandler(this.emptyBtn_Click);
             // 
-            // viewerBtn
-            // 
-            this.viewerBtn.Location = new System.Drawing.Point(205, 80);
-            this.viewerBtn.Name = "viewerBtn";
-            this.viewerBtn.Size = new System.Drawing.Size(75, 23);
-            this.viewerBtn.TabIndex = 1;
-            this.viewerBtn.Text = "Viewer";
-            this.viewerBtn.UseVisualStyleBackColor = true;
-            this.viewerBtn.Click += new System.EventHandler(this.viewerBtn_Click);
-            // 
             // oneLineBtn
             // 
-            this.oneLineBtn.Location = new System.Drawing.Point(13, 68);
+            this.oneLineBtn.Location = new System.Drawing.Point(161, 39);
             this.oneLineBtn.Name = "oneLineBtn";
-            this.oneLineBtn.Size = new System.Drawing.Size(75, 23);
+            this.oneLineBtn.Size = new System.Drawing.Size(145, 23);
             this.oneLineBtn.TabIndex = 2;
-            this.oneLineBtn.Text = "One Line";
+            this.oneLineBtn.Text = "Log One Line";
             this.oneLineBtn.UseVisualStyleBackColor = true;
             this.oneLineBtn.Click += new System.EventHandler(this.oneLineBtn_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 97);
+            this.button1.Location = new System.Drawing.Point(13, 68);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(144, 23);
+            this.button1.Size = new System.Drawing.Size(145, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "Five Threads Non-Circular";
             this.button1.UseVisualStyleBackColor = true;
@@ -104,9 +108,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 126);
+            this.button2.Location = new System.Drawing.Point(161, 68);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(144, 23);
+            this.button2.Size = new System.Drawing.Size(145, 23);
             this.button2.TabIndex = 4;
             this.button2.Text = "Stop At Circular ";
             this.button2.UseVisualStyleBackColor = true;
@@ -114,9 +118,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(13, 155);
+            this.button3.Location = new System.Drawing.Point(161, 97);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(144, 23);
+            this.button3.Size = new System.Drawing.Size(145, 23);
             this.button3.TabIndex = 5;
             this.button3.Text = "Circular With 1 Block";
             this.button3.UseVisualStyleBackColor = true;
@@ -124,9 +128,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(13, 184);
+            this.button4.Location = new System.Drawing.Point(13, 97);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(144, 23);
+            this.button4.Size = new System.Drawing.Size(145, 23);
             this.button4.TabIndex = 6;
             this.button4.Text = "One Thread Wraps";
             this.button4.UseVisualStyleBackColor = true;
@@ -134,9 +138,9 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(13, 213);
+            this.button5.Location = new System.Drawing.Point(13, 126);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(144, 23);
+            this.button5.Size = new System.Drawing.Size(145, 23);
             this.button5.TabIndex = 7;
             this.button5.Text = "Five Threads Wrap";
             this.button5.UseVisualStyleBackColor = true;
@@ -144,9 +148,9 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(13, 242);
+            this.button6.Location = new System.Drawing.Point(161, 126);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(144, 23);
+            this.button6.Size = new System.Drawing.Size(145, 23);
             this.button6.TabIndex = 8;
             this.button6.Text = "Start Circular By Time";
             this.button6.UseVisualStyleBackColor = true;
@@ -154,9 +158,9 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(12, 271);
+            this.button7.Location = new System.Drawing.Point(13, 155);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(144, 23);
+            this.button7.Size = new System.Drawing.Size(145, 23);
             this.button7.TabIndex = 9;
             this.button7.Text = "Missing Method Entry";
             this.button7.UseVisualStyleBackColor = true;
@@ -164,9 +168,9 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(12, 300);
+            this.button8.Location = new System.Drawing.Point(161, 155);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(144, 23);
+            this.button8.Size = new System.Drawing.Size(145, 23);
             this.button8.TabIndex = 10;
             this.button8.Text = "Missing Method Exit";
             this.button8.UseVisualStyleBackColor = true;
@@ -174,9 +178,9 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(12, 329);
+            this.button9.Location = new System.Drawing.Point(13, 184);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(144, 23);
+            this.button9.Size = new System.Drawing.Size(145, 23);
             this.button9.TabIndex = 11;
             this.button9.Text = "Missing Entries and Exits";
             this.button9.UseVisualStyleBackColor = true;
@@ -184,57 +188,57 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(13, 358);
+            this.button10.Location = new System.Drawing.Point(13, 213);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(144, 23);
+            this.button10.Size = new System.Drawing.Size(145, 23);
             this.button10.TabIndex = 12;
-            this.button10.Text = "All Unicode Chars";
+            this.button10.Text = "Log All Unicode Chars";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(13, 387);
+            this.button11.Location = new System.Drawing.Point(13, 300);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(163, 23);
+            this.button11.Size = new System.Drawing.Size(293, 23);
             this.button11.TabIndex = 13;
-            this.button11.Text = "More Than Uint.MaxValue lines";
+            this.button11.Text = "Log More Than Uint.MaxValue lines (takes forever)";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(13, 416);
+            this.button12.Location = new System.Drawing.Point(161, 213);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(163, 23);
+            this.button12.Size = new System.Drawing.Size(145, 23);
             this.button12.TabIndex = 14;
             this.button12.Text = "Controlled Logging...";
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
-            // button13
+            // btnTimeOneMillionWithWrapping
             // 
-            this.button13.Location = new System.Drawing.Point(13, 445);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(247, 23);
-            this.button13.TabIndex = 15;
-            this.button13.Text = "Time to log 1 Million messages with wrapping";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
+            this.btnTimeOneMillionWithWrapping.Location = new System.Drawing.Point(13, 271);
+            this.btnTimeOneMillionWithWrapping.Name = "btnTimeOneMillionWithWrapping";
+            this.btnTimeOneMillionWithWrapping.Size = new System.Drawing.Size(293, 23);
+            this.btnTimeOneMillionWithWrapping.TabIndex = 15;
+            this.btnTimeOneMillionWithWrapping.Text = "Time to log 1 Million messages with wrapping";
+            this.btnTimeOneMillionWithWrapping.UseVisualStyleBackColor = true;
+            this.btnTimeOneMillionWithWrapping.Click += new System.EventHandler(this.btnTimeOneMillionWithWrapping_Click);
             // 
-            // button14
+            // btnTimeOneMillionWithoutWrapping
             // 
-            this.button14.Location = new System.Drawing.Point(13, 474);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(247, 23);
-            this.button14.TabIndex = 16;
-            this.button14.Text = "Time to log 1 Million messages without wrapping";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
+            this.btnTimeOneMillionWithoutWrapping.Location = new System.Drawing.Point(13, 242);
+            this.btnTimeOneMillionWithoutWrapping.Name = "btnTimeOneMillionWithoutWrapping";
+            this.btnTimeOneMillionWithoutWrapping.Size = new System.Drawing.Size(292, 23);
+            this.btnTimeOneMillionWithoutWrapping.TabIndex = 16;
+            this.btnTimeOneMillionWithoutWrapping.Text = "Time to log 1 Million messages without wrapping";
+            this.btnTimeOneMillionWithoutWrapping.UseVisualStyleBackColor = true;
+            this.btnTimeOneMillionWithoutWrapping.Click += new System.EventHandler(this.btnTimeOneMillionWithoutWrapping_Click);
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(12, 503);
+            this.button15.Location = new System.Drawing.Point(161, 184);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(145, 23);
             this.button15.TabIndex = 17;
@@ -315,6 +319,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkUseKb);
+            this.groupBox1.Controls.Add(this.use00Chk);
             this.groupBox1.Controls.Add(this.exceedMaxMbRad);
             this.groupBox1.Controls.Add(this.textFileChk);
             this.groupBox1.Controls.Add(this.circularStartSizeBox);
@@ -329,12 +335,32 @@
             this.groupBox1.Controls.Add(this.circularWrapsRad);
             this.groupBox1.Controls.Add(this.noCircularRad);
             this.groupBox1.Controls.Add(this.noWrapRad);
-            this.groupBox1.Location = new System.Drawing.Point(12, 532);
+            this.groupBox1.Location = new System.Drawing.Point(13, 329);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(311, 203);
+            this.groupBox1.Size = new System.Drawing.Size(321, 203);
             this.groupBox1.TabIndex = 26;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Appending";
+            // 
+            // chkUseKb
+            // 
+            this.chkUseKb.AutoSize = true;
+            this.chkUseKb.Location = new System.Drawing.Point(197, 137);
+            this.chkUseKb.Name = "chkUseKb";
+            this.chkUseKb.Size = new System.Drawing.Size(102, 17);
+            this.chkUseKb.TabIndex = 35;
+            this.chkUseKb.Text = "Use Kb for sizes";
+            this.chkUseKb.UseVisualStyleBackColor = true;
+            // 
+            // use00Chk
+            // 
+            this.use00Chk.AutoSize = true;
+            this.use00Chk.Location = new System.Drawing.Point(148, 48);
+            this.use00Chk.Name = "use00Chk";
+            this.use00Chk.Size = new System.Drawing.Size(111, 17);
+            this.use00Chk.TabIndex = 34;
+            this.use00Chk.Text = "Use _00 file name";
+            this.use00Chk.UseVisualStyleBackColor = true;
             // 
             // exceedMaxMbRad
             // 
@@ -410,7 +436,7 @@
             // 
             // textWriterTraceListenerBtn
             // 
-            this.textWriterTraceListenerBtn.Location = new System.Drawing.Point(12, 741);
+            this.textWriterTraceListenerBtn.Location = new System.Drawing.Point(161, 538);
             this.textWriterTraceListenerBtn.Name = "textWriterTraceListenerBtn";
             this.textWriterTraceListenerBtn.Size = new System.Drawing.Size(144, 23);
             this.textWriterTraceListenerBtn.TabIndex = 27;
@@ -420,7 +446,7 @@
             // 
             // readConfigBtn
             // 
-            this.readConfigBtn.Location = new System.Drawing.Point(13, 770);
+            this.readConfigBtn.Location = new System.Drawing.Point(13, 538);
             this.readConfigBtn.Name = "readConfigBtn";
             this.readConfigBtn.Size = new System.Drawing.Size(144, 23);
             this.readConfigBtn.TabIndex = 28;
@@ -428,18 +454,150 @@
             this.readConfigBtn.UseVisualStyleBackColor = true;
             this.readConfigBtn.Click += new System.EventHandler(this.readConfigBtn_Click);
             // 
+            // button16
+            // 
+            this.button16.Location = new System.Drawing.Point(13, 567);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(144, 23);
+            this.button16.TabIndex = 30;
+            this.button16.Text = "Log to All Destinations";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(6, 55);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(306, 20);
+            this.textBox1.TabIndex = 31;
+            // 
+            // button17
+            // 
+            this.button17.Location = new System.Drawing.Point(7, 26);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(64, 23);
+            this.button17.TabIndex = 32;
+            this.button17.Text = "Open File:";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(77, 26);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(64, 23);
+            this.button18.TabIndex = 33;
+            this.button18.Text = "Close File";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.button18);
+            this.groupBox2.Controls.Add(this.button17);
+            this.groupBox2.Location = new System.Drawing.Point(12, 596);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(318, 81);
+            this.groupBox2.TabIndex = 34;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Viewer Control";
+            // 
+            // changingThreadNameBtn
+            // 
+            this.changingThreadNameBtn.Location = new System.Drawing.Point(161, 567);
+            this.changingThreadNameBtn.Name = "changingThreadNameBtn";
+            this.changingThreadNameBtn.Size = new System.Drawing.Size(144, 23);
+            this.changingThreadNameBtn.TabIndex = 35;
+            this.changingThreadNameBtn.Text = "Changing Thread Name";
+            this.changingThreadNameBtn.UseVisualStyleBackColor = true;
+            this.changingThreadNameBtn.Click += new System.EventHandler(this.changingThreadNameBtn_Click);
+            // 
+            // btnCrossAppDomains
+            // 
+            this.btnCrossAppDomains.Location = new System.Drawing.Point(164, 683);
+            this.btnCrossAppDomains.Name = "btnCrossAppDomains";
+            this.btnCrossAppDomains.Size = new System.Drawing.Size(145, 23);
+            this.btnCrossAppDomains.TabIndex = 36;
+            this.btnCrossAppDomains.Text = "Cross App Domains";
+            this.btnCrossAppDomains.UseVisualStyleBackColor = true;
+            this.btnCrossAppDomains.Click += new System.EventHandler(this.btnCrossAppDomains_Click);
+            // 
+            // btnReopenNoncircular
+            // 
+            this.btnReopenNoncircular.Location = new System.Drawing.Point(13, 683);
+            this.btnReopenNoncircular.Name = "btnReopenNoncircular";
+            this.btnReopenNoncircular.Size = new System.Drawing.Size(145, 23);
+            this.btnReopenNoncircular.TabIndex = 37;
+            this.btnReopenNoncircular.Text = "Reopen Non-Circular";
+            this.btnReopenNoncircular.UseVisualStyleBackColor = true;
+            this.btnReopenNoncircular.Click += new System.EventHandler(this.btnReopenNoncircular_Click);
+            // 
+            // btnReopenCircular
+            // 
+            this.btnReopenCircular.Location = new System.Drawing.Point(12, 712);
+            this.btnReopenCircular.Name = "btnReopenCircular";
+            this.btnReopenCircular.Size = new System.Drawing.Size(145, 23);
+            this.btnReopenCircular.TabIndex = 38;
+            this.btnReopenCircular.Text = "Reopen Circular";
+            this.btnReopenCircular.UseVisualStyleBackColor = true;
+            this.btnReopenCircular.Click += new System.EventHandler(this.btnReopenCircular_Click);
+            // 
+            // viewerWrapper1
+            // 
+            this.viewerWrapper1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewerWrapper1.AutoScroll = true;
+            this.viewerWrapper1.AutoScrollMinSize = new System.Drawing.Size(100, 150);
+            this.viewerWrapper1.BackColor = System.Drawing.Color.Bisque;
+            this.viewerWrapper1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.viewerWrapper1.Location = new System.Drawing.Point(339, 0);
+            this.viewerWrapper1.Name = "viewerWrapper1";
+            this.viewerWrapper1.Size = new System.Drawing.Size(676, 801);
+            this.viewerWrapper1.TabIndex = 29;
+            // 
+            // btnAutoReopen
+            // 
+            this.btnAutoReopen.Location = new System.Drawing.Point(164, 712);
+            this.btnAutoReopen.Name = "btnAutoReopen";
+            this.btnAutoReopen.Size = new System.Drawing.Size(145, 23);
+            this.btnAutoReopen.TabIndex = 39;
+            this.btnAutoReopen.Text = "Auto Reopen";
+            this.btnAutoReopen.UseVisualStyleBackColor = true;
+            this.btnAutoReopen.Click += new System.EventHandler(this.btnAutoReopen_Click);
+            // 
+            // btnEventHandler
+            // 
+            this.btnEventHandler.Location = new System.Drawing.Point(12, 741);
+            this.btnEventHandler.Name = "btnEventHandler";
+            this.btnEventHandler.Size = new System.Drawing.Size(145, 23);
+            this.btnEventHandler.TabIndex = 40;
+            this.btnEventHandler.Text = "EventHandler Dest";
+            this.btnEventHandler.UseVisualStyleBackColor = true;
+            this.btnEventHandler.Click += new System.EventHandler(this.btnEventHandler_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 827);
+            this.ClientSize = new System.Drawing.Size(1015, 801);
+            this.Controls.Add(this.btnEventHandler);
+            this.Controls.Add(this.btnAutoReopen);
+            this.Controls.Add(this.btnReopenCircular);
+            this.Controls.Add(this.btnReopenNoncircular);
+            this.Controls.Add(this.btnCrossAppDomains);
+            this.Controls.Add(this.changingThreadNameBtn);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.button16);
+            this.Controls.Add(this.viewerWrapper1);
             this.Controls.Add(this.readConfigBtn);
             this.Controls.Add(this.textWriterTraceListenerBtn);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button15);
-            this.Controls.Add(this.button14);
-            this.Controls.Add(this.button13);
+            this.Controls.Add(this.btnTimeOneMillionWithoutWrapping);
+            this.Controls.Add(this.btnTimeOneMillionWithWrapping);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
@@ -453,12 +611,13 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.oneLineBtn);
-            this.Controls.Add(this.viewerBtn);
             this.Controls.Add(this.emptyBtn);
             this.Name = "Form1";
             this.Text = "TracerX Test App";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -467,7 +626,6 @@
         #endregion
 
         private System.Windows.Forms.Button emptyBtn;
-        private System.Windows.Forms.Button viewerBtn;
         private System.Windows.Forms.Button oneLineBtn;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
@@ -481,8 +639,8 @@
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button13;
-        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.Button btnTimeOneMillionWithWrapping;
+        private System.Windows.Forms.Button btnTimeOneMillionWithoutWrapping;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button createAppendBtn;
         private System.Windows.Forms.Button appendToFileBtn;
@@ -502,6 +660,20 @@
         private System.Windows.Forms.CheckBox textFileChk;
         private System.Windows.Forms.RadioButton exceedMaxMbRad;
         private System.Windows.Forms.Button readConfigBtn;
+        private ViewerWrapper viewerWrapper1;
+        private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Button button18;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox use00Chk;
+        private System.Windows.Forms.Button changingThreadNameBtn;
+        private System.Windows.Forms.Button btnCrossAppDomains;
+        private System.Windows.Forms.Button btnReopenNoncircular;
+        private System.Windows.Forms.Button btnReopenCircular;
+        private System.Windows.Forms.Button btnAutoReopen;
+        private System.Windows.Forms.CheckBox chkUseKb;
+        private System.Windows.Forms.Button btnEventHandler;
     }
 }
 

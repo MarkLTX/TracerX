@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using TracerX.Properties;
 
 namespace TracerX.Viewer {
-    public partial class FilterDialog : Form {
+    internal partial class FilterDialog : Form {
         private MainForm _mainForm = MainForm.TheMainForm;
         private ColumnHeader _clickedHeader;
         private bool _suppressEvents = true;
@@ -72,7 +72,34 @@ namespace TracerX.Viewer {
             if (_suppressEvents) return;
             ok.Enabled = true;
             apply.Enabled = true;
+
+            IndicateTabFilter(sessionPage, sessionListView);
+            IndicateTabFilter(loggerPage, loggerListView);
+            IndicateTabFilter(methodPage, methodListView);
+            IndicateTabFilter(threadNamePage, threadNameListView);
+            IndicateTabFilter(threadIdPage, threadIdListView);
         }
+
+        private void IndicateTabFilter(TabPage page, ListView listView)
+        {
+            bool isFiltered = listView.CheckedItems.Count != listView.Items.Count;
+
+            if (page.Text[0] == '*')
+            {
+                if (!isFiltered)
+                {
+                    page.Text = page.Text.Trim('*');
+                }
+            }
+            else
+            {
+                if (isFiltered)
+                {
+                    page.Text = "*" + page.Text;
+                }
+            }
+        }
+
 
         // For some reason, the AnyListView_ItemChecked event occurs when switching
         // between tabs that have ListViews.  Use the Selecting and SelectedIndexChanged
@@ -110,11 +137,31 @@ namespace TracerX.Viewer {
             int index = 0;
             traceLevelListBox.Items.Clear();
             foreach (TraceLevel level in Enum.GetValues(typeof(TraceLevel))) {
-                if (level != TraceLevel.Inherited && (level & _mainForm.ValidTraceLevels) == level) {
-                    traceLevelListBox.Items.Add(level);                                                
-                    traceLevelListBox.SetItemChecked(index, (level & _mainForm.VisibleTraceLevels) == level);
+                if (level != TraceLevel.Inherited && (level & _mainForm.ValidTraceLevels) != 0) {
+                    traceLevelListBox.Items.Add(level);
+                    traceLevelListBox.SetItemChecked(index, (level & _mainForm.VisibleTraceLevels) != 0);
                     ++index;
                 } 
+            }
+
+            IndicateTraceLevelFilter(_mainForm.ValidTraceLevels != _mainForm.VisibleTraceLevels);
+        }
+
+        private void IndicateTraceLevelFilter(bool isFiltered)
+        {
+            if (traceLevelPage.Text[0] == '*')
+            {
+                if (!isFiltered)
+                {
+                    traceLevelPage.Text = traceLevelPage.Text.Trim('*');
+                }
+            }
+            else
+            {
+                if (isFiltered)
+                {
+                    traceLevelPage.Text = "*" + traceLevelPage.Text;
+                }
             }
         }
 
@@ -134,6 +181,19 @@ namespace TracerX.Viewer {
             //ok.Enabled = e.NewValue == CheckState.Checked || traceLevelListBox.CheckedItems.Count > 1;
             apply.Enabled = true;
             ok.Enabled = true;
+
+            int checkedCount = traceLevelListBox.CheckedItems.Count;
+
+            if (e.NewValue == CheckState.Checked)
+            {
+                ++checkedCount;
+            }
+            else
+            {
+                --checkedCount;
+            }
+
+            IndicateTraceLevelFilter(checkedCount != traceLevelListBox.Items.Count);
         }
 
         private void selectAllTraceLevels_Click(object sender, EventArgs e) {
@@ -177,6 +237,7 @@ namespace TracerX.Viewer {
 
             sessionCheckCol.Width = -1;
             sessionListView.EndUpdate();
+            IndicateTabFilter(sessionPage, sessionListView);
         }
 
         private void ApplySessionSelection() {
@@ -223,7 +284,7 @@ namespace TracerX.Viewer {
                 _sessionSorter = new ListViewItemSorter(sessionListView);
             }
 
-            _sessionSorter.Sort(e);
+            _sessionSorter.Sort(e.Column);
             _suppressEvents = false;
         }
         #endregion Sessions
@@ -248,6 +309,7 @@ namespace TracerX.Viewer {
             threadCheckCol.Width = -1;
             //threadIdCol.Width = -1;
             threadIdListView.EndUpdate();
+            IndicateTabFilter(threadIdPage, threadIdListView);
         }
 
         private void ApplyThreadIdSelection() {
@@ -294,7 +356,7 @@ namespace TracerX.Viewer {
                 _threadIdSorter = new ListViewItemSorter(threadIdListView);
             }
 
-            _threadIdSorter.Sort(e);
+            _threadIdSorter.Sort(e.Column);
             _suppressEvents = false;
         }
         #endregion Thread Ids
@@ -316,9 +378,9 @@ namespace TracerX.Viewer {
             }
 
             threadNameCheckCol.Width = -1;
-            //threadNameNameCol.Width = -1;
-            
+            //threadNameNameCol.Width = -1;            
             threadNameListView.EndUpdate();
+            IndicateTabFilter(threadNamePage, threadNameListView);
         }
 
         private void ApplyThreadNameSelection() {
@@ -354,7 +416,7 @@ namespace TracerX.Viewer {
                 threadNameCheckCol.Tag = _checkComparer;
             }
 
-            _threadNameSorter.Sort(e);
+            _threadNameSorter.Sort(e.Column);
             _suppressEvents = false;
         }
         #endregion Thread Names
@@ -370,6 +432,9 @@ namespace TracerX.Viewer {
                     this.loggerListView.Items.Add(item);
                 }
             }
+
+            SortLoggers(loggerNameCol.Index);
+            IndicateTabFilter(loggerPage, loggerListView);
         }
 
         private void checkAllLoggers_Click(object sender, EventArgs e) {
@@ -398,16 +463,21 @@ namespace TracerX.Viewer {
         }
 
         private void loggerListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+            SortLoggers(e.Column);
+        }
+
+        private void SortLoggers(int colIndex)
+        {
             _suppressEvents = true;
             // Create the sorter object the first time it is required.
-            if (_loggerSorter == null) {
+            if (_loggerSorter == null)
+            {
                 loggerCheckCol.Tag = _checkComparer;
                 _loggerSorter = new ListViewItemSorter(loggerListView);
             }
 
-            _loggerSorter.Sort(e);
+            _loggerSorter.Sort(colIndex);
             _suppressEvents = false;
-
         }
 
         #endregion Loggers
@@ -425,6 +495,8 @@ namespace TracerX.Viewer {
 
                 calledMethodsChk.Checked = Settings.Default.ShowCalledMethods;
             }
+
+            IndicateTabFilter(methodPage, methodListView);
         }
 
         private void checkAllMethodss_Click(object sender, EventArgs e) {
@@ -462,7 +534,7 @@ namespace TracerX.Viewer {
                 _methodSorter = new ListViewItemSorter(methodListView);
             }
 
-            _methodSorter.Sort(e);
+            _methodSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -533,7 +605,8 @@ namespace TracerX.Viewer {
             chkCase.Checked = _caseChecked;
             radWildcard.Checked = _wildChecked;            
             radRegex.Checked = _regexChecked;
-            //TODO: radNormal.Checked:
+
+            //if (TextFilterOn) textPage.Text = "*" + textPage.Text;
         }
 
         // Set the static properties based on the controls.
@@ -582,6 +655,13 @@ namespace TracerX.Viewer {
             
             ok.Enabled = true;
             apply.Enabled = true;
+
+            textPage.Text = textPage.Text.Trim('*');
+
+            if (chkContain.Checked || chkDoesNotContain.Checked)
+            {
+                textPage.Text = "*" + textPage.Text;
+            }
         }
 
         private void Text_FilterTextChanged(object sender, EventArgs e) {

@@ -76,6 +76,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ViewerWrapper.resx">
+      <DependentUpon>ViewerWrapper.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -89,11 +93,21 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ViewerWrapper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ViewerWrapper.Designer.cs">
+      <DependentUpon>ViewerWrapper.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
       <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
       <Name>TracerX-Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TracerX-Viewer\TracerX-Viewer.csproj">
+      <Project>{E301635B-84D6-4A08-9856-B7D5C0BCD918}</Project>
+      <Name>TracerX-Viewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -107,4 +121,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

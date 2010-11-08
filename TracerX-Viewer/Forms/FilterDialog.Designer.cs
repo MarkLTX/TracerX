@@ -29,6 +29,13 @@ namespace TracerX.Viewer {
             this.clearAllTraceLevels = new System.Windows.Forms.Button();
             this.selectAllTraceLevels = new System.Windows.Forms.Button();
             this.traceLevelListBox = new System.Windows.Forms.CheckedListBox();
+            this.sessionPage = new System.Windows.Forms.TabPage();
+            this.invertSessions = new System.Windows.Forms.Button();
+            this.uncheckAllSessions = new System.Windows.Forms.Button();
+            this.checkAllSessions = new System.Windows.Forms.Button();
+            this.sessionListView = new System.Windows.Forms.ListView();
+            this.sessionCheckCol = new System.Windows.Forms.ColumnHeader();
+            this.sessionCol = new System.Windows.Forms.ColumnHeader();
             this.loggerPage = new System.Windows.Forms.TabPage();
             this.invertLoggers = new System.Windows.Forms.Button();
             this.uncheckAllLoggers = new System.Windows.Forms.Button();
@@ -71,21 +78,14 @@ namespace TracerX.Viewer {
             this.ok = new System.Windows.Forms.Button();
             this.apply = new System.Windows.Forms.Button();
             this.close = new System.Windows.Forms.Button();
-            this.sessionPage = new System.Windows.Forms.TabPage();
-            this.invertSessions = new System.Windows.Forms.Button();
-            this.uncheckAllSessions = new System.Windows.Forms.Button();
-            this.checkAllSessions = new System.Windows.Forms.Button();
-            this.sessionListView = new System.Windows.Forms.ListView();
-            this.sessionCheckCol = new System.Windows.Forms.ColumnHeader();
-            this.sessionCol = new System.Windows.Forms.ColumnHeader();
             this.tabControl1.SuspendLayout();
             this.traceLevelPage.SuspendLayout();
+            this.sessionPage.SuspendLayout();
             this.loggerPage.SuspendLayout();
             this.methodPage.SuspendLayout();
             this.threadNamePage.SuspendLayout();
             this.threadIdPage.SuspendLayout();
             this.textPage.SuspendLayout();
-            this.sessionPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -103,7 +103,7 @@ namespace TracerX.Viewer {
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(437, 202);
+            this.tabControl1.Size = new System.Drawing.Size(473, 202);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
@@ -114,6 +114,7 @@ namespace TracerX.Viewer {
             this.traceLevelPage.Controls.Add(this.clearAllTraceLevels);
             this.traceLevelPage.Controls.Add(this.selectAllTraceLevels);
             this.traceLevelPage.Controls.Add(this.traceLevelListBox);
+            this.traceLevelPage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.traceLevelPage.Location = new System.Drawing.Point(4, 22);
             this.traceLevelPage.Name = "traceLevelPage";
             this.traceLevelPage.Padding = new System.Windows.Forms.Padding(3);
@@ -169,6 +170,83 @@ namespace TracerX.Viewer {
             this.traceLevelListBox.TabIndex = 1;
             this.traceLevelListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.traceLevelListBox_ItemCheck);
             this.traceLevelListBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.traceLevelListBox_Format);
+            // 
+            // sessionPage
+            // 
+            this.sessionPage.Controls.Add(this.invertSessions);
+            this.sessionPage.Controls.Add(this.uncheckAllSessions);
+            this.sessionPage.Controls.Add(this.checkAllSessions);
+            this.sessionPage.Controls.Add(this.sessionListView);
+            this.sessionPage.Location = new System.Drawing.Point(4, 22);
+            this.sessionPage.Name = "sessionPage";
+            this.sessionPage.Padding = new System.Windows.Forms.Padding(3);
+            this.sessionPage.Size = new System.Drawing.Size(429, 176);
+            this.sessionPage.TabIndex = 7;
+            this.sessionPage.Text = "Sessions";
+            this.sessionPage.UseVisualStyleBackColor = true;
+            // 
+            // invertSessions
+            // 
+            this.invertSessions.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.invertSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.invertSessions.Location = new System.Drawing.Point(346, 64);
+            this.invertSessions.Name = "invertSessions";
+            this.invertSessions.Size = new System.Drawing.Size(75, 23);
+            this.invertSessions.TabIndex = 7;
+            this.invertSessions.Text = "Invert";
+            this.invertSessions.UseVisualStyleBackColor = true;
+            this.invertSessions.Click += new System.EventHandler(this.invertSessions_Click);
+            // 
+            // uncheckAllSessions
+            // 
+            this.uncheckAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.uncheckAllSessions.Location = new System.Drawing.Point(346, 35);
+            this.uncheckAllSessions.Name = "uncheckAllSessions";
+            this.uncheckAllSessions.Size = new System.Drawing.Size(75, 23);
+            this.uncheckAllSessions.TabIndex = 6;
+            this.uncheckAllSessions.Text = "Uncheck All";
+            this.uncheckAllSessions.UseVisualStyleBackColor = true;
+            this.uncheckAllSessions.Click += new System.EventHandler(this.uncheckAllSessionss_Click);
+            // 
+            // checkAllSessions
+            // 
+            this.checkAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkAllSessions.Location = new System.Drawing.Point(346, 6);
+            this.checkAllSessions.Name = "checkAllSessions";
+            this.checkAllSessions.Size = new System.Drawing.Size(75, 23);
+            this.checkAllSessions.TabIndex = 5;
+            this.checkAllSessions.Text = "Check All";
+            this.checkAllSessions.UseVisualStyleBackColor = true;
+            this.checkAllSessions.Click += new System.EventHandler(this.checkAllSessions_Click);
+            // 
+            // sessionListView
+            // 
+            this.sessionListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.sessionListView.CheckBoxes = true;
+            this.sessionListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.sessionCheckCol,
+            this.sessionCol});
+            this.sessionListView.FullRowSelect = true;
+            this.sessionListView.Location = new System.Drawing.Point(3, 3);
+            this.sessionListView.Name = "sessionListView";
+            this.sessionListView.Size = new System.Drawing.Size(337, 167);
+            this.sessionListView.TabIndex = 0;
+            this.sessionListView.UseCompatibleStateImageBehavior = false;
+            this.sessionListView.View = System.Windows.Forms.View.Details;
+            this.sessionListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.AnyListView_ItemChecked);
+            this.sessionListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.sessionListView_ColumnClick);
+            // 
+            // sessionCheckCol
+            // 
+            this.sessionCheckCol.Text = "";
+            this.sessionCheckCol.Width = 24;
+            // 
+            // sessionCol
+            // 
+            this.sessionCol.Text = "Session";
+            this.sessionCol.Width = 63;
             // 
             // loggerPage
             // 
@@ -417,7 +495,7 @@ namespace TracerX.Viewer {
             this.threadIdPage.Location = new System.Drawing.Point(4, 22);
             this.threadIdPage.Name = "threadIdPage";
             this.threadIdPage.Padding = new System.Windows.Forms.Padding(3);
-            this.threadIdPage.Size = new System.Drawing.Size(429, 176);
+            this.threadIdPage.Size = new System.Drawing.Size(465, 176);
             this.threadIdPage.TabIndex = 1;
             this.threadIdPage.Text = "Thread IDs";
             this.threadIdPage.UseVisualStyleBackColor = true;
@@ -426,7 +504,7 @@ namespace TracerX.Viewer {
             // 
             this.invertThreadIds.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.invertThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertThreadIds.Location = new System.Drawing.Point(346, 64);
+            this.invertThreadIds.Location = new System.Drawing.Point(382, 64);
             this.invertThreadIds.Name = "invertThreadIds";
             this.invertThreadIds.Size = new System.Drawing.Size(75, 23);
             this.invertThreadIds.TabIndex = 7;
@@ -437,7 +515,7 @@ namespace TracerX.Viewer {
             // uncheckAllThreadIds
             // 
             this.uncheckAllThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uncheckAllThreadIds.Location = new System.Drawing.Point(346, 35);
+            this.uncheckAllThreadIds.Location = new System.Drawing.Point(382, 35);
             this.uncheckAllThreadIds.Name = "uncheckAllThreadIds";
             this.uncheckAllThreadIds.Size = new System.Drawing.Size(75, 23);
             this.uncheckAllThreadIds.TabIndex = 6;
@@ -448,7 +526,7 @@ namespace TracerX.Viewer {
             // checkAllThreadIds
             // 
             this.checkAllThreadIds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkAllThreadIds.Location = new System.Drawing.Point(346, 6);
+            this.checkAllThreadIds.Location = new System.Drawing.Point(382, 6);
             this.checkAllThreadIds.Name = "checkAllThreadIds";
             this.checkAllThreadIds.Size = new System.Drawing.Size(75, 23);
             this.checkAllThreadIds.TabIndex = 5;
@@ -468,7 +546,7 @@ namespace TracerX.Viewer {
             this.threadIdListView.FullRowSelect = true;
             this.threadIdListView.Location = new System.Drawing.Point(3, 3);
             this.threadIdListView.Name = "threadIdListView";
-            this.threadIdListView.Size = new System.Drawing.Size(337, 167);
+            this.threadIdListView.Size = new System.Drawing.Size(373, 167);
             this.threadIdListView.TabIndex = 0;
             this.threadIdListView.UseCompatibleStateImageBehavior = false;
             this.threadIdListView.View = System.Windows.Forms.View.Details;
@@ -607,7 +685,7 @@ namespace TracerX.Viewer {
             this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.ok.Enabled = false;
-            this.ok.Location = new System.Drawing.Point(188, 212);
+            this.ok.Location = new System.Drawing.Point(224, 212);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 1;
@@ -619,7 +697,7 @@ namespace TracerX.Viewer {
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.Enabled = false;
-            this.apply.Location = new System.Drawing.Point(269, 212);
+            this.apply.Location = new System.Drawing.Point(305, 212);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 2;
@@ -631,95 +709,18 @@ namespace TracerX.Viewer {
             // 
             this.close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.close.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.close.Location = new System.Drawing.Point(350, 212);
+            this.close.Location = new System.Drawing.Point(386, 212);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 3;
             this.close.Text = "Cancel";
             this.close.UseVisualStyleBackColor = true;
             // 
-            // sessionPage
-            // 
-            this.sessionPage.Controls.Add(this.invertSessions);
-            this.sessionPage.Controls.Add(this.uncheckAllSessions);
-            this.sessionPage.Controls.Add(this.checkAllSessions);
-            this.sessionPage.Controls.Add(this.sessionListView);
-            this.sessionPage.Location = new System.Drawing.Point(4, 22);
-            this.sessionPage.Name = "sessionPage";
-            this.sessionPage.Padding = new System.Windows.Forms.Padding(3);
-            this.sessionPage.Size = new System.Drawing.Size(429, 176);
-            this.sessionPage.TabIndex = 7;
-            this.sessionPage.Text = "Sessions";
-            this.sessionPage.UseVisualStyleBackColor = true;
-            // 
-            // invertSessions
-            // 
-            this.invertSessions.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.invertSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.invertSessions.Location = new System.Drawing.Point(346, 64);
-            this.invertSessions.Name = "invertSessions";
-            this.invertSessions.Size = new System.Drawing.Size(75, 23);
-            this.invertSessions.TabIndex = 7;
-            this.invertSessions.Text = "Invert";
-            this.invertSessions.UseVisualStyleBackColor = true;
-            this.invertSessions.Click += new System.EventHandler(this.invertSessions_Click);
-            // 
-            // uncheckAllSessions
-            // 
-            this.uncheckAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uncheckAllSessions.Location = new System.Drawing.Point(346, 35);
-            this.uncheckAllSessions.Name = "uncheckAllSessions";
-            this.uncheckAllSessions.Size = new System.Drawing.Size(75, 23);
-            this.uncheckAllSessions.TabIndex = 6;
-            this.uncheckAllSessions.Text = "Uncheck All";
-            this.uncheckAllSessions.UseVisualStyleBackColor = true;
-            this.uncheckAllSessions.Click += new System.EventHandler(this.uncheckAllSessionss_Click);
-            // 
-            // checkAllSessions
-            // 
-            this.checkAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkAllSessions.Location = new System.Drawing.Point(346, 6);
-            this.checkAllSessions.Name = "checkAllSessions";
-            this.checkAllSessions.Size = new System.Drawing.Size(75, 23);
-            this.checkAllSessions.TabIndex = 5;
-            this.checkAllSessions.Text = "Check All";
-            this.checkAllSessions.UseVisualStyleBackColor = true;
-            this.checkAllSessions.Click += new System.EventHandler(this.checkAllSessions_Click);
-            // 
-            // sessionListView
-            // 
-            this.sessionListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.sessionListView.CheckBoxes = true;
-            this.sessionListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.sessionCheckCol,
-            this.sessionCol});
-            this.sessionListView.FullRowSelect = true;
-            this.sessionListView.Location = new System.Drawing.Point(3, 3);
-            this.sessionListView.Name = "sessionListView";
-            this.sessionListView.Size = new System.Drawing.Size(337, 167);
-            this.sessionListView.TabIndex = 0;
-            this.sessionListView.UseCompatibleStateImageBehavior = false;
-            this.sessionListView.View = System.Windows.Forms.View.Details;
-            this.sessionListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.AnyListView_ItemChecked);
-            this.sessionListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.sessionListView_ColumnClick);
-            // 
-            // sessionCheckCol
-            // 
-            this.sessionCheckCol.Text = "";
-            this.sessionCheckCol.Width = 24;
-            // 
-            // sessionCol
-            // 
-            this.sessionCol.Text = "Session";
-            this.sessionCol.Width = 63;
-            // 
             // FilterDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(437, 247);
+            this.ClientSize = new System.Drawing.Size(473, 247);
             this.Controls.Add(this.close);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.ok);
@@ -732,6 +733,7 @@ namespace TracerX.Viewer {
             this.Text = "TracerX Filters";
             this.tabControl1.ResumeLayout(false);
             this.traceLevelPage.ResumeLayout(false);
+            this.sessionPage.ResumeLayout(false);
             this.loggerPage.ResumeLayout(false);
             this.methodPage.ResumeLayout(false);
             this.methodPage.PerformLayout();
@@ -739,7 +741,6 @@ namespace TracerX.Viewer {
             this.threadIdPage.ResumeLayout(false);
             this.textPage.ResumeLayout(false);
             this.textPage.PerformLayout();
-            this.sessionPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

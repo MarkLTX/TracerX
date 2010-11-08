@@ -95,7 +95,7 @@ namespace TracerX.Viewer {
             // Stuff read from the preamble.
             public Guid FileGuid { get; private set; }
             public string LoggersAssemblyVersion { get; private set; }
-            public int MaxMb { get; private set; }
+            public int MaxKb { get; private set; }
             public DateTime CreationTimeUtc { get; private set; }
             public DateTime CreationTimeLoggersTZ { get; private set; }
             private bool IsDST;
@@ -200,19 +200,30 @@ namespace TracerX.Viewer {
                 if (_reader.FormatVersion >= 6) {
                 }
 
-                if (_reader.FormatVersion >= 3) {
+                if (_reader.FormatVersion >= 3)
+                {
                     // Logger version was added to the preamble in version 3.
                     LoggersAssemblyVersion = _fileReader.ReadString();
                 }
 
-                MaxMb = _fileReader.ReadInt32();
+                if (_reader.FormatVersion >= 7)
+                {
+                    MaxKb = _fileReader.ReadInt32();
+                }
+                else
+                {
+                    // Convert Mb to Kb.
+                    MaxKb = _fileReader.ReadInt32() << 10;
+                }
 
                 if (_reader.FormatVersion >= 6) {
                     // These were added in version 6.
                     _maxFilePos = _fileReader.ReadInt64();
                     FileGuid = new Guid(_fileReader.ReadBytes(16));
                 } else {
-                    _maxFilePos = MaxMb << 20;
+                    // Prior to file version 6, there was no "append" feature so the max size 
+                    // for the session was also the max size for the file.  
+                    _maxFilePos = MaxKb << 10;
                 }
 
                 ticks = _fileReader.ReadInt64();
@@ -256,7 +267,9 @@ namespace TracerX.Viewer {
 
                             if (_possibleNextSessionPos != 0) {
                                 if (_fileReader.BaseStream.Length > _possibleNextSessionPos + 2) {
-                                    if ((DataFlags)_fileReader.ReadInt16() == DataFlags.NewSession) {
+                                    _fileReader.BaseStream.Position = _possibleNextSessionPos;
+                                    DataFlags possibleSession = (DataFlags)_fileReader.ReadInt16();
+                                    if (possibleSession == DataFlags.NewSession) {
                                         _reader._nextSessionPos = _fileReader.BaseStream.Position;
                                         _possibleNextSessionPos = 0;
                                     } else {
@@ -762,11 +775,12 @@ namespace TracerX.Viewer {
 
             // Called when the file changes. This attempts to read more records from the file.
             // It may also generate entry/exit records in this.GeneratedRecords.
-            // This returns null if the viewer should stop trying.
-            public List<Record> ReadMoreRecords() {
+            // If this returns null, the viewer should stop trying.
+            // This stops reading after maxRecords are read or the end of the file/session is reached.
+            public List<Record> ReadMoreRecords(int maxRecords) {
                 List<Record> newRecords = null;
 
-                _reader.InternalOpen(_reader.FileName);
+                _reader.InternalOpen(_reader.CurrentFile);
 
                 if (_fileReader != null) {
                     // Start by verifying that the last we record we read is still there.
@@ -775,7 +789,7 @@ namespace TracerX.Viewer {
                         newRecords = new List<Record>();
                         Record record = ReadRecord();
 
-                        while (record != null) {
+                        while (record != null && newRecords.Count < maxRecords) {
                             newRecords.Add(record);
                             record = ReadRecord();
                         }
@@ -790,7 +804,6 @@ namespace TracerX.Viewer {
                 bool result = false;
                 ulong thisRecNum = LastRecordNum;
                 uint thisBlockNum = _lastBlockNum;
-
 
                 try {
                     if (_lastRecordPos == 0) {

@@ -12,12 +12,18 @@ namespace TracerX.Viewer {
         // The minimum and maximum file format versions supported
         // by the viewer/reader.
         private const int _minVersion = 2;
-        private const int _maxVersion = 6;
+        private const int _maxVersion = 7;
 
         public int FormatVersion { get; private set; }
 
-        // File name passed to Open()
-        public string FileName { get; private set; }
+        // File name passed to ctor (originalFile).
+        public string OriginalFile { get; private set; }
+
+        // File name passed to ctor (tempFile).
+        public string TempFile { get; private set; }
+
+        // Which file (OriginalFile or TempFile) to use.
+        public string CurrentFile;
 
         // File size in bytes.
         public long Size;
@@ -61,6 +67,15 @@ namespace TracerX.Viewer {
         // from the thread IDs of all previous sessions.
         private int _maxThreadIDFromPrevSession;
 
+        // If tempFile != originalFile, tempFile is a temporary copy of originalFile.
+        // When OpenLogFile is called, tempFile is opened.
+        public Reader(string originalFile, string tempFile)
+        {
+            OriginalFile = originalFile;
+            TempFile = tempFile;
+            CurrentFile = tempFile;
+        }
+
         public void ReuseFilters() {
             // Save off the old filter objects (thread IDs, thread names, methods, and loggers) and 
             // reuse any that are also found in the new file.  We don't reuse the session filter.
@@ -83,10 +98,8 @@ namespace TracerX.Viewer {
 
         // Open the file, read the format version and preamble.
         // Return false if an error occurs, such as encountering an unsupported file version.
-        public bool OpenLogFile(string filename) {
-            FileName = filename;
-
-            InternalOpen(FileName);
+        public bool OpenLogFile() {
+            InternalOpen(CurrentFile);
 
             if (_fileReader != null) {
                 try {
@@ -103,7 +116,7 @@ namespace TracerX.Viewer {
                         _nextSessionPos = _fileReader.BaseStream.Position;
                     }
                 } catch (Exception ex) {
-                    MessageBox.Show("Error reading log file '" + filename + "':\n\n" + ex.ToString());
+                    MessageBox.Show("Error reading log file '" + CurrentFile + "':\n\n" + ex.ToString());
                     _fileReader = null;
                 }
             }
@@ -140,7 +153,7 @@ namespace TracerX.Viewer {
                 var tempPos = _nextSessionPos;
                 _nextSessionPos = 0;
 
-                if (alreadyOpen || InternalOpen(FileName)) {
+                if (alreadyOpen || InternalOpen(CurrentFile)) {
                     try {
                         lock (SessionObjects.Lock) {
                             session = new Session(this);
@@ -159,7 +172,8 @@ namespace TracerX.Viewer {
                             CurrentSession.Name = SessionObjects.AllSessionObjects.Count.ToString();
                         }
                     } catch (Exception ex) {
-                        MessageBox.Show("Error opening log file session " + (SessionObjects.AllSessionObjects.Count + 1) + ":\n\n" + ex.ToString());
+                        string msg = string.Format("Error opening log file session {0}.  File '{1}' may be corrupt.\n\n {2}", (SessionObjects.AllSessionObjects.Count + 1), CurrentFile, ex.ToString());
+                        MessageBox.Show(msg, "TracerX-Viewer");
                         session = null;
                     }
 

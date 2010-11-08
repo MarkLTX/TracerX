@@ -25,13 +25,14 @@ using System.Collections;
 
 namespace TracerX {
     /// <summary>
-    /// This is the default object Renderer.  It currently has special formatting 
+    /// This is the default object Renderer.  
+    /// It renders most types by calling object.ToString().
+    /// However, it performs special formatting 
     /// for arrays, collections, and DictionaryEntry objects.  
-    /// Other types end up using object.ToString() unless they have their own renderer.
-    /// To create renderers
-    /// for other types, implement IObjectRenderer and add the new renderer class to RendererMap.
+    /// To create renderers for other types, implement IObjectRenderer 
+    /// and add the new renderer class to RendererMap.
     /// </summary>
-    public sealed class DefaultRenderer : IObjectRenderer {
+    internal sealed class DefaultRenderer : IObjectRenderer {
         #region Constructors
 
         /// <summary>
@@ -190,7 +191,6 @@ namespace TracerX {
         /// <summary>
         /// Render the array argument into a string
         /// </summary>
-        /// <param name="rendererMap">The map used to lookup renderers</param>
         /// <param name="array">the array to render</param>
         /// <param name="writer">The writer to render to</param>
         /// <remarks>
@@ -227,7 +227,6 @@ namespace TracerX {
         /// <summary>
         /// Render the enumerator argument into a string
         /// </summary>
-        /// <param name="rendererMap">The map used to lookup renderers</param>
         /// <param name="enumerator">the enumerator to render</param>
         /// <param name="writer">The writer to render to</param>
         /// <remarks>
@@ -256,7 +255,6 @@ namespace TracerX {
         /// <summary>
         /// Render the DictionaryEntry argument into a string
         /// </summary>
-        /// <param name="rendererMap">The map used to lookup renderers</param>
         /// <param name="entry">the DictionaryEntry to render</param>
         /// <param name="writer">The writer to render to</param>
         /// <remarks>

@@ -19,7 +19,7 @@ namespace TestApp {
     internal class DomainCallbacks {
 
         static DomainCallbacks() {
-            Logger.FileLogging.Directory = "%EXEDIR%";
+            Logger.BinaryFileLogging.Directory = "%EXEDIR%";
             Logger.TextFileLogging.Directory = "%EXEDIR%";
         }
 
@@ -34,30 +34,32 @@ namespace TestApp {
         public uint MaxSessionSizeMb;
         public uint MaxAppendableFileMb;
         public uint CircularStartKb;
+        public bool Use_00;
+        public bool UseKbForSize;
 
         public void LoadConfig() {
             Logger.Xml.Configure("..\\..\\TestAppConfig.xml");
         }
 
         public void Empty() {
-            Logger.FileLogging.Name = "Empty.tx1";
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
-            Logger.FileLogging.Open();
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Name = "Empty.tx1";
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.BinaryFileLogging.Open();
+            Logger.BinaryFileLogging.Close();
 
             Logger.TextFileLogging.Name = "Empty";
             Log.TextFileTraceLevel = TracerX.TraceLevel.Verbose;
             Logger.TextFileLogging.Open();
             Logger.TextFileLogging.Close();
 
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void OneLine() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "OneLine";
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "OneLine";
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.BinaryFileLogging.Open();
 
             Logger.TextFileLogging.Name = "OneLine";
             Log.TextFileTraceLevel = TracerX.TraceLevel.Verbose;
@@ -65,9 +67,9 @@ namespace TestApp {
 
             Log.Warn("One line from ", AppDomain.CurrentDomain.FriendlyName);
 
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Close();
             Logger.TextFileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void FiveThreadsNonCircular() {
@@ -76,11 +78,11 @@ namespace TestApp {
             semaphore = new Semaphore(0, 5);
 
 
-            Log.FileTraceLevel = TracerX.TraceLevel.Debug;
-            Logger.FileLogging.Name = "FiveThreadsNonCircular.tx1";
-            Logger.FileLogging.CircularStartDelaySeconds = 0;
-            Logger.FileLogging.CircularStartSizeKb = 0;
-            Logger.FileLogging.Open();
+            Log.BinaryFileTraceLevel = TracerX.TraceLevel.Debug;
+            Logger.BinaryFileLogging.Name = "FiveThreadsNonCircular.tx1";
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 0;
+            Logger.BinaryFileLogging.Open();
 
             Log.TextFileTraceLevel = TracerX.TraceLevel.Verbose;
             Logger.TextFileLogging.Name = "FiveThreadsNonCircular";
@@ -94,9 +96,9 @@ namespace TestApp {
 
             for (int i = 5; i > 0; --i) semaphore.WaitOne();
 
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Close();
             Logger.TextFileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void LogNLines(object name) {
@@ -114,19 +116,19 @@ namespace TestApp {
 
         public void StopAtCircular() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "StopAtCircular.tx1";
-            Logger.FileLogging.CircularStartSizeKb = 100;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "StopAtCircular.tx1";
+            Logger.BinaryFileLogging.CircularStartSizeKb = 100;
+            Logger.BinaryFileLogging.Open();
 
             Log.Info("Circular log should start at ", 100 * 1024, " bytes.");
 
-            while (!Logger.FileLogging.CircularStarted) {
-                Log.InfoFormat("File size is {0}", Logger.FileLogging.CurrentSize);
+            while (!Logger.BinaryFileLogging.CircularStarted) {
+                Log.InfoFormat("File size is {0}", Logger.BinaryFileLogging.CurrentSize);
             }
 
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Close();
             TextStopAtCircular();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void TextStopAtCircular() {
@@ -149,16 +151,16 @@ namespace TestApp {
             // When the circular log starts, this writes several large messages, each large enough
             // to wrap the file so the result is only one block in the circular area.
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "CircularWith1Block.tx1";
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.FileLogging.CircularStartSizeKb = 1000;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "CircularWith1Block.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 1000;
+            Logger.BinaryFileLogging.Open();
 
             Log.Info("Circular log should start at ", 1000 * 1024, " bytes.");
             Log.Info("There should be one message in the circular part, with some messages lost.");
 
-            while (!Logger.FileLogging.CircularStarted) {
-                Log.InfoFormat("File size is {0}", Logger.FileLogging.CurrentSize);
+            while (!Logger.BinaryFileLogging.CircularStarted) {
+                Log.InfoFormat("File size is {0}", Logger.BinaryFileLogging.CurrentSize);
             }
 
             string big = new string('a', 25000);
@@ -170,36 +172,36 @@ namespace TestApp {
             //big = new string('c', 25000);
             //Log.Info(big);
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void OneThreadWraps() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "OneThreadWraps.tx1";
-            Logger.FileLogging.MaxSizeMb = 2;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "OneThreadWraps.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 2;
+            Logger.BinaryFileLogging.Open();
 
-            while (!Logger.FileLogging.Wrapped) {
-                Log.InfoFormat("File size is {0}", Logger.FileLogging.CurrentSize);
+            while (!Logger.BinaryFileLogging.Wrapped) {
+                Log.InfoFormat("File size is {0}", Logger.BinaryFileLogging.CurrentSize);
             }
 
             for (int i = 0; i < 10000; ++i) {
                 Log.InfoFormat("i = {0}, i squared = {1}", i, i * i);
             }
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void FiveThreadsWrap() {
-            Log.FileTraceLevel = TracerX.TraceLevel.Debug;
-            Logger.FileLogging.Name = "FiveThreadsWrap.tx1";
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
-            Logger.FileLogging.MaxSizeMb = 2;
-            Logger.FileLogging.CircularStartDelaySeconds = 0;
-            Logger.FileLogging.CircularStartSizeKb = 250;
-            Logger.FileLogging.Open();
+            Log.BinaryFileTraceLevel = TracerX.TraceLevel.Debug;
+            Logger.BinaryFileLogging.Name = "FiveThreadsWrap.tx1";
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.BinaryFileLogging.MaxSizeMb = 2;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 250;
+            Logger.BinaryFileLogging.Open();
 
             iterations = 25000;
             pauseEvery = 100;
@@ -215,58 +217,58 @@ namespace TestApp {
 
             for (int i = 5; i > 0; --i) semaphore.WaitOne();
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void StartCircularByTime() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "StartCircularByTime.tx1";
-            Logger.FileLogging.MaxSizeMb = 20;
-            Logger.FileLogging.CircularStartDelaySeconds = 1;
-            Logger.FileLogging.CircularStartSizeKb = 2000;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "StartCircularByTime.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 20;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 1;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 2000;
+            Logger.BinaryFileLogging.Open();
 
-            Log.Info("CircularStartDelaySeconds = ", Logger.FileLogging.CircularStartDelaySeconds);
+            Log.Info("CircularStartDelaySeconds = ", Logger.BinaryFileLogging.CircularStartDelaySeconds);
 
-            while (!Logger.FileLogging.CircularStarted) {
-                Log.InfoFormat("File size is {0}", Logger.FileLogging.CurrentSize);
+            while (!Logger.BinaryFileLogging.CircularStarted) {
+                Log.InfoFormat("File size is {0}", Logger.BinaryFileLogging.CurrentSize);
                 Thread.Sleep(100);
             }
 
             Log.Info("Now in circular.");
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void MissingMethodEntry() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "MissingMethodEntry.tx1";
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.FileLogging.CircularStartDelaySeconds = 1;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "MissingMethodEntry.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 1;
+            Logger.BinaryFileLogging.Open();
 
             Log.Info("Sleeping long enough for circular to start.");
             Thread.Sleep(1100);
 
             using (Log.InfoCall("Tom")) {
-                while (!Logger.FileLogging.Wrapped) {
-                    Log.WarnFormat("File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+                while (!Logger.BinaryFileLogging.Wrapped) {
+                    Log.WarnFormat("File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
                 }
             }
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void MissingMethodExit() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "MissingMethodExit.tx1";
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.FileLogging.CircularStartDelaySeconds = 1;
+            Logger.BinaryFileLogging.Name = "MissingMethodExit.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 1;
             Logger.EventLogging.MaxInternalEventNumber = 10000;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Open();
 
             using (Log.InfoCall()) {
                 Log.Info("Sleeping long enough for circular to start.");
@@ -274,23 +276,23 @@ namespace TestApp {
                 Log.Info("About to exit Main.");
             }
 
-            while (!Logger.FileLogging.Wrapped) {
-                Log.WarnFormat("File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+            while (!Logger.BinaryFileLogging.Wrapped) {
+                Log.WarnFormat("File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
             }
 
-            Log.WarnFormat("First wrapped line: File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+            Log.WarnFormat("First wrapped line: File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
 
         public void MissingEntriesAndExits() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "MissingEntriesAndExits.tx1";
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.FileLogging.CircularStartDelaySeconds = 1;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "MissingEntriesAndExits.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 1;
+            Logger.BinaryFileLogging.Open();
 
             using (Log.InfoCall())
             using (Log.InfoCall("ShouldHaveMissingExit")) {
@@ -303,22 +305,22 @@ namespace TestApp {
             using (Log.InfoCall("ShouldHaveMissingEntry1"))
             using (Log.InfoCall("ShouldHaveMissingEntry2")) {
 
-                while (!Logger.FileLogging.Wrapped) {
-                    Log.WarnFormat("File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+                while (!Logger.BinaryFileLogging.Wrapped) {
+                    Log.WarnFormat("File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
                 }
 
-                Log.WarnFormat("First wrapped line: File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+                Log.WarnFormat("First wrapped line: File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
             }
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void AllUnicodeChars() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "AllUnicodeChars.tx1";
-            Log.FileTraceLevel = TracerX.TraceLevel.Verbose;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "AllUnicodeChars.tx1";
+            Log.BinaryFileTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.BinaryFileLogging.Open();
 
             Log.Info("This log contains ALL Unicode code points in the range 0 - 0x10FFFF.");
             Log.Info("This includes the invalid non-paired surrogates, which should render as '?',");
@@ -353,88 +355,118 @@ namespace TestApp {
                 stop += 16;
             }
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void MoreThanUintMaxLines() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "MoreThanUintMaxLines.tx1";
-            Logger.FileLogging.MaxSizeMb = 100;
-            Logger.FileLogging.CircularStartSizeKb = 1;
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Name = "MoreThanUintMaxLines.tx1";
+            Logger.BinaryFileLogging.MaxSizeMb = 100;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 1;
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.BinaryFileLogging.Open();
 
             for (long i = 1; i < (long)uint.MaxValue + 99; ++i) {
-                Log.WarnFormat("File size is {0}, position is {1}.", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition);
+                Log.WarnFormat("File size is {0}, position is {1}.", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition);
             }
 
-            Logger.FileLogging.Close();
-            MessageBox.Show("Generated " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Close();
+            MessageBox.Show("Generated " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
         }
 
         public void ControlledLogging() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "ControlledLogging";
-            Logger.FileLogging.CircularStartDelaySeconds = 0;
-            Logger.FileLogging.CircularStartSizeKb = 0;
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
-            Logger.FileLogging.Open();
-            MessageBox.Show("Opened " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Name = "ControlledLogging";
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 0;
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.BinaryFileLogging.Open();
+            MessageBox.Show("Opened " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
 
             var dlg = new ControlledLogging();
             dlg.ShowDialog();
 
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Close();
         }
 
-        public void Time1MillionWithWrapping() {
+        //public void Time1MillionWithWrapping() {
+        //    if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
+        //    Logger.BinaryFileLogging.Name = "Time1MillionWithWrapping";
+        //    Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+        //    Logger.BinaryFileLogging.CircularStartSizeKb = 1;
+        //    Logger.BinaryFileLogging.MaxSizeMb = 1;
+        //    Logger.BinaryFileLogging.Open();
+        //    MessageBox.Show("Opened " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
+
+        //    int i;
+        //    Stopwatch sw = new Stopwatch();
+        //    sw.Start();
+
+        //    for (i = 0; i < 1000000; ++i) {
+        //        Log.Info("i = ", i);
+        //    }
+
+        //    sw.Stop();
+        //    Log.Info("Elapased time for ", i.ToString("N0"), " messages = ", sw.Elapsed.TotalSeconds);
+        //    Logger.BinaryFileLogging.Close();
+
+        //    MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        //}
+
+        //public void Time1MillionWithOutWrapping() {
+        //    if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
+        //    Logger.BinaryFileLogging.Name = "Time1MillionWithOutWrapping";
+        //    Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+        //    Logger.BinaryFileLogging.CircularStartSizeKb = 0;
+        //    Logger.BinaryFileLogging.MaxSizeMb = 100;
+        //    Logger.BinaryFileLogging.Open();
+        //    MessageBox.Show("Opened " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
+
+        //    int i;
+        //    Stopwatch sw = new Stopwatch();
+        //    sw.Start();
+
+        //    for (i = 0; i < 1000000; ++i) {
+        //        Log.Info("i = ", i);
+        //    }
+
+        //    sw.Stop();
+        //    Log.Info("Elapased time for ", i.ToString("N0"), " messages = ", sw.Elapsed.TotalSeconds);
+        //    Logger.BinaryFileLogging.Close();
+
+        //    MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        //}
+
+        public void ThreadNames() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "Time1MillionWithWrapping";
-            Logger.FileLogging.CircularStartDelaySeconds = 0;
-            Logger.FileLogging.CircularStartSizeKb = 1;
-            Logger.FileLogging.MaxSizeMb = 1;
-            Logger.FileLogging.Open();
-            MessageBox.Show("Opened " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+            Logger.BinaryFileLogging.Name = "ThreadNames";
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 1;
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.BinaryFileLogging.Open();
+            MessageBox.Show("Opened " + Logger.BinaryFileLogging.FullPath);
 
-            int i;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            Log.Info("No thread name set.");
 
-            for (i = 0; i < 1000000; ++i) {
-                Log.Info("i = ", i);
-            }
-
-            sw.Stop();
-            Log.Info("Elapased time for ", i.ToString("N0"), " messages = ", sw.Elapsed.TotalSeconds);
-            Logger.FileLogging.Close();
-
-            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
-        }
-
-        public void Time1MillionWithOutWrapping() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "Time1MillionWithOutWrapping";
-            Logger.FileLogging.CircularStartDelaySeconds = 0;
-            Logger.FileLogging.CircularStartSizeKb = 0;
-            Logger.FileLogging.MaxSizeMb = 100;
-            Logger.FileLogging.Open();
-            MessageBox.Show("Opened " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
 
-            int i;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            Log.Info("Thread.CurrentThread.Name = \"Main\"");
 
-            for (i = 0; i < 1000000; ++i) {
-                Log.Info("i = ", i);
-            }
+            Logger.ThreadName = "Override";
 
-            sw.Stop();
-            Log.Info("Elapased time for ", i.ToString("N0"), " messages = ", sw.Elapsed.TotalSeconds);
-            Logger.FileLogging.Close();
+            Log.Info("Logger.ThreadName = \"Override\"");
 
-            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+            Logger.ThreadName = null;
+
+            Log.Info("Logger.ThreadName = null");
+
+            Logger.ThreadName = "Another";
+
+            Log.Info("Logger.ThreadName = \"Another\"");
+
+            Logger.BinaryFileLogging.Close();
         }
 
         private static string[] names = new string[] { "All", "Your", "Base", "Are", "Belong", "To", "Us" };
@@ -447,12 +479,12 @@ namespace TestApp {
             if (random == null) {
                 random = new Random();
                 if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-                Logger.FileLogging.Name = "RandomCalls";
-                Logger.FileLogging.CircularStartDelaySeconds = 0;
-                Logger.FileLogging.CircularStartSizeKb = 0;
-                Logger.FileLogging.MaxSizeMb = 1;
-                Logger.FileLogging.Open();
-                MessageBox.Show("Opened " + Path.Combine(Logger.FileLogging.Directory, Logger.FileLogging.Name));
+                Logger.BinaryFileLogging.Name = "RandomCalls";
+                Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+                Logger.BinaryFileLogging.CircularStartSizeKb = 0;
+                Logger.BinaryFileLogging.MaxSizeMb = 1;
+                Logger.BinaryFileLogging.Open();
+                MessageBox.Show("Opened " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
             }
 
             int ndx = random.Next(names.Length);
@@ -469,18 +501,21 @@ namespace TestApp {
 
         private void InitAppendTest() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.FileLogging.Name = "AppendToMe";
-            Logger.FileLogging.MaxSizeMb = MaxSessionSizeMb;
-            Logger.FileLogging.AppendIfSmallerThanMb = MaxAppendableFileMb;
+            Logger.BinaryFileLogging.Name = "AppendToMe";
+            Logger.BinaryFileLogging.MaxSizeMb = MaxSessionSizeMb;
+            Logger.BinaryFileLogging.AppendIfSmallerThanMb = MaxAppendableFileMb;
+            Logger.BinaryFileLogging.Use_00 = Use_00;
+            Logger.BinaryFileLogging.UseKbForSize = UseKbForSize;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
 
             if (AppendTestMode == AppendMode.ExceedMaxMb || AppendTestMode == AppendMode.NoCircular) {
-                Logger.FileLogging.CircularStartSizeKb = 0;
+                Logger.BinaryFileLogging.CircularStartSizeKb = 0;
             } else {
-                Logger.FileLogging.CircularStartSizeKb = CircularStartKb;
+                Logger.BinaryFileLogging.CircularStartSizeKb = CircularStartKb;
             }
 
-            Logger.Root.FileTraceLevel = TracerX.TraceLevel.Verbose;
-            Logger.StandardData.FileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.Root.BinaryFileTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
         }
 
         private void TextInitAppendTest() {
@@ -488,6 +523,7 @@ namespace TestApp {
             Logger.TextFileLogging.Name = "AppendToMe";
             Logger.TextFileLogging.MaxSizeMb = MaxSessionSizeMb;
             Logger.TextFileLogging.AppendIfSmallerThanMb = MaxAppendableFileMb;
+            Logger.TextFileLogging.Use_00 = Use_00;
 
             if (AppendTestMode == AppendMode.ExceedMaxMb || AppendTestMode == AppendMode.NoCircular) {
                 Logger.TextFileLogging.CircularStartSizeKb = 0;
@@ -502,9 +538,9 @@ namespace TestApp {
         // This creates a new AppendToMe.tx1 file for another logging session to append to.
         public void CreateFileForAppending() {
             InitAppendTest();
-            Logger.FileLogging.AppendIfSmallerThanMb = 0; // Always create new file.
+            Logger.BinaryFileLogging.AppendIfSmallerThanMb = 0; // Always create new file.
             LogToAppendFile();
-            MessageBox.Show("Created and closed " + Logger.FileLogging.FullPath);
+            MessageBox.Show("Created and closed " + Logger.BinaryFileLogging.FullPath);
         }
 
         // This creates a new AppendToMe.tx1 file for another logging session to append to.
@@ -516,46 +552,46 @@ namespace TestApp {
         }
 
         private void LogToAppendFile() {
-            Logger.FileLogging.Open();
+            Logger.BinaryFileLogging.Open();
 
             switch (AppendTestMode) {
                 case AppendMode.Empty:
                     break;
                 case AppendMode.NoCircular:
                     Log.Info("Should be only line in session, circular not started.");
-                    if (Logger.FileLogging.CircularStarted) {
+                    if (Logger.BinaryFileLogging.CircularStarted) {
                         Log.Info("OOPS! Circular log started somehow.");
                     }
                     break;
                 case AppendMode.CircularNoWrap:
-                    while (!Logger.FileLogging.CircularStarted) {
+                    while (!Logger.BinaryFileLogging.CircularStarted) {
                         Log.Debug("Logging till circular log starts at " + CircularStartKb + " Kb.");
                     }
 
-                    Log.Debug("CircularStarted = ", Logger.FileLogging.CircularStarted);
+                    Log.Debug("CircularStarted = ", Logger.BinaryFileLogging.CircularStarted);
                     break;
                 case AppendMode.CircularWrap:
-                    while (!Logger.FileLogging.Wrapped) {
+                    while (!Logger.BinaryFileLogging.Wrapped) {
                         Log.Debug("Logging till circular log wraps at " + MaxSessionSizeMb + " Mb.");
                     }
 
-                    Log.Debug("Wrapped = ", Logger.FileLogging.Wrapped);
+                    Log.Debug("Wrapped = ", Logger.BinaryFileLogging.Wrapped);
                     break;
                 case AppendMode.ExceedMaxMb:
                     long prevSize = -1;
-                    long curSize = Logger.FileLogging.CurrentSize;
+                    long curSize = Logger.BinaryFileLogging.CurrentSize;
 
                     while (prevSize < curSize) {
                         prevSize = curSize;
-                        Log.Info("Logging until file stops growing, current size is ", Logger.FileLogging.CurrentSize);
-                        curSize = Logger.FileLogging.CurrentSize;
+                        Log.Info("Logging until file stops growing, current size is ", Logger.BinaryFileLogging.CurrentSize);
+                        curSize = Logger.BinaryFileLogging.CurrentSize;
                     }
 
                     Log.Info("File size did not grow, probably closed.");
                     break;
             }
 
-            Logger.FileLogging.Close();
+            Logger.BinaryFileLogging.Close();
         }
 
         private void LogToAppendTextFile() {
@@ -607,7 +643,7 @@ namespace TestApp {
         public void AppendToFile() {
             InitAppendTest();
             LogToAppendFile();
-            MessageBox.Show("Finished logging to " + Logger.FileLogging.FullPath);
+            MessageBox.Show("Finished logging to " + Logger.BinaryFileLogging.FullPath);
         }
 
         // This appends to the AppendToMe.tx1 file unless it's already too big.
@@ -621,9 +657,24 @@ namespace TestApp {
         public void TextWriter() {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
 
+            TextWriterTraceListener myTextListener = SetupTraceListener("SimpleTextWriterLog.txt");
+
+            // Log some stuff that should appear in the text file.
+            Log.Verbose("The time is ", DateTime.Now);
+            using (Log.DebugCall()) {
+                Log.Info("This was logged from within a method.");
+                Log.Info("The format string is ", Logger.DebugLogging.FormatString);
+            }
+
+            myTextListener.Writer.Close();
+            myTextListener.Close();
+        }
+
+        private static TextWriterTraceListener SetupTraceListener(string outputFile)
+        {
             // Create a file in the executable dir for output named TextWriterLog.txt.
-            string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TextWriterLog.txt");
+            //string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, outputFile);
             FileStream myFile = File.Create(filePath);
 
             MessageBox.Show("Opened " + filePath);
@@ -638,15 +689,129 @@ namespace TestApp {
             Logger.Root.DebugTraceLevel = TracerX.TraceLevel.Verbose;
 
             Logger.DebugLogging.FormatString = "{time,-12:HH:mm:ss.fff} {level,-8} {msg}";
+            return myTextListener;
+        }
 
-            // Log some stuff that should appear in the text file.
-            Log.Verbose("The time is ", DateTime.Now);
-            using (Log.DebugCall()) {
-                Log.Info("This was logged from within a method.");
-                Log.Info("The format string is ", Logger.DebugLogging.FormatString);
+        public void LogToAllDestinations()
+        {
+            // Set up binary file destination.
+            Logger.BinaryFileLogging.Name = "AllDestinationsBinaryFileOut";
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 1;
+            Logger.BinaryFileLogging.MaxSizeMb = 1;
+            Logger.Root.BinaryFileTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.BinaryFileLogging.Open();
+            MessageBox.Show("Opened " + Path.Combine(Logger.BinaryFileLogging.Directory, Logger.BinaryFileLogging.Name));
+
+            // Set up Debug (Trace) listener destination.
+            TextWriterTraceListener myTextListener = SetupTraceListener("AllDestinationsDebugOut.txt");
+
+            // Set up EventHandler destination.
+            SetupEventHandler();
+            
+            // Set up the text file destination.
+            Log.TextFileTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.TextFileLogging.Name = "AllDestinationsTextFileOut.txt";
+            Logger.TextFileLogging.Open();
+            MessageBox.Show("Opened " + Path.Combine(Logger.TextFileLogging.Directory, Logger.TextFileLogging.Name));
+
+            // Set up the event log destination
+            Logger.Root.EventLogTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.EventLogging.EventLog.Source = "TracerX - All Destinations";
+
+            // Generate some output.
+            random = new Random();
+            RandomCall();
+
+            // Close output files.
+            myTextListener.Writer.Close();
+            myTextListener.Close();
+        }
+
+        static StreamWriter _eventHandlerOut;
+
+        private static void SetupEventHandler()
+        {
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AllDestinationsEventHandlerOut.txt");
+            _eventHandlerOut = new StreamWriter(filePath);
+            MessageBox.Show("Opened " + filePath);
+
+            Logger.Root.EventHandlerTraceLevel = TracerX.TraceLevel.Verbose;
+            Logger.MessageCreated += Logger_MessageCreated;
+        }
+
+        private static void Logger_MessageCreated(object sender, Logger.MessageCreatedEventArgs e)
+        {
+            Logger logger = sender as Logger;
+            string space = new string(' ', 3 * e.Indentation);
+            string msg = string.Format("{7}Logger = {6}, Thread = {0}, # = {1}, depth = {2}, method = {3}, level = {4}, message = {5}",
+                Thread.CurrentThread.Name,
+                e.ThreadNumber,
+                e.Indentation,
+                e.Method,
+                e.TraceLevel,
+                e.Message,
+                logger.Name,
+                space
+                );
+
+            _eventHandlerOut.WriteLine(msg);
+        }
+
+        // This opens a log file but does not close it.  The "main" AppDomain creates
+        // a Logger and uses it to log to the file created here.
+        public void CrossAppDomains()
+        {
+            if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Named in domain that owns the log file.";
+            Logger.BinaryFileLogging.Name = "CrossAppDomains";
+            Logger.BinaryFileLogging.Open();
+            MessageBox.Show("Opened " + Logger.BinaryFileLogging.FullPath);
+
+            Logger LocalLog = Logger.GetLogger("Local Log");
+
+            LocalLog.Info("Logged in local app domain.");
+            Log.Info("Also logged in local app domain.");
+        }
+
+        public void OpenClose()
+        {
+            Logger.BinaryFileLogging.Name = "OpenClose";
+            Logger.BinaryFileLogging.Directory = "%EXEDIR%";
+            Logger.BinaryFileLogging.Use_00 = true;
+            Logger.BinaryFileLogging.Archives = 3;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 0;
+            Logger.BinaryFileLogging.CircularStartSizeKb = 0;
+
+            Logger Log2 = Logger.GetLogger("Log2");
+
+            // Test what happens when method-entries are logged before the file is opened.
+            using (Log.InfoCall("Meth-1"))
+            {
+                using (Log.InfoCall("Meth-2"))
+                {
+                    Log.Info("Logged inside Meth-2 before opening file");
+                    Logger.BinaryFileLogging.Open();
+                    Log.Info("Logged inside Meth-2 after opening first file");
+                }
             }
 
-            myTextListener.Close();
+            Log.Info("Not inside a method.");
+            Log.Info("Closing the file.");
+            Logger.BinaryFileLogging.Close();
+            
+            Logger.BinaryFileLogging.Open();
+            Log.Info("Opened second file, entering a method.");
+
+            using (Log.InfoCall("Meth-3"))
+            {
+                Log.Info("Closing file while in Meth-3.");
+                Logger.BinaryFileLogging.Close();
+                Logger.BinaryFileLogging.Open();
+                Log.Info("Logged inside Meth-3 after opening third file.");
+            }
+
+            Log.Info("Closing last file.");
+            Logger.BinaryFileLogging.Close();
         }
     }
 }
