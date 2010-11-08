@@ -44,9 +44,9 @@ namespace TracerX.Viewer {
                 Record rec = item.Tag as Record;
 
                 if (rec == null) {
-                    _selectedRow = MainForm.TheMainForm.SelectSingleRow(_topStackRow.Index);
+                    _selectedRow = MainForm.TheMainForm.SelectRowIndex(_topStackRow.Index);
                 } else if (rec.IsVisible) {
-                    _selectedRow = MainForm.TheMainForm.SelectSingleRow(rec.FirstRowIndex);
+                    _selectedRow = MainForm.TheMainForm.SelectRowIndex(rec.FirstRowIndex);
                 }
             }
         }

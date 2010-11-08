@@ -271,6 +271,8 @@ namespace TracerX.Viewer {
                 if (previousRow == null || previousRow.Rec.Time != this.Rec.Time || Settings.Default.DuplicateTimes) {
                     if (Settings.Default.RelativeTime) {
                         _fields[mainForm.headerTime.Index] = Program.FormatTimeSpan(Rec.Time - MainForm.ZeroTime);
+                    } else if (Settings.Default.UseCustomTimeFormat) {
+                        _fields[mainForm.headerTime.Index] = Rec.Time.ToLocalTime().ToString(Settings.Default.CustomTimeFormat);
                     } else {
                         _fields[mainForm.headerTime.Index] = Rec.Time.ToLocalTime().ToString(@"MM/dd/yy HH:mm:ss.fff");
                     }

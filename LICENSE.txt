@@ -4,7 +4,7 @@ source code were copied and modified from the Apache Log4Net project.
 Therefore, TracerX must be considered a "Derivative Work" under the terms of 
 the Apache License, which requires this LICENSE.txt file to exist and contain 
 the following copy of the Apache License.  Both licenses are also viewable by 
-launching TracerX.exe and selecting the Help\License menu command.
+launching TracerX-Viewer.exe and selecting the Help\License menu command.
 
                                  Apache License
                            Version 2.0, January 2004

@@ -5,6 +5,8 @@ using System.Text;
 using System.Diagnostics;
 using TracerX.Properties;
 using TracerX.Forms;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace TracerX.Viewer {
     /// <summary>
@@ -45,6 +47,20 @@ namespace TracerX.Viewer {
                 // The message text for this record may contain newlines.  Split the
                 // message into one or more lines.
                 Lines = msg.Split(_splitArg);
+
+                if (Lines.Length > 1) {
+                    // It's common for a carriage return to exist at the 
+                    // end of each line.  Remove them.
+                    for (int i = 0; i < Lines.Length; ++i) {
+                        Lines[i] = Lines[i].TrimEnd('\r');
+                    }
+
+                    // It's common for the last line to be empty.  If so, remove it.
+                    if (Lines.Last().Trim() == string.Empty) {
+                        Lines = Lines.Take(Lines.Length - 1).ToArray();
+                    }
+                }
+
                 IsCollapsed = Lines.Length > 1 && !Settings.Default.ExpandNewlines;
             }
 
@@ -200,37 +216,52 @@ namespace TracerX.Viewer {
             int firstRowIndex = curRowIndex;
             FirstRowIndex = -1; // None visible for now.
 
-            if (CollapsedDepth == 0 && 
-                Session.Visible &&
-                ThreadName.Visible && 
-                Thread.Visible && 
-                Logger.Visible && 
-                (MethodName.Visible || CallerIsVisible()) &&
-                (Level & MainForm.TheMainForm.VisibleTraceLevels) != 0) //
+            try
             {
-                if (HasNewlines && IsCollapsed) {
-                    // Test all the lines appended together, as the user will see it.
-                    string allTogether = GetLine(0, ' ', 0, false);
-                    if (FilterDialog.TextFilterTestString(allTogether)) {
-                        SetRow(rows, curRowIndex, 0);
-                        RowIndices[0] = curRowIndex; // Maybe we should set all of them?
-                        FirstRowIndex = curRowIndex;
-                        ++curRowIndex;
+                if (CollapsedDepth == 0 &&
+                    Session.Visible &&
+                    ThreadName.Visible &&
+                    Thread.Visible &&
+                    Logger.Visible &&
+                    (MethodName.Visible || CallerIsVisible()) &&
+                    (Level & MainForm.TheMainForm.VisibleTraceLevels) != 0) //
+                {
+                    if (HasNewlines && IsCollapsed)
+                    {
+                        // Test all the lines appended together, as the user will see it.
+                        string allTogether = GetLine(0, ' ', 0, false);
+                        if (FilterDialog.TextFilterTestString(allTogether))
+                        {
+                            SetRow(rows, curRowIndex, 0);
+                            RowIndices[0] = curRowIndex; // Maybe we should set all of them?
+                            FirstRowIndex = curRowIndex;
+                            ++curRowIndex;
+                        }
                     }
-                } else {
-                    // Check if each line passes the text filter and associate each
-                    // visible line with a Row in the rows array.
-                    for (int lineNum = 0; lineNum < Lines.Length; ++lineNum) {
-                        if (FilterDialog.TextFilterTestString(Lines[lineNum])) {
+                    else
+                    {
+                        // Check if each line passes the text filter and associate each
+                        // visible line with a Row in the rows array.
+                        for (int lineNum = 0; lineNum < Lines.Length; ++lineNum)
+                        {
+                            if (FilterDialog.TextFilterTestString(Lines[lineNum]))
+                            {
                                 SetRow(rows, curRowIndex, lineNum);
                                 RowIndices[lineNum] = curRowIndex;
                                 FirstRowIndex = firstRowIndex;
                                 ++curRowIndex;
-                        } else {
-                            RowIndices[lineNum] = -1;
+                            }
+                            else
+                            {
+                                RowIndices[lineNum] = -1;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.ToString());
             }
 
             return curRowIndex;
@@ -267,6 +298,14 @@ namespace TracerX.Viewer {
 
                     return result;
                 }
+            }
+        }
+
+        public bool SameThreadAs(Record other) {
+            if (Settings.Default.SearchThreadsByName) {
+                return other != null && other.ThreadName == this.ThreadName;
+            } else {
+                return other != null && other.Thread == this.Thread;
             }
         }
 

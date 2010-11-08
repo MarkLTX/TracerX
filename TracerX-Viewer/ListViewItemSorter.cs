@@ -66,18 +66,19 @@ namespace TracerX.Viewer {
             return result;
         }
 
-        public void Sort(ColumnClickEventArgs e) {
+        public void Sort(int colIndex) {
             // If the sort column has changed, force ascending sort.  
             // Otherwise, toggle the sort order.
-            if (_col == e.Column) {
+            if (_col == colIndex)
+            {
                 // Sorting same column again. Toggle the sort order.
                 _sortAscending = !_sortAscending;
             } else {
                 // Sorting a different column.  Use ascending sort
                 // and switch to the appropriate RowComparer for the column.
                 _sortAscending = true;
-                _col = e.Column;
-                _comparer = _listView.Columns[e.Column].Tag as RowComparer;
+                _col = colIndex;
+                _comparer = _listView.Columns[colIndex].Tag as RowComparer;
 
                 if (_comparer == null) {
                     _comparer = _defaultComparer;

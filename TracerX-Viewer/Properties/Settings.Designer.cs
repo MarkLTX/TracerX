@@ -339,5 +339,100 @@ namespace TracerX.Properties {
                 this["AutoUpdate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection RecentFolders {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["RecentFolders"]));
+            }
+            set {
+                this["RecentFolders"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SearchThreadsByName {
+            get {
+                return ((bool)(this["SearchThreadsByName"]));
+            }
+            set {
+                this["SearchThreadsByName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Bold {
+            get {
+                return ((bool)(this["Bold"]));
+            }
+            set {
+                this["Bold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("MM/dd/yy HH:mm:ss.fff")]
+        public string CustomTimeFormat {
+            get {
+                return ((string)(this["CustomTimeFormat"]));
+            }
+            set {
+                this["CustomTimeFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseCustomTimeFormat {
+            get {
+                return ((bool)(this["UseCustomTimeFormat"]));
+            }
+            set {
+                this["UseCustomTimeFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int TimeUnits {
+            get {
+                return ((int)(this["TimeUnits"]));
+            }
+            set {
+                this["TimeUnits"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
+        public int MaxNetworkKB {
+            get {
+                return ((int)(this["MaxNetworkKB"]));
+            }
+            set {
+                this["MaxNetworkKB"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int MaxRecords {
+            get {
+                return ((int)(this["MaxRecords"]));
+            }
+            set {
+                this["MaxRecords"] = value;
+            }
+        }
     }
 }

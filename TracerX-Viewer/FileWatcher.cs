@@ -59,9 +59,16 @@ namespace TracerX {
 
         private void ResetPollInterval() {
             if (Stopped) return;
-            
-            _pollTimer.Change(500, 500);
-            _pollInterval = 500;
+
+            try
+            {
+                _pollTimer.Change(500, 500);
+                _pollInterval = 500;
+            }
+            catch 
+            {
+                // Sometimes get NullReferenceException even though _pollTimer is not null.
+            }
         }
 
         private void NextInterval() {

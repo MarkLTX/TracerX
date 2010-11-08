@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TracerX.Forms;
+using TracerX.Properties;
 
 namespace TracerX.Viewer {
 

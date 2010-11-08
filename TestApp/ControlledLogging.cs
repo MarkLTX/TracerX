@@ -18,7 +18,7 @@ namespace TestApp
 
         private System.Threading.Timer _timer;
         private int _tickCount;
-        private uint _nearMaxSize = (Logger.FileLogging.MaxSizeMb << 20) - 1000;
+        private uint _nearMaxSize = (Logger.BinaryFileLogging.MaxSizeMb << 20) - 1000;
 
         private WorkerData _workerData1 = new WorkerData("Worker1");
         private WorkerData _workerData2 = new WorkerData("Worker2");
@@ -42,12 +42,12 @@ namespace TestApp
         {
             InitializeComponent();
 
-            Log.FileTraceLevel = TraceLevel.Verbose;
+            Log.BinaryFileTraceLevel = TraceLevel.Verbose;
 
             // Start the timer used to log a line every N milliseconds.
             _timer = new System.Threading.Timer(new TimerCallback(TimerTick));
 
-            _fileInfo = new FileInfo(Logger.FileLogging.FullPath);
+            _fileInfo = new FileInfo(Logger.BinaryFileLogging.FullPath);
             UpdateStats();
         }
 
@@ -61,24 +61,28 @@ namespace TestApp
             if (InvokeRequired) {
                 if (!IsDisposed) {
                     Action del = UpdateStats;
-                    Invoke(del);
+                    try {
+                        Invoke(del);
+                    } catch {
+                        // Sometimes get ObjectDisposedException
+                    }
                 }
 
                 return;
             }
 
-            circularBtn.Enabled = !Logger.FileLogging.CircularStarted;
-            wrapBtn.Enabled = Logger.FileLogging.CircularStarted;
-            wrap2Btn.Enabled = Logger.FileLogging.CircularStarted;
-            button2.Enabled = Logger.FileLogging.CurrentPosition < _nearMaxSize;
+            circularBtn.Enabled = !Logger.BinaryFileLogging.CircularStarted;
+            wrapBtn.Enabled = Logger.BinaryFileLogging.CircularStarted;
+            wrap2Btn.Enabled = Logger.BinaryFileLogging.CircularStarted;
+            button2.Enabled = Logger.BinaryFileLogging.CurrentPosition < _nearMaxSize;
 
             _fileInfo.Refresh();
             lastWriteBox.Text = _fileInfo.LastWriteTime.ToLongTimeString();
-            sizeBox.Text = Logger.FileLogging.CurrentSize.ToString("N0");
-            positionBox.Text = Logger.FileLogging.CurrentPosition.ToString("N0");
-            circularBox.Text = Logger.FileLogging.CircularStarted.ToString();
-            wrappedBox.Text = Logger.FileLogging.Wrapped.ToString();
-            blockBox.Text = Logger.FileLogging.CurrentBlock.ToString();
+            sizeBox.Text = Logger.BinaryFileLogging.CurrentSize.ToString("N0");
+            positionBox.Text = Logger.BinaryFileLogging.CurrentPosition.ToString("N0");
+            circularBox.Text = Logger.BinaryFileLogging.CircularStarted.ToString();
+            wrappedBox.Text = Logger.BinaryFileLogging.Wrapped.ToString();
+            blockBox.Text = Logger.BinaryFileLogging.CurrentBlock.ToString();
         }
 
         void TimerTick(object o)
@@ -89,7 +93,7 @@ namespace TestApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Log.WarnFormat("Size = {0:N0}, Position = {1:N0}, InCircular = {2}, Wrapped = {3}", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition, Logger.FileLogging.CircularStarted, Logger.FileLogging.Wrapped);
+            Log.WarnFormat("Size = {0:N0}, Position = {1:N0}, InCircular = {2}, Wrapped = {3}", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition, Logger.BinaryFileLogging.CircularStarted, Logger.BinaryFileLogging.Wrapped);
             UpdateStats();
         }
 
@@ -126,7 +130,7 @@ namespace TestApp
         private void circularBtn_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
-            Logger.FileLogging.CircularStartDelaySeconds = 1;
+            Logger.BinaryFileLogging.CircularStartDelaySeconds = 1;
             Thread.Sleep(1000);
             Log.Warn("Starting circular.");
             UpdateStats();
@@ -137,9 +141,9 @@ namespace TestApp
         {
             Cursor = Cursors.WaitCursor;
 
-            while (Logger.FileLogging.CurrentPosition < _nearMaxSize)
+            while (Logger.BinaryFileLogging.CurrentPosition < _nearMaxSize)
             {
-                Log.WarnFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition, Logger.FileLogging.CircularStarted, Logger.FileLogging.Wrapped);
+                Log.WarnFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition, Logger.BinaryFileLogging.CircularStarted, Logger.BinaryFileLogging.Wrapped);
             }
 
             UpdateStats();
@@ -207,18 +211,18 @@ namespace TestApp
         }
 
         private void wrapBtn_Click(object sender, EventArgs e) {
-            uint startPos = Logger.FileLogging.CurrentPosition;
+            uint startPos = Logger.BinaryFileLogging.CurrentPosition;
 
             Cursor = Cursors.WaitCursor;
 
-            while (Logger.FileLogging.CurrentPosition >= startPos) {
-                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition, Logger.FileLogging.CircularStarted, Logger.FileLogging.Wrapped);
+            while (Logger.BinaryFileLogging.CurrentPosition >= startPos) {
+                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition, Logger.BinaryFileLogging.CircularStarted, Logger.BinaryFileLogging.Wrapped);
             }
 
             Log.Info("Now back at beginning of circular part.");
 
-            while (Logger.FileLogging.CurrentPosition < startPos) {
-                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition, Logger.FileLogging.CircularStarted, Logger.FileLogging.Wrapped);
+            while (Logger.BinaryFileLogging.CurrentPosition < startPos) {
+                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition, Logger.BinaryFileLogging.CircularStarted, Logger.BinaryFileLogging.Wrapped);
             }
 
             Log.Info("Starting position now overwritten.");
@@ -227,12 +231,12 @@ namespace TestApp
         }
 
         private void wrap2Btn_Click(object sender, EventArgs e) {
-            uint startPos = Logger.FileLogging.CurrentPosition;
+            uint startPos = Logger.BinaryFileLogging.CurrentPosition;
 
             Cursor = Cursors.WaitCursor;
 
-            while (Logger.FileLogging.CurrentPosition >= startPos) {
-                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.FileLogging.CurrentSize, Logger.FileLogging.CurrentPosition, Logger.FileLogging.CircularStarted, Logger.FileLogging.Wrapped);
+            while (Logger.BinaryFileLogging.CurrentPosition >= startPos) {
+                Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.BinaryFileLogging.CurrentSize, Logger.BinaryFileLogging.CurrentPosition, Logger.BinaryFileLogging.CircularStarted, Logger.BinaryFileLogging.Wrapped);
             }
 
             Log.Info("Now back at beginning of circular part.");
