@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Diagnostic logger.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("TracerX")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2010")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // The version components are specified manually.
 // major.minor.yymm.ddhht, where yy is two-digit year,
 // mm is two-digit month, dd is two-digit date, hh is two-digit hour, and t is the tens digit of the minutes.
-[assembly: AssemblyVersion("5.0.1011.7135")] 
+[assembly: AssemblyVersion("5.1.1101.11202")] 
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion

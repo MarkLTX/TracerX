@@ -4,7 +4,7 @@ namespace HelloWorld
 {
     class Program
     {
-        // Create a Logger named after this class.
+        // Create/get a Logger named after this class (could be anything).
         static Logger Log = Logger.GetLogger("Program");
 
         static void Main(string[] args)
@@ -14,7 +14,6 @@ namespace HelloWorld
 
             // Log a string.
             Log.Info("Hello, World!");
-            System.Threading.Thread.CurrentThread.Name = "x";
         }
     }
 }
