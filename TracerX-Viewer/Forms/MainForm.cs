@@ -98,7 +98,7 @@ namespace TracerX.Viewer {
                 if (info.TotalPhysicalMemory >= 2000000000)
                 {
                     // 2 gigabytes or more, use 1,000,000 records per gig.
-                    Settings.Default.MaxRecords = (int)info.TotalPhysicalMemory / 1000;
+                    Settings.Default.MaxRecords = (int)(info.TotalPhysicalMemory / 1000);
                 }
                 else
                 {
