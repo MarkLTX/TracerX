@@ -159,15 +159,6 @@ namespace TracerX {
         /// Methods and configuration for logging to the full-featured binary file supported by the viewer.
         /// Output to this file is filtered by the <see cref="Logger.BinaryFileTraceLevel"/> property.
         /// </summary>
-        [Obsolete("Use BinaryFileLogging instead.", false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Browsable(false)]
-        public static BinaryFile FileLogging { get { return BinaryFileLogging; } }
-
-        /// <summary>
-        /// Methods and configuration for logging to the full-featured binary file supported by the viewer.
-        /// Output to this file is filtered by the <see cref="Logger.BinaryFileTraceLevel"/> property.
-        /// </summary>
         public static BinaryFile BinaryFileLogging { get { return BinaryFile.Singleton; } }
 
         /// <summary>
@@ -228,6 +219,14 @@ namespace TracerX {
             set { ThreadData.CurrentThreadData.Name = value; }
         }
 
+        /// <summary>
+        /// Deprecated.  Use <see cref="BinaryFileLogging"/> instead.
+        /// </summary>
+        [Obsolete("Use BinaryFileLogging instead.", false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        public static BinaryFile FileLogging { get { return BinaryFileLogging; } }
+
         #endregion
 
         #region Instance properties
@@ -242,21 +241,7 @@ namespace TracerX {
 
         /// <summary>
         /// This controls which logging calls send output to the binary file.  Only those calls at levels
-        /// less than or equal to FileTraceLevel go to the file.  If FileTraceLevel is set to
-        /// Inherited, the get accessor returns the trace Level inherited from the parent logger.
-        /// See the <see cref="BinaryFileLogging"/> property.
-        /// </summary>
-        [Obsolete("Use BinaryFileTraceLevel instead.", false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Browsable(false)]
-        public TraceLevel FileTraceLevel {
-            get { return BinaryFileTraceLevel; }
-            set { BinaryFileTraceLevel = value; }
-        }
-
-        /// <summary>
-        /// This controls which logging calls send output to the binary file.  Only those calls at levels
-        /// less than or equal to FileTraceLevel go to the file.  If FileTraceLevel is set to
+        /// less than or equal to this value go to the file.  If this is set to
         /// Inherited, the get accessor returns the trace Level inherited from the parent logger.
         /// See the <see cref="BinaryFileLogging"/> property.
         /// </summary>
@@ -319,6 +304,19 @@ namespace TracerX {
             get;
             set;
         }
+
+        /// <summary>
+        /// Deprecated.  Use <see cref="BinaryFileTraceLevel"/> instead.
+        /// </summary>
+        [Obsolete("Use BinaryFileTraceLevel instead.", false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        public TraceLevel FileTraceLevel
+        {
+            get { return BinaryFileTraceLevel; }
+            set { BinaryFileTraceLevel = value; }
+        }
+
         #endregion
 
         #region Logging methods
@@ -797,7 +795,7 @@ namespace TracerX {
             Root.EventLogTraceLevel = TraceLevel.Off;
             Root.EventHandlerTraceLevel = TraceLevel.Off;
 
-            // The StandardData logger is special in that it is initialized with a FileTraceLevel
+            // The StandardData logger is special in that it is initialized with a BinaryFileTraceLevel
             // of Verbose.  The user can change it programatically or via XML.
             StandardData = GetLogger("StandardData");
             StandardData.BinaryFileTraceLevel = TraceLevel.Verbose;
@@ -830,11 +828,52 @@ namespace TracerX {
             return builder.ToString();
         }
 
+        private static string _webAppPath = null;
+
         // If we are not a web app, this will throw an exception the
-        // caller must handle.  This will load the System.Web assembly
-        // if it hasn't already been loaded.
-        internal static string GetWebAppDir() {
-            return System.Web.HttpRuntime.AppDomainAppPath.TrimEnd('\\', '/');
+        // caller must handle.  
+        internal static string GetWebAppDir()
+        {
+            if (_webAppPath == null)
+            {
+                // First call to this method.
+                // If this doesn't work, we'll leave
+                // _webAppPath = "" so we won't
+                // try again on future calls.
+                _webAppPath = "";
+
+                // We don't want to depend on System.Web or load it,
+                // but if System.Web has already been loaded then
+                // use System.Web.HttpRuntime.AppDomainAppPath to check if we're a web app
+                // and return the app's path. 
+
+                foreach (Assembly webAsm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (webAsm.FullName.StartsWith("System.Web, ")) {
+                        Type httpruntime = webAsm.GetType("System.Web.HttpRuntime");
+                        PropertyInfo prop = httpruntime.GetProperty("AppDomainAppPath", BindingFlags.Public | BindingFlags.Static);
+
+                        // Exception if not a web app.
+                        string s = (string)prop.GetValue(null, null);
+                        _webAppPath = s.TrimEnd('\\', '/');
+
+                        return _webAppPath;
+                    }
+                }
+
+                throw new Exception("System.Web was not already loaded.");
+            }
+            else if (_webAppPath == "")
+            {
+                // This means we already experienced an exception in 
+                // the above code on the first call, so no need
+                // to try again.
+                throw new Exception("Not a web app.");
+            }
+            else
+            {
+                return _webAppPath;
+            }
         }
 
         // Get the application name without loading System.Windows.Forms.dll

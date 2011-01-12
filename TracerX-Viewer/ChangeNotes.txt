@@ -1,8 +1,1 @@
-Added a user control called TracerXViewerControl that allows the viewer to be hosted as a UserControl in other applications.
-When loading large files over the network, make a temporary local copy for faster loading.
-Added File menu item "Recent Folders".
-Eliminated flickering that occurs when file is updated by the logger and new records are read by the viewer.
-Added option to specify whether next/prev thread buttons should search by name or by number.
-Added option for bold font.
-Fixed bug in crumb bar that (rarely) crashes the viewer when launched.
-Fixed bug in file watcher code that sometimes crashes when loading a file that's still being updated.
+Changed target framework to be the client-only subset.

@@ -1,13 +1,1 @@
-Added Sandcastle Help File Builder project and improved XML comments for help file.
-Added .chm help file to binaries.
-Added option to used Kb instead of Mb for max file size.
-Added option to use "rolling files" instead of single circular file.
-Added thread-safe method to close and re-open log files.
-Added events raised when files are opened and closed.
-Added overload of GetLogger() that gets a Logger from another AppDomain.
-Added EventHandler destination that raises a cancellable event for each message.
-Added option to number the current log file with "_00".
-Added Logger.ThreadName property, which overrides Thread.CurrentThread.Name and can be changed any time.
-Added logging method that allows record timestamp to be explicitly specified.
-Fixed bug that occurs when method calls are logged to the Debug destination in conjunction with using the Event Log destination.
-Fixed bug that occurs when different method calls are logged to different destinations due to trace levels.
+Changed target framework to be the client-only subset.
