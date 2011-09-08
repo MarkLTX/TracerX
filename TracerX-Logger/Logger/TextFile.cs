@@ -27,21 +27,13 @@ namespace TracerX {
 
         private bool _wrapped = false;
 
-        #region Singleton
-
-        // Private ctor to guarantee singleton.
-        private TextFile()
+        /// <summary>
+        /// Constructs an unopened TracerX TextFile with default Name and Directory.
+        /// </summary>
+        public TextFile()
             : base(".txt") {
             _internalFormatString = Logger.ParseFormatString(_formatString);
         }
-
-        static internal TextFile Singleton {
-            get { return _singleton; }
-        }
-
-        private static TextFile _singleton = new TextFile();
-
-        #endregion Singleton
 
         /// <summary>
         /// Controls which fields are written to the text file by all loggers.
@@ -162,8 +154,8 @@ namespace TracerX {
 
             ++CurrentFile;
 
-            // This guarantees there is something before the circular part.
-            _logfile.WriteLine("Log file opened at {0}", _openTimeUtc.ToLocalTime());
+            // This guarantees the file won't be emtpy, and may help user understand what's going on with rolling or wrapping.
+            _logfile.WriteLine("TracerX: Log file opened at {0}.  FullFilePolicy = {1}, Use_00 = {2}, MaxGrowth = {3} {4}, AppendIfSmallerThan = {5} {3}, initial size = {6}.", _openTimeUtc.ToLocalTime(), FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB", AppendIfSmallerThanMb, BaseStream.Length);
 
             ManageArchives(renamedFile);
         }
@@ -217,55 +209,110 @@ namespace TracerX {
         }
 
         // Logs a message to the text file, possibly wrapping or starting a new file.  
-        internal void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
-            lock (_fileLocker) {
-                try {
-                    if (IsOpen) {
+        internal void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg)
+        {
+            lock (_fileLocker)
+            {
+                try
+                {
+                    if (IsOpen)
+                    {
                         DateTime utcNow = DateTime.UtcNow;
                         DateTime localNow = utcNow.ToLocalTime();
 
                         //System.Diagnostics.Debug.Print("Position = " + BaseStream.Position);
 
-                        if (BaseStream.Position >= _maxFilePosition) {
-                            // The previously written line reached the max file size, so we
-                            // must either wrap or start a new file.
-                            if (CircularStarted) {
-                                // Wrap
-                                string wrapMsg = String.Format("TracerX: Returning (wrapping) to file position {0} for next log message.", _positionOfCircularPart);
-                                WriteLine(logger, threadData, msgLevel, localNow, wrapMsg);
-                                BaseStream.Position = _positionOfCircularPart;
+                        if (BaseStream.Position >= _maxFilePosition)
+                        {
+                            // The previously written line reached the max file size, so apply the FullFilePolicy.
 
-                                if (!_wrapped) {
-                                    _wrapped = true;
-                                    Logger.EventLogging.Log("The text file wrapped for the first time: " + FullPath, Logger.EventLogging.FirstWrap);
-                                }
-                            } else {
-                                RestartFile();
+                            switch (FullFilePolicy)
+                            {
+                                case FullFilePolicy.Close:
+                                    // This should really never happen because we check for this condition
+                                    // immediately after writing the line.
+                                    Close();
+                                    break;
+                                case FullFilePolicy.Roll:
+                                    RestartFile();
+                                    WriteLine(logger, threadData, msgLevel, localNow, msg);
+                                    break;
+                                case FullFilePolicy.Wrap:
+                                    if (CircularStarted)
+                                    {
+                                        string wrapMsg = String.Format("TracerX: Returning (wrapping) to file position {0} for next log message.", _positionOfCircularPart);
+                                        WriteLine(logger, threadData, msgLevel, localNow, wrapMsg);
+                                        BaseStream.Position = _positionOfCircularPart;
+
+                                        if (!_wrapped)
+                                        {
+                                            _wrapped = true;
+                                            Logger.EventLogging.Log("The text file wrapped for the first time: " + FullPath, Logger.EventLogging.FirstWrap);
+                                        }
+
+                                        WriteLine(logger, threadData, msgLevel, localNow, msg);
+                                    }
+                                    else
+                                    {
+                                        // Since the circular didn't start, there's no where to wrap to.  Log an error and close the file.
+
+                                        string closeMsg = string.Format("TracerX: File is closing (not wrapping) because FullFilePolicy = Wrap and the file reached maximum size ({0}) before circular logging started.  ", _maxFilePosition);
+                                        Logger.EventLogging.Log(closeMsg + "\n" + FullPath, Logger.EventLogging.MaxFileSizeReached);
+
+                                        WriteLine(logger, threadData, msgLevel, localNow, closeMsg);
+
+                                        closeMsg = string.Format("MaxSizeMb = {0}, AppendIfSmallerThanMb = {1}, UseKbForSize = {2}", MaxSizeMb, AppendIfSmallerThanMb, UseKbForSize);
+                                        WriteLine(logger, threadData, msgLevel, localNow, closeMsg);
+
+                                        Close();
+                                    }
+
+                                    break;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             // Possibly start the circular log based on the current time and/or file size.
                             // Note that _circularStartTime is UTC.
-                            if (!CircularStarted && (utcNow >= _circularStartTime ||
-                                (CircularStartSizeKb > 0 && (BaseStream.Position - _openSize) >= CircularStartSizeKb << 10))) //
-                                {
+
+                            if (FullFilePolicy == FullFilePolicy.Wrap && !CircularStarted &&
+                                (utcNow >= _circularStartTime ||
+                                (CircularStartSizeKb > 0 && (BaseStream.Position - _openSize) >= CircularStartSizeKb << 10)))
+                            {
+                                // Start the circular log, which basically means setting _positionOfCircularPart so we know where
+                                // to set the file position when it's time to wrap in the future.
+
                                 WriteLine(logger, threadData, msgLevel, localNow, "TracerX: Last line before circular log starts.");
                                 _positionOfCircularPart = BaseStream.Position;
-                                WriteLine(logger, threadData, msgLevel, localNow, "TracerX: First line in circular portion of log (never wrapped if you see this).");
+                                WriteLine(logger, threadData, msgLevel, localNow, "TracerX: First line in circular portion of log (never wrapped if you see this whole line).");
 
-                                if (BaseStream.Position >= _maxFilePosition) {
+                                if (BaseStream.Position >= _maxFilePosition)
+                                {
+                                    // The messages we just wrote exceeded the max file size, which means there really wasn't enough room to do circular logging.
                                     Logger.EventLogging.Log("Circular logging would have started, but there was not enough room left in the file: " + FullPath, Logger.EventLogging.TooLateForCircular);
-                                    WriteLine(logger, threadData, msgLevel, localNow, "TracerX: Max file size exceeded.  Insufficient space to start the circular log.  Closing file.");
-                                    RestartFile();
-                                } else {
+                                    WriteLine(logger, threadData, msgLevel, localNow, "TracerX: Max file size exceeded.  FullFilePolicy = Wrap, but insufficient space to start the circular log.  Closing file (not rolling).");
+
+                                    Close();
+                                }
+                                else
+                                {
                                     string eventMsg = String.Format("Circular logging has started for text file '{0}' with {1:N0} bytes remaining.", FullPath, _maxFilePosition - CurrentPosition);
                                     Logger.EventLogging.Log(eventMsg, Logger.EventLogging.CircularLogStarted);
                                 }
                             }
-                        }
 
-                        WriteLine(logger, threadData, msgLevel, localNow, msg);
+                            WriteLine(logger, threadData, msgLevel, localNow, msg);
+                            
+                            if (FullFilePolicy == FullFilePolicy.Close && IsOpen && BaseStream.Position >= _maxFilePosition)
+                            {
+                                string closeMsg = string.Format("TracerX: Closing file (not rolling or wrapping) because the maximum size was reached and FullFilePolicy = Close, MaxSizeMb = {0}, AppendIfSmallerThanMb = {1}, UseKbForSize = {2}", MaxSizeMb, AppendIfSmallerThanMb, UseKbForSize);
+                                WriteLine(logger, threadData, msgLevel, localNow, closeMsg);
+                            }
+                        }
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     // Give up!  close the log file.
                     Logger.EventLogging.Log("An exception was thrown while logging to the text file: " + ex.ToString(), Logger.EventLogging.ExceptionInLogger);
                     Close();
@@ -273,16 +320,24 @@ namespace TracerX {
             }
         }
 
-        private void RestartFile() {
-            string msg = "The following text log file is being closed and reopened:\n" + FullPath;
+        private void RestartFile()
+        {
+            // Log an event.
+            string msg = "The following text log file is being closed and reopened (rolled):\n" + FullPath;
             Logger.EventLogging.Log(msg, Logger.EventLogging.LogFileReopening);
 
+            // Write an explanation at the end of the current file.
+            msg = string.Format("TracerX: Rolling the file.  FullFilePolicy = {0}, Use_00 = {1}, MaxSize = {2} {3}.", FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB");
+            _logfile.WriteLine(msg);
+
+            // Close, roll, and reopen.
             Close();
             ManageArchives(FullPath);
             _logfile = OpenStreamWriter(false);
 
-            // This guarantees there is something before the circular part.
-            _logfile.WriteLine("TracerX: Log file reopened.");
+            // Write an explanation at the top of the new file.
+            msg = string.Format("TracerX: Log file reopened (rolled).  FullFilePolicy = {0}, Use_00 = {1}, MaxSize = {2} {3}.", FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB");
+            _logfile.WriteLine(msg);
         }
 
         private StreamWriter OpenStreamWriter(bool append) {
@@ -319,8 +374,10 @@ namespace TracerX {
             long startPos = BaseStream.Position;
             string indent = "";
 
-            if (threadData.TextFileStackDepth > 0) {
-                indent = new string(' ', 3 * threadData.TextFileStackDepth);
+            threadData.GetTextFileState(logger.TextFile); // Sets threadData.TextFileState.
+
+            if (threadData.TextFileState.StackDepth > 0) {
+                indent = new string(' ', 3 * threadData.TextFileState.StackDepth);
             }
 
             ++_lineCnt;
@@ -332,7 +389,7 @@ namespace TracerX {
                 threadData.TracerXID,
                 threadData.Name ?? "<null>",
                 now,
-                threadData.CurrentTextFileMethod ?? "<null>",
+                threadData.TextFileState.CurrentMethod ?? "<null>",
                 indent,
                 msg ?? "<null>"
                 );

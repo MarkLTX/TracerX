@@ -1,1 +1,16 @@
+5.1 
 Changed target framework to be the client-only subset.
+
+5.2 
+Allow each Logger to have it's own BinaryFile and/or TextFile.
+Fixed bug in how FullFilePolicy applies to text files.
+Use SHA1 hash for password protection.
+Added encryption for password protected files.
+
+
+Notes:
+
+Doc: XML configuration applies only to default file(s).
+Consider assigning Logger.BinaryFile to Logger from other AppDomain.
+
+Test: Call ThreadData.ResetBinaryFileStateData with and without flags.MethodEntry.

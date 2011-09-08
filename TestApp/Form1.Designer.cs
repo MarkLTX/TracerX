@@ -42,7 +42,6 @@
             this.button15 = new System.Windows.Forms.Button();
             this.createAppendBtn = new System.Windows.Forms.Button();
             this.appendToFileBtn = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.noCircularRad = new System.Windows.Forms.RadioButton();
             this.noWrapRad = new System.Windows.Forms.RadioButton();
             this.circularWrapsRad = new System.Windows.Forms.RadioButton();
@@ -69,9 +68,13 @@
             this.btnCrossAppDomains = new System.Windows.Forms.Button();
             this.btnReopenNoncircular = new System.Windows.Forms.Button();
             this.btnReopenCircular = new System.Windows.Forms.Button();
-            this.viewerWrapper1 = new TestApp.ViewerWrapper();
             this.btnAutoReopen = new System.Windows.Forms.Button();
             this.btnEventHandler = new System.Windows.Forms.Button();
+            this.btnMultiFileSingleThread = new System.Windows.Forms.Button();
+            this.btnMultiFileMultiThread = new System.Windows.Forms.Button();
+            this.btnTextTest = new System.Windows.Forms.Button();
+            this.chkUsePassword = new System.Windows.Forms.CheckBox();
+            this.viewerWrapper1 = new TestApp.ViewerWrapper();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -82,7 +85,7 @@
             this.emptyBtn.Name = "emptyBtn";
             this.emptyBtn.Size = new System.Drawing.Size(145, 23);
             this.emptyBtn.TabIndex = 0;
-            this.emptyBtn.Text = "Make Empty File";
+            this.emptyBtn.Text = "Make Empty File *";
             this.emptyBtn.UseVisualStyleBackColor = true;
             this.emptyBtn.Click += new System.EventHandler(this.emptyBtn_Click);
             // 
@@ -92,7 +95,7 @@
             this.oneLineBtn.Name = "oneLineBtn";
             this.oneLineBtn.Size = new System.Drawing.Size(145, 23);
             this.oneLineBtn.TabIndex = 2;
-            this.oneLineBtn.Text = "Log One Line";
+            this.oneLineBtn.Text = "Log One Line *";
             this.oneLineBtn.UseVisualStyleBackColor = true;
             this.oneLineBtn.Click += new System.EventHandler(this.oneLineBtn_Click);
             // 
@@ -102,7 +105,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(145, 23);
             this.button1.TabIndex = 3;
-            this.button1.Text = "Five Threads Non-Circular";
+            this.button1.Text = "Five Threads Non-Circular *";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -112,7 +115,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(145, 23);
             this.button2.TabIndex = 4;
-            this.button2.Text = "Stop At Circular ";
+            this.button2.Text = "Stop At Circular *";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -132,7 +135,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(145, 23);
             this.button4.TabIndex = 6;
-            this.button4.Text = "One Thread Wraps";
+            this.button4.Text = "One Thread Wraps *";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -142,7 +145,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(145, 23);
             this.button5.TabIndex = 7;
-            this.button5.Text = "Five Threads Wrap";
+            this.button5.Text = "Five Threads Wrap *";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -222,7 +225,7 @@
             this.btnTimeOneMillionWithWrapping.Name = "btnTimeOneMillionWithWrapping";
             this.btnTimeOneMillionWithWrapping.Size = new System.Drawing.Size(293, 23);
             this.btnTimeOneMillionWithWrapping.TabIndex = 15;
-            this.btnTimeOneMillionWithWrapping.Text = "Time to log 1 Million messages with wrapping";
+            this.btnTimeOneMillionWithWrapping.Text = "Time to log 1 Million messages with wrapping *";
             this.btnTimeOneMillionWithWrapping.UseVisualStyleBackColor = true;
             this.btnTimeOneMillionWithWrapping.Click += new System.EventHandler(this.btnTimeOneMillionWithWrapping_Click);
             // 
@@ -232,7 +235,7 @@
             this.btnTimeOneMillionWithoutWrapping.Name = "btnTimeOneMillionWithoutWrapping";
             this.btnTimeOneMillionWithoutWrapping.Size = new System.Drawing.Size(292, 23);
             this.btnTimeOneMillionWithoutWrapping.TabIndex = 16;
-            this.btnTimeOneMillionWithoutWrapping.Text = "Time to log 1 Million messages without wrapping";
+            this.btnTimeOneMillionWithoutWrapping.Text = "Time to log 1 Million messages without wrapping *";
             this.btnTimeOneMillionWithoutWrapping.UseVisualStyleBackColor = true;
             this.btnTimeOneMillionWithoutWrapping.Click += new System.EventHandler(this.btnTimeOneMillionWithoutWrapping_Click);
             // 
@@ -252,7 +255,7 @@
             this.createAppendBtn.Name = "createAppendBtn";
             this.createAppendBtn.Size = new System.Drawing.Size(145, 23);
             this.createAppendBtn.TabIndex = 18;
-            this.createAppendBtn.Text = "Create file for appending";
+            this.createAppendBtn.Text = "Create file for appending *";
             this.createAppendBtn.UseVisualStyleBackColor = true;
             this.createAppendBtn.Click += new System.EventHandler(this.createAppendBtn_Click);
             // 
@@ -262,18 +265,9 @@
             this.appendToFileBtn.Name = "appendToFileBtn";
             this.appendToFileBtn.Size = new System.Drawing.Size(145, 23);
             this.appendToFileBtn.TabIndex = 19;
-            this.appendToFileBtn.Text = "Append to file";
+            this.appendToFileBtn.Text = "Append to file *";
             this.appendToFileBtn.UseVisualStyleBackColor = true;
             this.appendToFileBtn.Click += new System.EventHandler(this.appendToFileBtn_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(220, 13);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "Each button creates a separate App Domain.";
             // 
             // noCircularRad
             // 
@@ -543,20 +537,6 @@
             this.btnReopenCircular.UseVisualStyleBackColor = true;
             this.btnReopenCircular.Click += new System.EventHandler(this.btnReopenCircular_Click);
             // 
-            // viewerWrapper1
-            // 
-            this.viewerWrapper1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.viewerWrapper1.AutoScroll = true;
-            this.viewerWrapper1.AutoScrollMinSize = new System.Drawing.Size(100, 150);
-            this.viewerWrapper1.BackColor = System.Drawing.Color.Bisque;
-            this.viewerWrapper1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.viewerWrapper1.Location = new System.Drawing.Point(339, 0);
-            this.viewerWrapper1.Name = "viewerWrapper1";
-            this.viewerWrapper1.Size = new System.Drawing.Size(676, 801);
-            this.viewerWrapper1.TabIndex = 29;
-            // 
             // btnAutoReopen
             // 
             this.btnAutoReopen.Location = new System.Drawing.Point(164, 712);
@@ -577,11 +557,70 @@
             this.btnEventHandler.UseVisualStyleBackColor = true;
             this.btnEventHandler.Click += new System.EventHandler(this.btnEventHandler_Click);
             // 
+            // btnMultiFileSingleThread
+            // 
+            this.btnMultiFileSingleThread.Location = new System.Drawing.Point(164, 741);
+            this.btnMultiFileSingleThread.Name = "btnMultiFileSingleThread";
+            this.btnMultiFileSingleThread.Size = new System.Drawing.Size(145, 23);
+            this.btnMultiFileSingleThread.TabIndex = 41;
+            this.btnMultiFileSingleThread.Text = "Multi-File Single-Thread";
+            this.btnMultiFileSingleThread.UseVisualStyleBackColor = true;
+            this.btnMultiFileSingleThread.Click += new System.EventHandler(this.btnMultiFileSingleThread_Click);
+            // 
+            // btnMultiFileMultiThread
+            // 
+            this.btnMultiFileMultiThread.Location = new System.Drawing.Point(164, 770);
+            this.btnMultiFileMultiThread.Name = "btnMultiFileMultiThread";
+            this.btnMultiFileMultiThread.Size = new System.Drawing.Size(145, 23);
+            this.btnMultiFileMultiThread.TabIndex = 42;
+            this.btnMultiFileMultiThread.Text = "Multi-File Multi-Thread";
+            this.btnMultiFileMultiThread.UseVisualStyleBackColor = true;
+            this.btnMultiFileMultiThread.Click += new System.EventHandler(this.btnMultiFileMultiThread_Click);
+            // 
+            // btnTextTest
+            // 
+            this.btnTextTest.Location = new System.Drawing.Point(13, 770);
+            this.btnTextTest.Name = "btnTextTest";
+            this.btnTextTest.Size = new System.Drawing.Size(145, 23);
+            this.btnTextTest.TabIndex = 43;
+            this.btnTextTest.Text = "Test Text File";
+            this.btnTextTest.UseVisualStyleBackColor = true;
+            this.btnTextTest.Click += new System.EventHandler(this.btnTextTest_Click);
+            // 
+            // chkUsePassword
+            // 
+            this.chkUsePassword.AutoSize = true;
+            this.chkUsePassword.Location = new System.Drawing.Point(13, 12);
+            this.chkUsePassword.Name = "chkUsePassword";
+            this.chkUsePassword.Size = new System.Drawing.Size(185, 17);
+            this.chkUsePassword.TabIndex = 44;
+            this.chkUsePassword.Text = "Use password \"abc123\" for * files";
+            this.chkUsePassword.UseVisualStyleBackColor = true;
+            this.chkUsePassword.CheckedChanged += new System.EventHandler(this.chkUsePassword_CheckedChanged);
+            // 
+            // viewerWrapper1
+            // 
+            this.viewerWrapper1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewerWrapper1.AutoScroll = true;
+            this.viewerWrapper1.AutoScrollMinSize = new System.Drawing.Size(100, 150);
+            this.viewerWrapper1.BackColor = System.Drawing.Color.Bisque;
+            this.viewerWrapper1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.viewerWrapper1.Location = new System.Drawing.Point(339, 0);
+            this.viewerWrapper1.Name = "viewerWrapper1";
+            this.viewerWrapper1.Size = new System.Drawing.Size(676, 801);
+            this.viewerWrapper1.TabIndex = 29;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1015, 801);
+            this.Controls.Add(this.chkUsePassword);
+            this.Controls.Add(this.btnTextTest);
+            this.Controls.Add(this.btnMultiFileMultiThread);
+            this.Controls.Add(this.btnMultiFileSingleThread);
             this.Controls.Add(this.btnEventHandler);
             this.Controls.Add(this.btnAutoReopen);
             this.Controls.Add(this.btnReopenCircular);
@@ -594,7 +633,6 @@
             this.Controls.Add(this.readConfigBtn);
             this.Controls.Add(this.textWriterTraceListenerBtn);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.btnTimeOneMillionWithoutWrapping);
             this.Controls.Add(this.btnTimeOneMillionWithWrapping);
@@ -644,7 +682,6 @@
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button createAppendBtn;
         private System.Windows.Forms.Button appendToFileBtn;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton noCircularRad;
         private System.Windows.Forms.RadioButton noWrapRad;
         private System.Windows.Forms.RadioButton circularWrapsRad;
@@ -674,6 +711,10 @@
         private System.Windows.Forms.Button btnAutoReopen;
         private System.Windows.Forms.CheckBox chkUseKb;
         private System.Windows.Forms.Button btnEventHandler;
+        private System.Windows.Forms.Button btnMultiFileSingleThread;
+        private System.Windows.Forms.Button btnMultiFileMultiThread;
+        private System.Windows.Forms.Button btnTextTest;
+        private System.Windows.Forms.CheckBox chkUsePassword;
     }
 }
 

@@ -36,6 +36,7 @@ namespace TracerX.Viewer {
             } else {
                 sessionCombo.Items.AddRange(SessionObjects.AllSessionObjects.ToArray());
                 sessionCombo.SelectedIndex = 0;
+                lblOfN.Text = "of " + SessionObjects.AllSessionObjects.Count;
             }
         }
 
@@ -66,7 +67,7 @@ namespace TracerX.Viewer {
             }
 
             sessionPercent = (double)sessionSize / (double)_reader.Size;
-            string sizeMsg = string.Format("{0:N0} ({1:P1})", sessionSize, sessionPercent);
+            string sizeMsg = string.Format("{0:N0} ({1:P1} of file)", sessionSize, sessionPercent);
 
             sessionListView.Items.Clear();
 
@@ -79,8 +80,8 @@ namespace TracerX.Viewer {
             sessionListView.Items.Add(new ListViewItem(new string[] { "Last record number", session.LastRecordNum.ToString("N0") }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Record count", session.RecordsRead.ToString("N0") }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Records lost by wrapping", (session.LastRecordNum - session.RecordsRead).ToString("N0") }));
-            sessionListView.Items.Add(new ListViewItem(new string[] { "Max size (KB)", session.MaxKb.ToString("N0") }));
-            sessionListView.Items.Add(new ListViewItem(new string[] { "Size (bytes)", sizeMsg}));
+            sessionListView.Items.Add(new ListViewItem(new string[] { "Max session size (KB)", session.MaxKb.ToString("N0") }));
+            sessionListView.Items.Add(new ListViewItem(new string[] { "Session size (bytes)", sizeMsg}));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Loggers assembly version", session.LoggersAssemblyVersion }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "GUID", session.FileGuid.ToString() }));
 

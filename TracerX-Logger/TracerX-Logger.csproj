@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Enums-Logger.cs" />
     <Compile Include="Logger\CallEnder.cs" />
+    <Compile Include="Logger\Encryptor.cs" />
     <Compile Include="Logger\Logger.ConsoleLogging.cs" />
     <Compile Include="Logger\Logger.DebugLogging.cs" />
     <Compile Include="Logger\Logger.EventHandlerLogging.cs" />
@@ -112,7 +113,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

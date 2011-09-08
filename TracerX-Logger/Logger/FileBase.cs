@@ -68,7 +68,8 @@ namespace TracerX {
         /// <summary>
         /// If true when the file is opened, "_00" will be appended to the file name.
         /// This allows for more consistent sorting/grouping of file names in
-        /// Windows Explorer when archived files (_01, _02, etc.) are present.
+        /// Windows Explorer when archived files (_01, _02, etc.) are also present.
+        /// Default = false.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
         public bool Use_00 {
@@ -94,6 +95,7 @@ namespace TracerX {
 
         /// <summary>
         /// If true, <see cref="MaxSizeMb"/> and <see cref="AppendIfSmallerThanMb"/> have units of kilobytes (2**10 bytes) instead of megabytes.
+        /// Default = false.
         /// </summary>
         public bool UseKbForSize
         {
@@ -202,7 +204,7 @@ namespace TracerX {
         /// <summary>
         /// If FullFilePolicy is Wrap,
         /// circular logging will start when the log file size has increased by
-        /// this amount, unless already started.
+        /// this amount, unless already started.  Default = 300 KB.
         /// Set this to 0 to disable this feature.
         /// Attempts to change this value are ignored after circular logging starts.
         /// </summary>
@@ -222,6 +224,7 @@ namespace TracerX {
         /// <summary>
         /// If FullFilePolicy is Wrap,
         /// circular logging will start when the log file has been opened this many seconds, unless already started.
+        /// The default is 60.
         /// Set this to 0 to disable this feature.
         /// Attempts to change this value are ignored after circular logging starts.
         /// </summary>
@@ -245,7 +248,7 @@ namespace TracerX {
         /// <summary>
         /// Counts how many times Open() has been successfully called.
         /// Zero means the file has never been opened.
-        /// Non-zero does not mean the file is currently open (use IsOpen for that).
+        /// Non-zero does NOT mean the file is currently open (use IsOpen for that).
         /// </summary>
         public int CurrentFile { get; protected set; }
 
@@ -282,25 +285,25 @@ namespace TracerX {
         /// <summary>
         /// Event raised just before the file is opened by Open().  
         /// Last chance to set file related properties like Directory, Name, MaxSizeMb, etc..  
-        /// The "sender" is either BinaryFileLogging or TextFileLogging, depending on which file is being opened.
+        /// The "sender" is an instance of BinaryFile or TextFile, depending on which file is being opened.
         /// </summary>
         public event CancelEventHandler Opening;
 
         /// <summary>
         /// Event raised after file is opened by Open().
-        /// The "sender" is either BinaryFileLogging or TextFileLogging depending on which file was opened.
+        /// The "sender" is an instance of BinaryFile or TextFile depending on which file was opened.
         /// </summary>
         public event EventHandler Opened;
 
         /// <summary>
         /// Event raised just before file is closed by Close().
-        /// The "sender" is either BinaryFileLogging or TextFileLogging depending on which file is being closed.
+        /// The "sender" is an instance of BinaryFile or TextFile depending on which file is being closed.
         /// </summary>
         public event EventHandler Closing;
 
         /// <summary>
         /// Event raised just after file is closed by Close().
-        /// The "sender" is either BinaryFileLogging or TextFileLogging depending on which file was closed.
+        /// The "sender" is an instance of BinaryFile or TextFile depending on which file was closed.
         /// </summary>
         public event EventHandler Closed;
 

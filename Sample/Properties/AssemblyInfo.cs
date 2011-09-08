@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
+[assembly: AssemblyCopyright("Copyright © Mark Lauritsen 2010-2011")]
 [assembly: AssemblyProduct("Sample")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -28,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("5.1.1101.11211")]
+[assembly: AssemblyVersion("6.0.1109.7202")]
 //[assembly: AssemblyFileVersion("1.0.0.0")]

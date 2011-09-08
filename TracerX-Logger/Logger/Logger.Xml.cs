@@ -41,7 +41,7 @@ namespace TracerX {
             /// <para>
             /// Each application has an XML configuration file. The file has the
             /// same name as the application with '.config' as the extension.
-            /// This method loads TracerX configuratin from the
+            /// This method loads TracerX configuration from the
             /// <c>TracerX</c> section of the .config file.
             /// </para>
             /// </remarks>
@@ -386,19 +386,19 @@ namespace TracerX {
                             switch (node.Name.ToLower()) {
                                 case "directory":
                                 case "logdirectory":
-                                    Logger.BinaryFileLogging.Directory = subElement.GetAttribute("value");
+                                    Logger.DefaultBinaryFile.Directory = subElement.GetAttribute("value");
                                     break;
                                 case "appendifsmallerthanmb":
-                                    Logger.BinaryFileLogging.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.BinaryFileLogging.AppendIfSmallerThanMb);
+                                    Logger.DefaultBinaryFile.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.DefaultBinaryFile.AppendIfSmallerThanMb);
                                     break;
                                 case "maxsizemb":
-                                    Logger.BinaryFileLogging.MaxSizeMb = GetUintVal(subElement, "value", Logger.BinaryFileLogging.MaxSizeMb);
+                                    Logger.DefaultBinaryFile.MaxSizeMb = GetUintVal(subElement, "value", Logger.DefaultBinaryFile.MaxSizeMb);
                                     break;
                                 case "fullfilepolicy":
                                     try
                                     {
                                         string fileFullVal = subElement.GetAttribute("value");
-                                        Logger.BinaryFileLogging.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
+                                        Logger.DefaultBinaryFile.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
                                     }
                                     catch (Exception ex)
                                     {
@@ -407,22 +407,22 @@ namespace TracerX {
                                     }
                                     break;
                                 case "archives":
-                                    Logger.BinaryFileLogging.Archives = GetUintVal(subElement, "value", Logger.BinaryFileLogging.Archives);
+                                    Logger.DefaultBinaryFile.Archives = GetUintVal(subElement, "value", Logger.DefaultBinaryFile.Archives);
                                     break;
                                 case "circularstartsizekb":
-                                    Logger.BinaryFileLogging.CircularStartSizeKb = GetUintVal(subElement, "value", Logger.BinaryFileLogging.CircularStartSizeKb);
+                                    Logger.DefaultBinaryFile.CircularStartSizeKb = GetUintVal(subElement, "value", Logger.DefaultBinaryFile.CircularStartSizeKb);
                                     break;
                                 case "circularstartdelayseconds":
-                                    Logger.BinaryFileLogging.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.BinaryFileLogging.CircularStartDelaySeconds);
+                                    Logger.DefaultBinaryFile.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.DefaultBinaryFile.CircularStartDelaySeconds);
                                     break;
                                 case "addtolistofrecentlycreatedfiles":
-                                    Logger.BinaryFileLogging.AddToListOfRecentlyCreatedFiles = GetBoolVal(subElement, "value", Logger.BinaryFileLogging.AddToListOfRecentlyCreatedFiles);
+                                    Logger.DefaultBinaryFile.AddToListOfRecentlyCreatedFiles = GetBoolVal(subElement, "value", Logger.DefaultBinaryFile.AddToListOfRecentlyCreatedFiles);
                                     break;
                                 case "use_00":
-                                    Logger.BinaryFileLogging.Use_00 = GetBoolVal(subElement, "value", Logger.BinaryFileLogging.Use_00);
+                                    Logger.DefaultBinaryFile.Use_00 = GetBoolVal(subElement, "value", Logger.DefaultBinaryFile.Use_00);
                                     break;
                                 case "usekbforsize":
-                                    Logger.BinaryFileLogging.UseKbForSize = GetBoolVal(subElement, "value", Logger.BinaryFileLogging.UseKbForSize);
+                                    Logger.DefaultBinaryFile.UseKbForSize = GetBoolVal(subElement, "value", Logger.DefaultBinaryFile.UseKbForSize);
                                     break;
                                 case "logpotentiallysensitivedataatstartup":
                                     _warnings += "LogPotentiallySensitiveDataAtStartup is deprecated.\n\n";
@@ -458,19 +458,19 @@ namespace TracerX {
                             XmlElement subElement = (XmlElement)node;
                             switch (node.Name.ToLower()) {
                                 case "directory":
-                                    Logger.TextFileLogging.Directory = subElement.GetAttribute("value");
+                                    Logger.DefaultTextFile.Directory = subElement.GetAttribute("value");
                                     break;
                                 case "appendifsmallerthanmb":
-                                    Logger.TextFileLogging.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.TextFileLogging.AppendIfSmallerThanMb);
+                                    Logger.DefaultTextFile.AppendIfSmallerThanMb = GetUintVal(subElement, "value", Logger.DefaultTextFile.AppendIfSmallerThanMb);
                                     break;
                                 case "maxsizemb":
-                                    Logger.TextFileLogging.MaxSizeMb = GetUintVal(subElement, "value", Logger.TextFileLogging.MaxSizeMb);
+                                    Logger.DefaultTextFile.MaxSizeMb = GetUintVal(subElement, "value", Logger.DefaultTextFile.MaxSizeMb);
                                     break;
                                 case "fullfilepolicy":
                                     try
                                     {
                                         string fileFullVal = subElement.GetAttribute("value");
-                                        Logger.TextFileLogging.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
+                                        Logger.DefaultTextFile.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
                                     }
                                     catch (Exception ex)
                                     {
@@ -479,22 +479,22 @@ namespace TracerX {
                                     }
                                     break;
                                 case "archives":
-                                    Logger.TextFileLogging.Archives = GetUintVal(subElement, "value", Logger.TextFileLogging.Archives);
+                                    Logger.DefaultTextFile.Archives = GetUintVal(subElement, "value", Logger.DefaultTextFile.Archives);
                                     break;
                                 case "use_00":
-                                    Logger.TextFileLogging.Use_00 = GetBoolVal(subElement, "value", Logger.TextFileLogging.Use_00);
+                                    Logger.DefaultTextFile.Use_00 = GetBoolVal(subElement, "value", Logger.DefaultTextFile.Use_00);
                                     break;
                                 case "usekbforsize":
-                                    Logger.TextFileLogging.UseKbForSize = GetBoolVal(subElement, "value", Logger.TextFileLogging.UseKbForSize);
+                                    Logger.DefaultTextFile.UseKbForSize = GetBoolVal(subElement, "value", Logger.DefaultTextFile.UseKbForSize);
                                     break;
                                 case "circularstartsizekb":
-                                    Logger.TextFileLogging.CircularStartSizeKb = GetUintVal(subElement, "value", Logger.TextFileLogging.CircularStartSizeKb);
+                                    Logger.DefaultTextFile.CircularStartSizeKb = GetUintVal(subElement, "value", Logger.DefaultTextFile.CircularStartSizeKb);
                                     break;
                                 case "circularstartdelayseconds":
-                                    Logger.TextFileLogging.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.TextFileLogging.CircularStartDelaySeconds);
+                                    Logger.DefaultTextFile.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.DefaultTextFile.CircularStartDelaySeconds);
                                     break;
                                 case "formatstring" :
-                                    Logger.TextFileLogging.FormatString = subElement.GetAttribute("value");
+                                    Logger.DefaultTextFile.FormatString = subElement.GetAttribute("value");
                                     break;
                                 default:
                                     // Unexpected element.

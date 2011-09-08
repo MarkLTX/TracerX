@@ -3,42 +3,78 @@ using System.Diagnostics;
 using System.Threading;
 using System.Text;
 using System;
-//using FileLogging = TracerX.Logger.FileLogging;
 using ConsoleLogging = TracerX.Logger.ConsoleLogging;
 using DebugLogging = TracerX.Logger.DebugLogging;
 using EventHandlerLogging = TracerX.Logger.EventHandlerLogging;
+using System.Collections.Generic;
 
-namespace TracerX {
-    [Flags]
-    internal enum Destinations {
-        None = 0,
-        BinaryFile = 1,
-        TextFile = 2,
-        Console = 4,
-        Debug = 8,
-        EventLog = 16,
-        EventHandler = 32
+namespace TracerX 
+{
+    // Each instance of ThreadData has one of these for each destination.
+    internal class DestinationState
+    {
+        // The stack depth of method calls logged to the destination.
+        internal byte StackDepth;
+
+        // The curent method name for the thread.
+        internal string CurrentMethod = string.Empty;
+    }
+
+    // Each instance of ThreadData has one of these for each TextFile 
+    // the thread writes to.
+    internal class TextFileState : DestinationState
+    {
+        internal TextFile File;
+    }
+
+    // Each instance of ThreadData has one of these for each BinaryFile 
+    // the thread writes to.
+    internal class BinaryFileState : DestinationState
+    {
+        // Which instance of BinaryFile the current state data is for.
+        internal BinaryFile File;
+
+        // How often the file has been opened.
+        internal int LastFileNumber;
+
+        // The trace Level of the last line logged by this thread.  TraceLevel.Off means no lines logged yet.
+        internal TraceLevel LastTraceLevel = TraceLevel.Off;
+
+        // The thread's name the last time it logged a line.
+        internal string LastThreadName;
+
+        // The method name for the thread's previous line.
+        internal string LastMethod = string.Empty;
+
+        // The logger for the last line logged by the thread.
+        internal Logger LastLogger;
+
+        // The last block logged to by this thread.  0 means no lines were logged yet.
+        internal uint LastBlock = 0;
     }
 
     // Instances of StackEntry are used to keep track of the call stack
     // based on calls to ErrorCall, DebugCall, etc..
+    // Each thread (instance of ThreadData) has its own stack of these.
     internal class StackEntry
     {
-        internal StackEntry(Logger logger, TraceLevel level, string method, StackEntry caller, Destinations destinations) {
-            Destinations = destinations;
+        internal StackEntry(Logger logger, TraceLevel level, string method, StackEntry caller, Destinations destinations)
+        {
             Logger = logger;
             Level = level;
             MethodName = method;
             Caller = caller;
+            Destinations = destinations;
         }
 
+        internal StackEntry Caller; // The method that called this one.
+        internal Destinations Destinations; // Which destinations the call was logged to.
+        internal BinaryFileState BinaryFileState; // If one of the destinations was BinaryFile, this is its thread-specific state data.
         internal ulong EntryLine;   // Line number of method entry in Binary log file.
-        //internal int EntryFileNum;  // The binary file number the method entry was written to.
-        internal Destinations Destinations; // Flags that indicate which destinations this was logged for.
+        internal TextFileState TextFileState; // If one of the destinations was TextFile, this is its thread-specific state data.
         internal string MethodName; // The method that was called.
         internal TraceLevel Level;  // TraceLevel at which the call was called.
         internal Logger Logger;     // The Logger used to log the call.
-        internal StackEntry Caller; // The method that called this one
     }
 
     /// <summary>
@@ -90,7 +126,7 @@ namespace TracerX {
         [ThreadStatic]
         private static ThreadData _threadData;
 
-        // A counter use to ensure each thread has a unique ID despite the fact that
+        // A counter used to ensure each thread has a unique ID despite the fact that
         // .NET recycles the managed thread IDs.  
         private static int _threadCounter = 0;
 
@@ -109,11 +145,12 @@ namespace TracerX {
         // terminated earlier (.NET recycles the managed IDs).  
         internal int ManagedId = Thread.CurrentThread.ManagedThreadId;
 
-        // StackDepth is incremented by LogCallEntry and decremented by LogCallExit.
-        internal byte MasterStackDepth;
-
         // The top of the call stack for this thread.
         internal StackEntry TopStackEntry;
+
+        // MasterStackDepth is incremented by LogCallEntry and decremented by LogCallExit.
+        // It's the number of entries in the linked list starting with TopStackEntry.
+        internal byte MasterStackDepth;
 
         internal Logger LastLoggerAnyDest = Logger.Root;
 
@@ -121,93 +158,107 @@ namespace TracerX {
 
         #region BinaryFile data
 
-        // Resets all state data that might be associated with an earlier binary file.
-        internal void ResetBinaryFileStateData(int fileNum, DataFlags flags)
+        // TODO: Replace this with a ThreadLocal<> member in BinaryFile when we use C# 4.0.
+        internal BinaryFileState BinaryFileState { get; private set; }
+
+        private Dictionary<BinaryFile, BinaryFileState> _binaryFileStatesForThisThread = new Dictionary<BinaryFile, BinaryFileState>();
+
+        // Looks up the thread-specific state for the specified binary file,
+        // creating a new one if necessary.
+        internal BinaryFileState GetBinaryFileState(BinaryFile file)
         {
-            if ((flags & DataFlags.MethodEntry) == 0) CurrentBinaryFileMethod = string.Empty;
+            BinaryFileState result = BinaryFileState;
 
-            LastBinaryFileNumber = fileNum;
-            BinaryFileStackDepth = 0;
-            LastTraceLevel = TraceLevel.Off;
-            LastThreadName = null;
-            LastMethod = string.Empty;
-            LastLogger = null;
-            LastBlock = 0;
-
-            // Remove BinaryFile from all destinations in the call stack so
-            // we don't try to log method-exits when the methods exit
-            // (because the method-entries were logged in an earlier file).
-            for (StackEntry stackEntry = TopStackEntry; stackEntry != null; stackEntry = stackEntry.Caller)
+            if (BinaryFileState == null || BinaryFileState.File != file)
             {
-                stackEntry.Destinations &= ~Destinations.BinaryFile;
+                // Look up or create the state data for the specified file.
+                if (!_binaryFileStatesForThisThread.TryGetValue(file, out result))
+                {
+                    result = new BinaryFileState();
+                    result.File = file;
+                    _binaryFileStatesForThisThread.Add(file, result);
+                }
+
+                BinaryFileState = result;
             }
+            else
+            {
+                // We already have the data for the specified file.
+            }
+
+            return result;
         }
 
-        // Which instance of BinaryFile the current state data is for.
-        internal int LastBinaryFileNumber;
-        
-        // The curent method name for the thread.
-        internal string CurrentBinaryFileMethod = string.Empty;
+        // Resets all state data that might be associated with an earlier binary file
+        // and prepares for the next (specified) opening of the file.
+        internal void ResetBinaryFileStateData(int fileNum, DataFlags flags)
+        {
+            BinaryFileState.LastFileNumber = fileNum;
+            BinaryFileState.LastTraceLevel = TraceLevel.Off;
+            BinaryFileState.LastThreadName = null;
+            BinaryFileState.LastMethod = string.Empty;
+            BinaryFileState.LastLogger = null;
+            BinaryFileState.LastBlock = 0;
 
-        // The stack depth of method calls logged to the file.
-        internal byte BinaryFileStackDepth;
+            // For simplicity, abandon the stack rather than deal with the fact that there
+            // may be a deep call stack when the file is closed and reopened.
 
-        // The trace Level of the last line logged by this thread.  TraceLevel.Off means no lines logged yet.
-        internal TraceLevel LastTraceLevel = TraceLevel.Off;
+            BinaryFileState.StackDepth = 0;
 
-        // The thread's name the last time it logged a line.
-        internal string LastThreadName;
+            for (StackEntry stackEntry = TopStackEntry; stackEntry != null; stackEntry = stackEntry.Caller)
+            {
+                if (stackEntry.BinaryFileState == BinaryFileState)
+                {
+                    stackEntry.Destinations &= ~Destinations.BinaryFile;
+                    stackEntry.BinaryFileState = null;
+                }
+            }
 
-        // The method name for the thread's previous line.
-        internal string LastMethod = string.Empty;
-
-        // The logger for the last line logged by the thread.
-        internal Logger LastLogger;
-
-        // The last block logged to by this thread.  0 means no lines were logged yet.
-        internal uint LastBlock = 0;        
+            // I'm not sure why we wouldn't always do this.
+            if ((flags & DataFlags.MethodEntry) == 0) BinaryFileState.CurrentMethod = string.Empty;
+        }
 
         #endregion
 
         #region TextFile data
-        // The last method logged to the text file by LogCallEntry.
-        internal string CurrentTextFileMethod = string.Empty;
 
-        // The stack depth of method calls logged to the text file.
-        internal byte TextFileStackDepth;
+        internal TextFileState TextFileState { get; private set; }
+
+        private Dictionary<TextFile, TextFileState> _textFileStatesForThisThread = new Dictionary<TextFile, TextFileState>();
+
+        // Looks up the thread-specific state for the specified binary file,
+        // creating a new one if necessary.
+        internal TextFileState GetTextFileState(TextFile file)
+        {
+            TextFileState result = TextFileState;
+
+            if (TextFileState == null || TextFileState.File != file)
+            {
+                // Look up or create the state data for the specified file.
+                if (!_textFileStatesForThisThread.TryGetValue(file, out result))
+                {
+                    result = new TextFileState();
+                    result.File = file;
+                    _textFileStatesForThisThread.Add(file, result);
+                }
+
+                TextFileState = result;
+            }
+            else
+            {
+                // We already have the data for the specified file.
+            }
+
+            return result;
+        }
+
         #endregion
 
-        #region Console data
-        // The last method logged to the console by LogCallEntry.
-        internal string CurrentConsoleMethod = string.Empty;
-
-        // The stack depth of method calls logged to the console.
-        internal byte ConsoleStackDepth;
-        #endregion
-
-        #region Debug data
-        // The last method logged via Trace.WriteLine by LogCallEntry.
-        internal string CurrentDebugMethod = string.Empty;
-
-        // The stack depth of method calls logged via Trace.WriteLine.
-        internal byte DebugStackDepth;
-        #endregion
-
-        #region EventLog data
-        // The last method logged to the event log.
-        internal string CurrentEventMethod = string.Empty;
-
-        // The stack depth of method calls logged to the event log.
-        internal byte EventStackDepth;
-        #endregion
-
-        #region EventHandler data
-        // The last method logged to the EventHandler log.
-        internal string CurrentEventHandlerMethod = string.Empty;
-
-        // The stack depth of method calls logged to the EventHandler log.
-        internal byte EventHandlerStackDepth;
-        #endregion
+        // The state data for the other destinations is simple because there is only one instance of each.
+        internal DestinationState ConsoleState = new DestinationState();
+        internal DestinationState DebugState = new DestinationState();
+        internal DestinationState EventLogState = new DestinationState();
+        internal DestinationState EventHandlerState = new DestinationState();
 
         // A thread-safe place to append several message parts into one message before logging it.
         internal readonly StringWriter StringWriter = new StringWriter();
@@ -236,20 +287,20 @@ namespace TracerX {
             {
                 if ((destinations & Destinations.EventHandler) == Destinations.EventHandler)
                 {
-                    string originalMethod = CurrentEventHandlerMethod;
-                    CurrentEventHandlerMethod = method;
+                    string originalMethod = EventHandlerState.CurrentMethod;
+                    EventHandlerState.CurrentMethod = method;
 
                     // The LogMsg method returns true if the event is cancelled.
                     result = !EventHandlerLogging.LogMsg(logger, this, level, method + " entered", true, false);
 
                     if (result)
                     {
-                        ++EventHandlerStackDepth;
+                        ++EventHandlerState.StackDepth;
                     }
                     else
                     {
                         // Event was cancelled, so restore the original method.
-                        CurrentEventHandlerMethod = originalMethod;
+                        EventHandlerState.CurrentMethod = originalMethod;
                     }
                 }
 
@@ -257,39 +308,56 @@ namespace TracerX {
                 {
                     StackEntry stackEntry = new StackEntry(logger, level, method, TopStackEntry, destinations);
 
+                    // Don't put the stack entry on the stack (i.e. set TopStackEntry) until after the method-entry
+                    // is logged because of code in BinaryFile.WriteLine().
+
                     if ((destinations & Destinations.BinaryFile) == Destinations.BinaryFile)
                     {
-                        CurrentBinaryFileMethod = method;
-                        Logger.BinaryFileLogging.LogEntry(this, stackEntry);
-                        ++BinaryFileStackDepth;
+                        // This may be the first output to be written to the file, so commit to it.
+                        logger.CommitToBinaryFile();
+
+                        // Lookup the BinaryFileState that applies to this thread and file.
+                        stackEntry.BinaryFileState = GetBinaryFileState(logger.BinaryFile);
+
+                        BinaryFileState.CurrentMethod = method;
+                        logger.BinaryFile.LogEntry(this, stackEntry);
+                        ++BinaryFileState.StackDepth;
                     }
 
                     if ((destinations & Destinations.TextFile) == Destinations.TextFile)
                     {
-                        CurrentTextFileMethod = method;
-                        Logger.TextFileLogging.LogMsg(logger, this, level, method + " entered");
-                        ++TextFileStackDepth;
+                        // This may be the first output to be written to the file, so commit to it.
+                        logger.CommitToTextFile();
+
+                        stackEntry.TextFileState = GetTextFileState(logger.TextFile);
+
+                        TextFileState.CurrentMethod = method;
+                        logger.TextFile.LogMsg(logger, this, level, method + " entered");
+                        ++TextFileState.StackDepth;
                     }
 
                     if ((destinations & Destinations.Console) == Destinations.Console)
                     {
-                        CurrentConsoleMethod = method;
+                        ConsoleState.CurrentMethod = method;
                         ConsoleLogging.LogMsg(logger, this, level, method + " entered");
-                        ++ConsoleStackDepth;
+                        ++ConsoleState.StackDepth;
                     }
 
                     if ((destinations & Destinations.Debug) == Destinations.Debug)
                     {
-                        CurrentDebugMethod = method;
+                        DebugState.CurrentMethod = method;
                         DebugLogging.LogMsg(logger, this, level, method + " entered");
-                        ++DebugStackDepth;
+                        ++DebugState.StackDepth;
                     }
 
                     if ((destinations & Destinations.EventLog) == Destinations.EventLog)
                     {
-                        CurrentEventMethod = method;
+                        // Method-entry messages seem like a dumb thing to put in the event log,
+                        // but we'll keep track of the stack anyway.
+
+                        EventLogState.CurrentMethod = method;
                         //EventLogging.LogMsg(logger, this, level, method + " entered");
-                        ++EventStackDepth;
+                        ++EventLogState.StackDepth;
                     }
 
                     ++MasterStackDepth;
@@ -307,55 +375,65 @@ namespace TracerX {
             return result;
         }
 
-
-        // Log the exit of a method call.
+        // Log the exit of a method call to each destination indicated by TopStackEntry.
         internal void LogCallExit()
         {
-            if ((TopStackEntry.Destinations & Destinations.EventHandler) == Destinations.EventHandler)
+            if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
                 // Although this LogMsg() call raises a cancellable event, method-exit messages aren't really cancellable because
                 // we must "balance" the original method-entry message.
-                --EventHandlerStackDepth;
+                --EventHandlerState.StackDepth;
                 EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting", false, true);
-                CurrentEventHandlerMethod = GetCaller(Destinations.EventHandler);
+                EventHandlerState.CurrentMethod = GetCaller(Destinations.EventHandler);
             }
 
-            if ((TopStackEntry.Destinations & Destinations.BinaryFile) == Destinations.BinaryFile)
+            if ((TopStackEntry.Destinations & Destinations.BinaryFile) != 0)
             {
-                if (Logger.BinaryFileLogging.LogExit(this, TopStackEntry))
+                // Make sure BinaryFileState corresponds to the BinaryFile instance
+                // the method-exit should be logged to (the same BinaryFile the
+                // method-entry for TopStackEntry was logged to).
+                BinaryFileState = TopStackEntry.BinaryFileState;
+
+                if (TopStackEntry.Logger.BinaryFile.LogExit(this))
                 {
-                    // BinaryFileStackDepth depth is decremented after logging so any meta-logging has the right depth.
-                    --BinaryFileStackDepth;
-                    CurrentBinaryFileMethod = GetCaller(Destinations.BinaryFile);
+                    // BinaryFileState.StackDepth depth is decremented after logging so any meta-logging has the right depth.
+                    // GetCaller() also depends on the stack depth.
+                    BinaryFileState.CurrentMethod = GetCaller(BinaryFileState);
+                    --BinaryFileState.StackDepth;
                 }
             }
 
-            if ((TopStackEntry.Destinations & Destinations.TextFile) == Destinations.TextFile)
+            if ((TopStackEntry.Destinations & Destinations.TextFile) != 0)
             {
-                --TextFileStackDepth;
-                Logger.TextFileLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
-                CurrentTextFileMethod = GetCaller(Destinations.TextFile);
+                // Make sure BinaryFileState corresponds to the BinaryFile instance
+                // the method-exit should be logged to (the same BinaryFile the
+                // method-entry for TopStackEntry was logged to).
+                TextFileState = TopStackEntry.TextFileState;
+
+                --TextFileState.StackDepth;
+                TopStackEntry.Logger.TextFile.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                TextFileState.CurrentMethod = GetCaller(TextFileState);
             }
 
-            if ((TopStackEntry.Destinations & Destinations.Console) == Destinations.Console)
+            if ((TopStackEntry.Destinations & Destinations.Console) != 0)
             {
-                --ConsoleStackDepth;
+                --ConsoleState.StackDepth;
                 ConsoleLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
-                CurrentConsoleMethod = GetCaller(Destinations.Console);
+                ConsoleState.CurrentMethod = GetCaller(Destinations.Console);
             }
 
-            if ((TopStackEntry.Destinations & Destinations.Debug) == Destinations.Debug)
+            if ((TopStackEntry.Destinations & Destinations.Debug) != 0)
             {
-                --DebugStackDepth;
+                --DebugState.StackDepth;
                 DebugLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
-                CurrentDebugMethod = GetCaller(Destinations.Debug);
+                DebugState.CurrentMethod = GetCaller(Destinations.Debug);
             }
 
-            if ((TopStackEntry.Destinations & Destinations.EventLog) == Destinations.EventLog)
+            if ((TopStackEntry.Destinations & Destinations.EventLog) != 0)
             {
-                --EventStackDepth;
+                --EventLogState.StackDepth;
                 //EventLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
-                CurrentEventMethod = GetCaller(Destinations.EventLog);
+                EventLogState.CurrentMethod = GetCaller(Destinations.EventLog);
             }
 
             LastLoggerAnyDest = TopStackEntry.Logger;
@@ -363,6 +441,7 @@ namespace TracerX {
             --MasterStackDepth;
         }
 
+        // Search down the stack for the next caller for the specified destination.
         private string GetCaller(Destinations destination)
         {
             for (StackEntry caller = TopStackEntry.Caller; caller != null; caller = caller.Caller)
@@ -371,6 +450,48 @@ namespace TracerX {
                 {
                     return caller.MethodName;
                 }
+            }
+
+            return "";
+        }
+
+        // Search down the stack for the next caller for the specified binary file.
+        private string GetCaller(BinaryFileState fileData)
+        {
+            // For binary files, the stack depth is decremented AFTER this is called,
+            // so check stackdepth > 1.
+            if (fileData.StackDepth > 1)
+            {
+                for (StackEntry caller = TopStackEntry.Caller; caller != null; caller = caller.Caller)
+                {
+                    if (caller.BinaryFileState == fileData)
+                    {
+                        return caller.MethodName;
+                    }
+                }
+
+                Debug.Assert(false, "A caller should have been found.");
+            }
+
+            return "";
+        }
+
+        // Search down the stack for the next caller for the specified text file.
+        private string GetCaller(TextFileState fileData)
+        {
+            // For text files, the stack depth is decremented BEFORE this is called,
+            // so check stackdepth > 0.
+            if (fileData.StackDepth > 0)
+            {
+                for (StackEntry caller = TopStackEntry.Caller; caller != null; caller = caller.Caller)
+                {
+                    if (caller.TextFileState == fileData)
+                    {
+                        return caller.MethodName;
+                    }
+                }
+
+                Debug.Assert(false, "A caller should have been found.");
             }
 
             return "";

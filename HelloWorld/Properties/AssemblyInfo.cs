@@ -8,9 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("HelloWorld")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Mark A. Lauritsen")]
 [assembly: AssemblyProduct("HelloWorld")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2010-2011")]
+[assembly: AssemblyCopyright("Copyright © Mark Lauritsen 2010-2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.1.1101.11211")]
+[assembly: AssemblyVersion("6.0.1109.7202")]
 //[assembly: AssemblyFileVersion("1.0.0.0")]

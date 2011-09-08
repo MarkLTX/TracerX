@@ -23,8 +23,8 @@ namespace TracerX
                     {
                         var args = new MessageCreatedEventArgs
                         {
-                            Indentation = threadData.EventHandlerStackDepth,
-                            Method = threadData.CurrentEventHandlerMethod,
+                            Indentation = threadData.EventHandlerState.StackDepth,
+                            Method = threadData.EventHandlerState.CurrentMethod,
                             ThreadNumber = threadData.TracerXID,
                             Message = msg,
                             TraceLevel = msgLevel,
