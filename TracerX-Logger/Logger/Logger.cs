@@ -42,8 +42,8 @@ namespace TracerX {
     /// output will be suppressed unless you set this to a higher value. The binary file must be viewed with the TracerX-Viewer 
     /// application, which has powerful filtering, navigating, coloring and other features.  Since the viewer
     /// only works with the binary file, it should be your primary logging destination.  Additional configuration of the binary
-    /// file, such as the file name and location, is specified via the static <see cref="Logger.BinaryFileLogging"/> object.
-    /// Also, you must call Logger.BinaryFileLogging.Open() to open the file.
+    /// file, such as the file name and location, is specified via the <see cref="Logger.BinaryFile"/> object.
+    /// Also, you must call BinaryFile.Open() to open the file.
     /// </para>
     /// <para>
     /// The <see cref="TextFileTraceLevel"/> property specifies the maximum level of output sent to the text log file. 
@@ -156,16 +156,18 @@ namespace TracerX {
         #region Static properties
 
         /// <summary>
-        /// Methods and configuration for logging to the full-featured binary file supported by the viewer.
+        /// The default binary output file used by all Logger instances.
+        /// This is the full-featured binary file supported by the viewer.
         /// Output to this file is filtered by the <see cref="Logger.BinaryFileTraceLevel"/> property.
+        /// Individual Loggers can log to a different file by setting the <see cref="BinaryFile"/> property.
         /// </summary>
-        public static BinaryFile BinaryFileLogging { get { return BinaryFile.Singleton; } }
+        public static BinaryFile DefaultBinaryFile { get; private set; }
 
         /// <summary>
-        /// Methods and configuration for logging to the text file (preferred by real men).
+        /// The default text output file used by all Logger instances.
         /// Output to this file is filtered by the <see cref="Logger.TextFileTraceLevel"/> property.
         /// </summary>
-        public static TextFile TextFileLogging { get { return TextFile.Singleton; } }
+        public static TextFile DefaultTextFile { get; private set; }
 
         /// <summary>
         /// This event is raised when a <see cref="Logger"/> is passed a message whose <see cref="TraceLevel"/> is
@@ -220,12 +222,28 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Deprecated.  Use <see cref="BinaryFileLogging"/> instead.
+        /// Deprecated.  Use <see cref="DefaultBinaryFile"/> instead.
         /// </summary>
-        [Obsolete("Use BinaryFileLogging instead.", false)]
+        [Obsolete("Use DefaultBinaryFile instead.", false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        public static BinaryFile FileLogging { get { return BinaryFileLogging; } }
+        public static BinaryFile FileLogging { get { return DefaultBinaryFile; } }
+
+        /// <summary>
+        /// Deprecated.  Use <see cref="DefaultBinaryFile"/> instead.
+        /// </summary>
+        [Obsolete("Use DefaultBinaryFile instead.", false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        public static BinaryFile BinaryFileLogging { get { return DefaultBinaryFile; } }
+
+        /// <summary>
+        /// Deprecated.  Use <see cref="DefaultTextFile"/> instead.
+        /// </summary>
+        [Obsolete("Use DefaultTextFile instead.", false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        public static TextFile TextFileLogging { get { return DefaultTextFile; } }
 
         #endregion
 
@@ -236,23 +254,97 @@ namespace TracerX {
         /// it's dotted notation (e.g. A.B.C is a child or grandchild of A).
         /// The name is set in the call to <see cref="GetLogger(string)"/> and is read-only thereafter.
         /// </summary>
-        public string Name { get { return _name; } }
-        private readonly string _name;
+        public string Name { get; private set; }
 
         /// <summary>
-        /// This controls which logging calls send output to the binary file.  Only those calls at levels
-        /// less than or equal to this value go to the file.  If this is set to
+        /// The <see cref="BinaryFile"/> instance used by this Logger instance.  Initially equal to Logger.DefaultBinaryFile.
+        /// Once the Logger writes to the file, BinaryFileIsCommitted becomes true and BinaryFile cannot be set to a different
+        /// BinaryFile.  Attempting to do so throws an exception.
+        /// </summary>
+        public BinaryFile BinaryFile
+        {
+            get { return _binaryFile; } // No lock. C# spec says this is atomic.
+
+            set
+            {
+                lock (_loggerLock)
+                {
+                    if (_binaryFile != value)
+                    {                        
+                        if (_isBinaryFileCommitted)
+                        {
+                            // The reason for this is that it would be difficult to support logging method-entries to one
+                            // file and logging the corresponding method-exits to another file.
+                            throw new Exception("Logger.BinaryFile cannot be changed after the Logger has written to the file.");
+                        }
+                        else
+                        {
+                            _binaryFile = value;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initially false, this becomes true when this Logger first writes to its BinaryFile.  After that,
+        /// BinaryFile can't be changed.
+        /// </summary>
+        public bool IsBinaryFileCommitted
+        {
+            get { return _isBinaryFileCommitted; }
+        }
+
+        /// <summary>
+        /// This controls which logging calls send output to the <see cref="BinaryFile"/>.  Only those calls at levels
+        /// less than or equal to BinaryFileTraceLevel go to the file.  If BinaryFileTraceLevel is set to
         /// Inherited, the get accessor returns the trace Level inherited from the parent logger.
-        /// See the <see cref="BinaryFileLogging"/> property.
         /// </summary>
         public TraceLevel BinaryFileTraceLevel {
             get { return BinaryFileLevels.EffectiveLevel; }
             set { SetTraceLevel(value, BinaryFileIndex); }
         }
 
+
+        /// <summary>
+        /// The <see cref="TextFile"/> instance used by this Logger instance.  Initially equal to Logger.DefaultTextFile.
+        /// Once the Logger writes to the file, TextFileIsCommitted becomes true and TextFile cannot be set to a different
+        /// TextFile.  Attempting to do so throws an exception.
+        /// </summary>
+        public TextFile TextFile
+        {
+            get { return _textFile; }
+
+            set
+            {
+                lock (_loggerLock)
+                {
+                    if (_textFile != value)
+                    {                        
+                        if (_isTextFileCommitted)
+                        {
+                            // The reason for this is that it would be difficult to support logging method-entries to one
+                            // file and logging the corresponding method-exits to another file.
+                            throw new Exception("Logger.BinaryFile cannot be changed after the Logger has written to the file.");
+                        }
+                        else
+                        {
+                            _textFile = value;
+                        }
+                    }
+                }
+            }
+        }
+
+        public bool IsTextFileCommitted
+        {
+            get { return _isTextFileCommitted; }
+        }
+
+
         /// <summary>
         /// Similar to <see cref="BinaryFileTraceLevel"/>, but applies to text file output.
-        /// See the <see cref="TextFileLogging"/> property.
+        /// See the <see cref="TextFile"/> property.
         /// </summary>
         public TraceLevel TextFileTraceLevel {
             get { return TextFileLevels.EffectiveLevel; }
@@ -306,7 +398,7 @@ namespace TracerX {
         }
 
         /// <summary>
-        /// Deprecated.  Use <see cref="BinaryFileTraceLevel"/> instead.
+        /// Deprected.  Use <see cref="BinaryFileTraceLevel"/> instead.
         /// </summary>
         [Obsolete("Use BinaryFileTraceLevel instead.", false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -328,7 +420,11 @@ namespace TracerX {
         [Browsable(false)]
         public void Explicit(TraceLevel level, DateTime explicitUtcTime, string msg)
         {
-            if (BinaryFileTraceLevel >= level) BinaryFileLogging.LogMsg(explicitUtcTime, this, level, msg);
+            if (BinaryFileTraceLevel >= level)
+            {
+                CommitToBinaryFile();
+                BinaryFile.LogMsg(explicitUtcTime, this, level, msg);
+            }
         }
 
         #region Fatal logging
@@ -771,6 +867,61 @@ namespace TracerX {
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Logs a view lines about the execution environment, such as OS Version,
+        /// assembly version/location, user name, and machine name.
+        /// </summary>
+        public void LogEnvironmentInfo()
+        {
+            using (InfoCall("EnvironmentInfo"))
+            {
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+
+                if (entryAssembly == null)
+                {
+                    Info("Assembly.GetEntryAssembly() returned null.");
+                }
+                else
+                {
+                    Info("EntryAssembly.Location = ", entryAssembly.Location);
+                    Info("EntryAssembly.FullName = ", entryAssembly.FullName); // Includes assembly version.
+
+                    try
+                    {
+                        // Try to get the file version.
+                        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(entryAssembly.Location);
+                        Info("FileVersionInfo.FileVersion = ", fvi.FileVersion);
+                        Info("FileVersionInfo.ProductVersion = ", fvi.ProductVersion);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                try
+                {
+                    Info("AppDomain.FriendlyName = ", AppDomain.CurrentDomain.FriendlyName);
+                    Info("AppDomain.IsDefaultAppDomain = ", AppDomain.CurrentDomain.IsDefaultAppDomain());
+                    Info("AppDomain.BaseDirectory = ", AppDomain.CurrentDomain.BaseDirectory);
+                }
+                catch (Exception)
+                {
+                }
+
+                Info("Environment.OSVersion = ", Environment.OSVersion);
+                Info("Environment.CurrentDirectory = ", Environment.CurrentDirectory);
+                Info("Environment.UserInteractive = ", Environment.UserInteractive);
+
+                Debug("Environment.CommandLine = ", Environment.CommandLine);
+
+                Verbose("Environment.MachineName = ", Environment.MachineName);
+                Verbose("Environment.UserDomainName = ", Environment.UserDomainName);
+                Verbose("Environment.UserName = ", Environment.UserName);
+            }
+        }
+
         #endregion
         #endregion
 
@@ -780,13 +931,17 @@ namespace TracerX {
         /// Ctor is private.  GetLogger() should be the only caller.
         /// </summary>
         private Logger(string name) {
-            _name = name;
+            Name = name;
             DestinationLevels = new LevelPair[] { BinaryFileLevels, TextFileLevels, ConsoleLevels, DebugOutLevels, EventLogLevels, EventHandlerLevels };
             _loggers.Add(name, this);
         }
         
-        // The static ctor creates the Root logger.
-        static Logger() {
+        // The static ctor.
+        static Logger()
+        {
+            DefaultBinaryFile = new BinaryFile();
+            DefaultTextFile = new TextFile();
+
             Root = new Logger("Root");
             Root.BinaryFileTraceLevel = TraceLevel.Info;
             Root.TextFileTraceLevel = TraceLevel.Off;
@@ -903,6 +1058,41 @@ namespace TracerX {
             return result;
         }
 
+        // This is called just before writing to the binary file. It ensures
+        // the BinaryFile property can't change afterward.
+        internal void CommitToBinaryFile()
+        {
+            // Once _binaryFileIsCommitted, it stays true forever.
+            if (!_isBinaryFileCommitted)
+            {
+                lock (_loggerLock)
+                {
+                    _isBinaryFileCommitted = true;
+                }
+            }
+        }
+
+        // This is called just before writing to the text file. It ensures
+        // the TextFile property can't change afterward.
+        internal void CommitToTextFile()
+        {
+            // Once _isTextFileCommitted, it stays true forever.
+            if (!_isTextFileCommitted)
+            {
+                lock (_loggerLock)
+                {
+                    _isTextFileCommitted = true;
+                }
+            }
+        }
+
+        private volatile BinaryFile _binaryFile = DefaultBinaryFile;
+        private volatile bool _isBinaryFileCommitted;
+
+        private volatile TextFile _textFile = DefaultTextFile;
+        private volatile bool _isTextFileCommitted;
+        private object _loggerLock = new object();
+
         #region Trace levels
         // Each logging destination has an explicit trace level and an effective trace level that is
         // inherited from the parent logger if the explicit trace level is Inherited.
@@ -973,16 +1163,31 @@ namespace TracerX {
         #endregion
 
         #region Message logging
+
+        // Determines which destinations the message should be logged to and calls
+        // the appropriate method for each.
         private void LogToDestinations(ThreadData threadData, TraceLevel msgLevel, string msg) {
             try {
                 bool cancelled = false;
 
+                // The EventHandler destination is first so if the handler cancels the event,
+                // the message won't be logged to any other destinations.
                 if (EventHandlerTraceLevel >= msgLevel) cancelled = EventHandlerLogging.LogMsg(this, threadData, msgLevel, msg, false, false);
 
                 if (!cancelled)
                 {
-                    if (BinaryFileTraceLevel >= msgLevel) BinaryFileLogging.LogMsg(this, threadData, msgLevel, msg);
-                    if (TextFileTraceLevel >= msgLevel) TextFileLogging.LogMsg(this, threadData, msgLevel, msg);
+                    if (BinaryFileTraceLevel >= msgLevel)
+                    {
+                        CommitToBinaryFile();
+                        BinaryFile.LogMsg(this, threadData, msgLevel, msg);
+                    }
+
+                    if (TextFileTraceLevel >= msgLevel)
+                    {
+                        CommitToTextFile();
+                        TextFile.LogMsg(this, threadData, msgLevel, msg);
+                    }
+                   
                     if (ConsoleTraceLevel >= msgLevel) ConsoleLogging.LogMsg(this, threadData, msgLevel, msg);
                     if (DebugTraceLevel >= msgLevel) DebugLogging.LogMsg(this, threadData, msgLevel, msg);
                     if (EventLogTraceLevel >= msgLevel) EventLogging.LogMsg(this, threadData, msgLevel, msg);
@@ -1085,8 +1290,8 @@ namespace TracerX {
         internal Destinations GetDestinations(TraceLevel level) {
             Destinations destinations = Destinations.None;
 
-            if (BinaryFileTraceLevel >= level && BinaryFileLogging.IsOpen) destinations |= Destinations.BinaryFile;
-            if (TextFileTraceLevel >= level && TextFileLogging.IsOpen) destinations |= Destinations.TextFile;
+            if (BinaryFileTraceLevel >= level && BinaryFile.IsOpen) destinations |= Destinations.BinaryFile;
+            if (TextFileTraceLevel >= level && TextFile.IsOpen) destinations |= Destinations.TextFile;
             if (ConsoleTraceLevel >= level) destinations |= Destinations.Console;
             if (DebugTraceLevel >= level) destinations |= Destinations.Debug;
             if (EventLogTraceLevel >= level) destinations |= Destinations.EventLog;

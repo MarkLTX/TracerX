@@ -14,7 +14,7 @@ namespace TracerX {
         /// <summary>
         /// Replaced by Inherited.
         /// </summary>
-        [Obsolete("Use 'Inherited' instead of 'Undefined'", false)]
+        [Obsolete("Use 'Inherited' instead of 'Undefined'")]
         Undefined = Inherited,
 
         /// <summary> Turns logging off for the Logger/destination with this level. </summary>

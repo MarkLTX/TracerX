@@ -42,7 +42,7 @@ namespace TracerX {
             // Logs a message via Trace.WriteLine.
             internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
                 lock (_debugLocker) {
-                    string indent = new string(' ', 3 * threadData.DebugStackDepth);
+                    string indent = new string(' ', 3 * threadData.DebugState.StackDepth);
                     ++_lineCount;
 
                     msg = string.Format(Logger.DebugLogging._internalDebugFormatString,
@@ -52,7 +52,7 @@ namespace TracerX {
                         threadData.TracerXID,
                         threadData.Name ?? "<null>",
                         DateTime.Now,
-                        threadData.CurrentDebugMethod ?? "<null>" ,
+                        threadData.DebugState.CurrentMethod ?? "<null>" ,
                         indent,
                         msg ?? "<null>"
                         );

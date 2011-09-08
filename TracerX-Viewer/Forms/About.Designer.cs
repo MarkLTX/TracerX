@@ -36,18 +36,18 @@ namespace TracerX.Viewer {
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 54);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 13);
+            this.label2.Size = new System.Drawing.Size(125, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Assembly version:";
+            this.label2.Text = "Viewer assembly version:";
             // 
             // asmVer
             // 
             this.asmVer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.asmVer.Location = new System.Drawing.Point(176, 51);
+            this.asmVer.Location = new System.Drawing.Point(143, 51);
             this.asmVer.Name = "asmVer";
             this.asmVer.ReadOnly = true;
-            this.asmVer.Size = new System.Drawing.Size(273, 20);
+            this.asmVer.Size = new System.Drawing.Size(306, 20);
             this.asmVer.TabIndex = 6;
             // 
             // ok
@@ -65,10 +65,10 @@ namespace TracerX.Viewer {
             // 
             this.loadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadDir.Location = new System.Drawing.Point(176, 81);
+            this.loadDir.Location = new System.Drawing.Point(143, 81);
             this.loadDir.Name = "loadDir";
             this.loadDir.ReadOnly = true;
-            this.loadDir.Size = new System.Drawing.Size(273, 20);
+            this.loadDir.Size = new System.Drawing.Size(306, 20);
             this.loadDir.TabIndex = 9;
             // 
             // label5

@@ -33,6 +33,7 @@ namespace TracerX.Viewer {
             this.sessionCombo = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.lblOfN = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // close
@@ -122,6 +123,15 @@ namespace TracerX.Viewer {
             this.label3.TabIndex = 11;
             this.label3.Text = "File properties:";
             // 
+            // lblOfN
+            // 
+            this.lblOfN.AutoSize = true;
+            this.lblOfN.Location = new System.Drawing.Point(191, 181);
+            this.lblOfN.Name = "lblOfN";
+            this.lblOfN.Size = new System.Drawing.Size(27, 13);
+            this.lblOfN.TabIndex = 12;
+            this.lblOfN.Text = "of N";
+            // 
             // FileProperties
             // 
             this.AcceptButton = this.close;
@@ -129,6 +139,7 @@ namespace TracerX.Viewer {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.close;
             this.ClientSize = new System.Drawing.Size(400, 452);
+            this.Controls.Add(this.lblOfN);
             this.Controls.Add(this.sessionCombo);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -159,6 +170,7 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ComboBox sessionCombo;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblOfN;
 
     }
 }

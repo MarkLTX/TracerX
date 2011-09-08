@@ -55,6 +55,12 @@
       <DependentUpon>ControlledLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="DomainCallbacks.cs" />
+    <Compile Include="TextTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextTest.Designer.cs">
+      <DependentUpon>TextTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,6 +81,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextTest.resx">
+      <DependentUpon>TextTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ViewerWrapper.resx">
       <DependentUpon>ViewerWrapper.cs</DependentUpon>
@@ -123,7 +132,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 // The version components are specified manually.
-// major.minor.yymm.ddhht, where yy is two-digit year,
-// mm is two-digit month, dd is two-digit date, hh is two-digit hour, and t is the tens digit of the minutes.
-[assembly: AssemblyVersion("5.1.1101.11211")] 
+// major.minor.yymm.ddhht, where 'yy' is two-digit year,
+// 'mm' is two-digit month, 'dd' is two-digit date, 'hh' is two-digit hour, and 't' is the tens digit of the minutes.
+[assembly: AssemblyVersion("6.0.1109.7202")] 
 //[assembly: AssemblyFileVersion("1.0.010211.0")]  Let this default to the AssemblyVersion

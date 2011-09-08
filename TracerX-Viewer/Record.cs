@@ -6,7 +6,6 @@ using System.Diagnostics;
 using TracerX.Properties;
 using TracerX.Forms;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace TracerX.Viewer {
     /// <summary>

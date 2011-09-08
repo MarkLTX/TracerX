@@ -44,7 +44,7 @@ namespace TracerX {
             // Logs a message to the console.
             internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
                 lock (_consoleLocker) {
-                    string indent = new string(' ', 3 * threadData.ConsoleStackDepth);
+                    string indent = new string(' ', 3 * threadData.ConsoleState.StackDepth);
                     ++_lineCount;
 
                     Console.WriteLine(Logger.ConsoleLogging._internalConsoleFormatString,
@@ -54,7 +54,7 @@ namespace TracerX {
                         threadData.TracerXID,
                         threadData.Name ?? "<null>",
                         DateTime.Now,
-                        threadData.CurrentConsoleMethod ?? "<null>",
+                        threadData.ConsoleState.CurrentMethod ?? "<null>",
                         indent,
                         msg == null ? "<null>" : msg
                         );

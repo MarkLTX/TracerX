@@ -27,6 +27,8 @@ namespace TracerX.Viewer {
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.cancel = new System.Windows.Forms.Button();
             this.ok = new System.Windows.Forms.Button();
+            this.lblHint = new System.Windows.Forms.Label();
+            this.txtHint = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -44,14 +46,14 @@ namespace TracerX.Viewer {
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Location = new System.Drawing.Point(12, 25);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(184, 20);
+            this.textBox1.Size = new System.Drawing.Size(176, 20);
             this.textBox1.TabIndex = 1;
             // 
             // cancel
             // 
-            this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(120, 52);
+            this.cancel.Location = new System.Drawing.Point(112, 117);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 2;
@@ -60,9 +62,9 @@ namespace TracerX.Viewer {
             // 
             // ok
             // 
-            this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(39, 51);
+            this.ok.Location = new System.Drawing.Point(31, 116);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 3;
@@ -70,19 +72,42 @@ namespace TracerX.Viewer {
             this.ok.UseVisualStyleBackColor = true;
             this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
+            // lblHint
+            // 
+            this.lblHint.AutoSize = true;
+            this.lblHint.Location = new System.Drawing.Point(12, 57);
+            this.lblHint.Name = "lblHint";
+            this.lblHint.Size = new System.Drawing.Size(29, 13);
+            this.lblHint.TabIndex = 4;
+            this.lblHint.Text = "Hint:";
+            // 
+            // txtHint
+            // 
+            this.txtHint.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHint.Location = new System.Drawing.Point(15, 74);
+            this.txtHint.Multiline = true;
+            this.txtHint.Name = "txtHint";
+            this.txtHint.ReadOnly = true;
+            this.txtHint.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtHint.Size = new System.Drawing.Size(170, 36);
+            this.txtHint.TabIndex = 5;
+            // 
             // PasswordDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel;
-            this.ClientSize = new System.Drawing.Size(208, 82);
+            this.ClientSize = new System.Drawing.Size(200, 143);
+            this.Controls.Add(this.txtHint);
+            this.Controls.Add(this.lblHint);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1018, 116);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(216, 116);
             this.Name = "PasswordDialog";
@@ -100,5 +125,7 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.Button ok;
+        private System.Windows.Forms.Label lblHint;
+        private System.Windows.Forms.TextBox txtHint;
     }
 }

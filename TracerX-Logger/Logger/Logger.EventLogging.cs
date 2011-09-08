@@ -95,7 +95,7 @@ namespace TracerX {
             // Logs a message to the event log.
             internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
                 lock (_eventLocker) {
-                    string indent = new string(' ', 3 * threadData.EventStackDepth);
+                    string indent = new string(' ', 3 * threadData.EventLogState.StackDepth);
                     ++_lineCount;
 
                     string output = string.Format(Logger.EventLogging._internalEventFormatString,
@@ -105,7 +105,7 @@ namespace TracerX {
                         threadData.TracerXID,
                         threadData.Name ?? "<null>",
                         DateTime.Now,
-                        threadData.CurrentEventMethod ?? "<null>",
+                        threadData.EventLogState.CurrentMethod ?? "<null>",
                         indent,
                         msg ?? "<null>" 
                         );
@@ -136,6 +136,7 @@ namespace TracerX {
             internal const int XmlConfigWarning = 105; // The TracerX element was loaded from XML with warnings.
             internal const int ExceptionInArchive = 106; // An exception occurred while archiving the old output file.
             internal const int AppendVersionConflict = 107; // Could not append to existing log file because it had an old version.
+            internal const int AppendPasswordConflict = 108; // Could not append to existing log file because passwords are different.
             internal const int UnhandledExceptionInApp = 120; // An unhandled exception occurred somewhere in the app.
 
             // 201-300 = info
