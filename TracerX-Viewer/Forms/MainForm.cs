@@ -744,19 +744,24 @@ namespace TracerX.Viewer {
 
         private void RestoreScrollPosition(int rowNum) {
             // Attempt to maintain the same scroll position as before the refresh.
-            if (rowNum == -1 || rowNum >= NumRows) {
-                // Go to the very end and select the last row so the next refresh will also
-                // scroll to the end.
-                SelectRowIndex(NumRows - 1);
-            } else {
-                // Scroll to the same index as before the refresh.
-                // For some reason, setting the TopItem once doesn't work.  Setting
-                // it three times usually does, so try up to four.
-                for (int i = 0; i < 4; ++i) {
-                    if (TheListView.TopItem.Index == rowNum) break;
-                    Debug.Print("Setting TopItem index to " + rowNum);
-                    TheListView.TopItem = (TheListView.Items[rowNum]);
+
+            try {
+                if (rowNum == -1 || rowNum >= NumRows) {
+                    // Go to the very end and select the last row so the next refresh will also
+                    // scroll to the end.
+                    SelectRowIndex(NumRows - 1);
+                } else {
+                    // Scroll to the same index as before the refresh.
+                    // For some reason, setting the TopItem once doesn't work.  Setting
+                    // it three times usually does, so try up to four.
+                    for (int i = 0; i < 4; ++i) {
+                        if (TheListView.TopItem.Index == rowNum) break;     // Exception reported here.
+                        Debug.Print("Setting TopItem index to " + rowNum);
+                        TheListView.TopItem = (TheListView.Items[rowNum]);
+                    }
                 }
+            } catch (Exception) {
+                // Restoring the scroll position isn't critical.  Just let it go.
             }
         }
 
@@ -958,10 +963,19 @@ namespace TracerX.Viewer {
         }
 
         void FileRenamed(object sender, RenamedEventArgs e) {
-            Debug.Print(e.OldName + " renamed to " + e.Name + "(" + e.ChangeType + ")");
+            Debug.Print(String.Format("{0} renamed to {1}({2})", e.OldName, e.Name, e.ChangeType));
             autoUpdate.Enabled = false;
             StopFileWatcher();
-            ShowMessageBox("The log file has been renamed.  It will no longer be monitored for changes unless you reload/refresh it.");
+
+            if (Settings.Default.AutoReload) {
+                // Allow some time for new log file to be started.
+                Thread.Sleep(250);
+                Application.DoEvents();
+                StartReading(null); // Null means refresh the current file.
+                RestoreScrollPosition(-1);
+            } else {
+                ShowMessageBox("The log file has been renamed.  It will no longer be monitored for changes unless you reload/refresh it.");
+            }
         }
 
         private void SetCollapseDepth(Record rec) {
@@ -2131,11 +2145,6 @@ namespace TracerX.Viewer {
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
             FillRecentlyViewedMenu();
             FillRecentFolderdsMenu();
-            recentlyCreatedToolStripMenuItem.Enabled = File.Exists(_recentlyCreatedListFile);
-        }
-
-        private void recentlyCreatedToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
             FillRecentlyCreatedMenu();
         }
 

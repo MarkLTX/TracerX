@@ -226,6 +226,7 @@ namespace TracerX.Viewer {
         private void InitAutoUpdate() {
             autoUpdate.Checked = Settings.Default.AutoUpdate;
             txtMaxRecords.Text = Settings.Default.MaxRecords.ToString();
+            autoReload.Checked = Settings.Default.AutoReload;
         }
 
         private bool VerifyAutoUpdate()
@@ -261,6 +262,7 @@ namespace TracerX.Viewer {
             // gets called when AutoUpdate is set to true.
             Settings.Default.MaxRecords = int.Parse(txtMaxRecords.Text);
             Settings.Default.AutoUpdate = autoUpdate.Checked;
+            Settings.Default.AutoReload = autoReload.Checked;
         }
         #endregion Auto-Update
 
