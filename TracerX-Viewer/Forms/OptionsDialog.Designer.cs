@@ -29,6 +29,7 @@ namespace TracerX.Viewer {
             this.ok = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.miscPage = new System.Windows.Forms.TabPage();
+            this.chkReapplyFilter = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -58,6 +59,8 @@ namespace TracerX.Viewer {
             this.label1 = new System.Windows.Forms.Label();
             this.expandLinesWithNewlines = new System.Windows.Forms.CheckBox();
             this.autoUpdatePage = new System.Windows.Forms.TabPage();
+            this.txtMaxRecords = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.autoUpdate = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.versionPage = new System.Windows.Forms.TabPage();
@@ -67,9 +70,7 @@ namespace TracerX.Viewer {
             this.txtVersionInterval = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.chkReapplyFilter = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.txtMaxRecords = new System.Windows.Forms.TextBox();
+            this.autoReload = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.miscPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -150,6 +151,19 @@ namespace TracerX.Viewer {
             this.miscPage.TabIndex = 1;
             this.miscPage.Text = "Miscellaneous";
             this.miscPage.UseVisualStyleBackColor = true;
+            // 
+            // chkReapplyFilter
+            // 
+            this.chkReapplyFilter.AutoSize = true;
+            this.chkReapplyFilter.Checked = true;
+            this.chkReapplyFilter.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReapplyFilter.Location = new System.Drawing.Point(9, 27);
+            this.chkReapplyFilter.Name = "chkReapplyFilter";
+            this.chkReapplyFilter.Size = new System.Drawing.Size(215, 17);
+            this.chkReapplyFilter.TabIndex = 6;
+            this.chkReapplyFilter.Text = "Reapply current filter after refreshing file.";
+            this.chkReapplyFilter.UseVisualStyleBackColor = true;
+            this.chkReapplyFilter.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
             // groupBox1
             // 
@@ -457,6 +471,7 @@ namespace TracerX.Viewer {
             // 
             // autoUpdatePage
             // 
+            this.autoUpdatePage.Controls.Add(this.autoReload);
             this.autoUpdatePage.Controls.Add(this.txtMaxRecords);
             this.autoUpdatePage.Controls.Add(this.label13);
             this.autoUpdatePage.Controls.Add(this.autoUpdate);
@@ -468,6 +483,24 @@ namespace TracerX.Viewer {
             this.autoUpdatePage.TabIndex = 3;
             this.autoUpdatePage.Text = "Auto-Update";
             this.autoUpdatePage.UseVisualStyleBackColor = true;
+            // 
+            // txtMaxRecords
+            // 
+            this.txtMaxRecords.Location = new System.Drawing.Point(12, 77);
+            this.txtMaxRecords.MaxLength = 9;
+            this.txtMaxRecords.Name = "txtMaxRecords";
+            this.txtMaxRecords.Size = new System.Drawing.Size(80, 20);
+            this.txtMaxRecords.TabIndex = 7;
+            this.txtMaxRecords.TextChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(9, 61);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(278, 13);
+            this.label13.TabIndex = 6;
+            this.label13.Text = "Cancel auto-updating when this many records are loaded:";
             // 
             // autoUpdate
             // 
@@ -561,36 +594,18 @@ namespace TracerX.Viewer {
             this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
                 "website?";
             // 
-            // chkReapplyFilter
+            // autoReload
             // 
-            this.chkReapplyFilter.AutoSize = true;
-            this.chkReapplyFilter.Checked = true;
-            this.chkReapplyFilter.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReapplyFilter.Location = new System.Drawing.Point(9, 27);
-            this.chkReapplyFilter.Name = "chkReapplyFilter";
-            this.chkReapplyFilter.Size = new System.Drawing.Size(215, 17);
-            this.chkReapplyFilter.TabIndex = 6;
-            this.chkReapplyFilter.Text = "Reapply current filter after refreshing file.";
-            this.chkReapplyFilter.UseVisualStyleBackColor = true;
-            this.chkReapplyFilter.CheckedChanged += new System.EventHandler(this.SomethingChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(9, 61);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(278, 13);
-            this.label13.TabIndex = 6;
-            this.label13.Text = "Cancel auto-updating when this many records are loaded:";
-            // 
-            // txtMaxRecords
-            // 
-            this.txtMaxRecords.Location = new System.Drawing.Point(12, 77);
-            this.txtMaxRecords.MaxLength = 9;
-            this.txtMaxRecords.Name = "txtMaxRecords";
-            this.txtMaxRecords.Size = new System.Drawing.Size(80, 20);
-            this.txtMaxRecords.TabIndex = 7;
-            this.txtMaxRecords.TextChanged += new System.EventHandler(this.SomethingChanged);
+            this.autoReload.AutoSize = true;
+            this.autoReload.Checked = true;
+            this.autoReload.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.autoReload.Location = new System.Drawing.Point(9, 113);
+            this.autoReload.Name = "autoReload";
+            this.autoReload.Size = new System.Drawing.Size(336, 17);
+            this.autoReload.TabIndex = 8;
+            this.autoReload.Text = "Auto-reload (Automatically reload the file when log file is restarted).";
+            this.autoReload.UseVisualStyleBackColor = true;
+            this.autoReload.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
             // OptionsDialog
             // 
@@ -682,5 +697,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.CheckBox chkReapplyFilter;
         private System.Windows.Forms.TextBox txtMaxRecords;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox autoReload;
     }
 }

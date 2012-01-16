@@ -618,7 +618,6 @@ namespace TracerX.Viewer {
             this.recentlyCreatedToolStripMenuItem.Text = "Recently Created";
             this.commandProvider.SetUICommand(this.recentlyCreatedToolStripMenuItem, null);
             this.recentlyCreatedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
-            this.recentlyCreatedToolStripMenuItem.DropDownOpening += new System.EventHandler(this.recentlyCreatedToolStripMenuItem_DropDownOpening);
             // 
             // recentFoldersToolStripMenuItem
             // 

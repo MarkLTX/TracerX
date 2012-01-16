@@ -170,6 +170,22 @@ namespace TracerX {
         public static TextFile DefaultTextFile { get; private set; }
 
         /// <summary>
+        /// Text to substitute for null strings and other objects passed to logging methods.
+        /// Default is &lt;null&gt;,but can be anything except null (including string.Empty).
+        /// </summary>
+        public static string TextForNull {
+            get { return _textForNull; }
+
+            set {
+                if (value == null) {
+                    throw new ArgumentNullException("TextForNull", "Logger.TextForNull can't be null.");
+                } else {
+                    _textForNull = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// This event is raised when a <see cref="Logger"/> is passed a message whose <see cref="TraceLevel"/> is
         /// less than or equal to the <see cref="Logger.EventHandlerTraceLevel"/> property.
         /// The <see cref="MessageCreatedEventArgs"/> passed to the handlers contains the message text, TraceLevel,
@@ -927,6 +943,8 @@ namespace TracerX {
 
         #region Private/Internal
 
+        private static string _textForNull = "<null>";
+
         /// <summary>
         /// Ctor is private.  GetLogger() should be the only caller.
         /// </summary>
@@ -1205,7 +1223,7 @@ namespace TracerX {
         private void MaybeLog(TraceLevel msgLevel, string msg) {
             if (IsLevelEnabled(msgLevel)) {
                 // At least one destination is enabled at this level.
-                LogToDestinations(ThreadData.CurrentThreadData, msgLevel, msg);
+                LogToDestinations(ThreadData.CurrentThreadData, msgLevel, msg ?? _textForNull);
             }
         }
 
@@ -1216,7 +1234,7 @@ namespace TracerX {
             if (IsLevelEnabled(msgLevel)) {
                 ThreadData threadData = ThreadData.CurrentThreadData;
 
-                RendererMap.FindAndRender(arg0, threadData.StringWriter);
+                RendererMap.FindAndRender(arg0 ?? _textForNull, threadData.StringWriter);
                 string msg = threadData.ResetStringWriter();
                 LogToDestinations(threadData, msgLevel, msg);
             }
@@ -1229,8 +1247,8 @@ namespace TracerX {
             if (IsLevelEnabled(msgLevel)) {
                 ThreadData threadData = ThreadData.CurrentThreadData;
 
-                RendererMap.FindAndRender(arg0, threadData.StringWriter);
-                RendererMap.FindAndRender(arg1, threadData.StringWriter);
+                RendererMap.FindAndRender(arg0 ?? _textForNull, threadData.StringWriter);
+                RendererMap.FindAndRender(arg1 ?? _textForNull, threadData.StringWriter);
                 string msg = threadData.ResetStringWriter();
                 LogToDestinations(threadData, msgLevel, msg);
             }
@@ -1245,8 +1263,9 @@ namespace TracerX {
 
                 foreach (object o in items)
                 {
-                    RendererMap.FindAndRender(o, threadData.StringWriter);
+                    RendererMap.FindAndRender(o ?? _textForNull, threadData.StringWriter);
                 }
+
                 string msg = threadData.ResetStringWriter();
                 LogToDestinations(threadData, msgLevel, msg);
             }
