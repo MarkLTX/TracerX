@@ -1,2 +1,1 @@
-Changed target framework to be the client-only subset.
-Fixed annoying delay that sometimes occurs when launching the viewer.
+Forced crumb bar link color to be blue.
