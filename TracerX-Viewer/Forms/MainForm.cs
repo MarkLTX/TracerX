@@ -1376,16 +1376,22 @@ namespace TracerX.Viewer {
             RebuildAllRows();
         }
 
+
+
         // Called when the first filter is added or the last filter is
         // removed for a class of objects such as loggers or threads,
         // or whenever the presence/status of the filter icons that appear
         // in the column headers and the "clear all filtering" commands 
         // may need to be updated.
         private void FilterAddedOrRemoved(object sender, EventArgs e) {
+
+            int horizontalScrollPos = TheListView.HorizontalScrollPos;
+
             filterClearCmd.Enabled = false;
 
             if (VisibleTraceLevels == ValidTraceLevels) {
                 headerLevel.ImageIndex = -1;
+                headerLevel.TextAlign = headerLevel.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 headerLevel.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
@@ -1393,6 +1399,7 @@ namespace TracerX.Viewer {
 
             if (SessionObjects.AllVisible) {
                 headerSession.ImageIndex = -1;
+                headerSession.TextAlign = headerSession.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerSession.ImageIndex = 9;
@@ -1401,6 +1408,7 @@ namespace TracerX.Viewer {
 
             if (ThreadNames.AllVisible) {
                 headerThreadName.ImageIndex = -1;
+                headerThreadName.TextAlign = headerThreadName.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerThreadName.ImageIndex = 9;
@@ -1409,6 +1417,7 @@ namespace TracerX.Viewer {
 
             if (ThreadObjects.AllVisible) {
                 headerThreadId.ImageIndex = -1;
+                headerThreadId.TextAlign = headerThreadId.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerThreadId.ImageIndex = 9;
@@ -1417,6 +1426,7 @@ namespace TracerX.Viewer {
 
             if (LoggerObjects.AllVisible) {
                 headerLogger.ImageIndex = -1;
+                headerLogger.TextAlign = headerLogger.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerLogger.ImageIndex = 9;
@@ -1425,6 +1435,7 @@ namespace TracerX.Viewer {
 
             if (MethodObjects.AllVisible) {
                 headerMethod.ImageIndex = -1;
+                headerMethod.TextAlign = headerMethod.TextAlign; // Fixes problem on Windows Vista/7
             } else {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerMethod.ImageIndex = 9;
@@ -1437,7 +1448,10 @@ namespace TracerX.Viewer {
                 filterClearCmd.Enabled = true;
             } else {
                 headerText.ImageIndex = -1;
+                headerText.TextAlign = headerText.TextAlign; // Fixes problem on Windows Vista/7
             }
+
+            TheListView.HorizontalScrollPos = horizontalScrollPos;
         }
 
         // Hide selected thread names
@@ -2911,6 +2925,10 @@ namespace TracerX.Viewer {
             }
 
             return result;
+        }
+
+        private void clearFilterButton_Click(object sender, EventArgs e) {
+
         }
     }
 }

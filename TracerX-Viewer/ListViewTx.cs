@@ -201,6 +201,33 @@ namespace TracerX {
             }
         }
 
+        public int HorizontalScrollPos
+        {
+            get { return GetScrollPos(this.Handle, SBS_HORZ); }
+            
+            set
+            {
+                try
+                {
+                    LockWindowUpdate(this.Handle);
+
+                    //Calculate the value the scroll needs to scroll back.
+                    int dx = value - GetScrollPos(this.Handle, SBS_HORZ);
+
+                    //if (dx != 0)
+                    {
+                        //Send the scroll message.
+                        SendMessage(this.Handle, ListViewMessages.LVM_SCROLL, dx, 0);
+                    }
+                }
+                finally
+                {
+                    LockWindowUpdate(IntPtr.Zero);
+                }
+            }
+        }
+
+
         [Flags]
         private enum ListViewSetItemCountFlags
         {
@@ -214,11 +241,24 @@ namespace TracerX {
         private enum ListViewMessages
         {
             LVM_FIRST = 0x1000,      // ListView messages
+            LVM_SCROLL = LVM_FIRST + 20,
             LVM_SETITEMCOUNT = (LVM_FIRST + 47),
         }
 
-        [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto, SetLastError = false)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, ListViewMessages msg, int wParam, ListViewSetItemCountFlags lParam);
+
+        const int SBS_HORZ = 0;
+
+        [DllImport("user32.dll")]
+        static extern int GetScrollPos(System.IntPtr hWnd, int nBar);
+        [DllImport("user32.dll")]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        static extern bool LockWindowUpdate(IntPtr Handle);
+
+        private static IntPtr SendMessage(IntPtr hWnd, ListViewMessages msg, int wParam, ListViewSetItemCountFlags lParam)
+        {
+            return SendMessage(hWnd, (uint)msg, wParam, (int)lParam);
+        }
 
         private FieldInfo GetVirtualListSizeField()
         {
