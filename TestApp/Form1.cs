@@ -264,6 +264,7 @@ namespace TestApp
         private void SetAppendMode()
         {
             if (emptyRad.Checked) _domCallbacks.AppendTestMode = DomainCallbacks.AppendMode.Empty;
+            if (endWithNullRad.Checked) _domCallbacks.AppendTestMode = DomainCallbacks.AppendMode.EndWithNull;
             if (noCircularRad.Checked) _domCallbacks.AppendTestMode = DomainCallbacks.AppendMode.NoCircular;
             if (noWrapRad.Checked) _domCallbacks.AppendTestMode = DomainCallbacks.AppendMode.CircularNoWrap;
             if (circularWrapsRad.Checked) _domCallbacks.AppendTestMode = DomainCallbacks.AppendMode.CircularWrap;

@@ -173,13 +173,18 @@ namespace TracerX {
         /// Text to substitute for null strings and other objects passed to logging methods.
         /// Default is &lt;null&gt;,but can be anything except null (including string.Empty).
         /// </summary>
-        public static string TextForNull {
+        public static string TextForNull 
+        {
             get { return _textForNull; }
-
-            set {
-                if (value == null) {
+            
+            set
+            {
+                if (value == null)
+                {
                     throw new ArgumentNullException("TextForNull", "Logger.TextForNull can't be null.");
-                } else {
+                }
+                else
+                {
                     _textForNull = value;
                 }
             }

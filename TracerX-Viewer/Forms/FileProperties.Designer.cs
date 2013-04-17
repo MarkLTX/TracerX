@@ -25,11 +25,11 @@ namespace TracerX.Viewer {
         private void InitializeComponent() {
             this.close = new System.Windows.Forms.Button();
             this.sessionListView = new System.Windows.Forms.ListView();
-            this.sessionNameCol = new System.Windows.Forms.ColumnHeader();
-            this.sessionValueCol = new System.Windows.Forms.ColumnHeader();
+            this.sessionNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.sessionValueCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.commonListView = new System.Windows.Forms.ListView();
-            this.commonNameCol = new System.Windows.Forms.ColumnHeader();
-            this.commonValueCol = new System.Windows.Forms.ColumnHeader();
+            this.commonNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.commonValueCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sessionCombo = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,7 +40,7 @@ namespace TracerX.Viewer {
             // 
             this.close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.close.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.close.Location = new System.Drawing.Point(320, 423);
+            this.close.Location = new System.Drawing.Point(320, 466);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 5;
@@ -49,16 +49,16 @@ namespace TracerX.Viewer {
             // 
             // sessionListView
             // 
-            this.sessionListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.sessionListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sessionListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.sessionNameCol,
             this.sessionValueCol});
             this.sessionListView.GridLines = true;
             this.sessionListView.Location = new System.Drawing.Point(11, 202);
             this.sessionListView.Name = "sessionListView";
-            this.sessionListView.Size = new System.Drawing.Size(381, 214);
+            this.sessionListView.Size = new System.Drawing.Size(381, 257);
             this.sessionListView.TabIndex = 6;
             this.sessionListView.UseCompatibleStateImageBehavior = false;
             this.sessionListView.View = System.Windows.Forms.View.Details;
@@ -74,15 +74,15 @@ namespace TracerX.Viewer {
             // 
             // commonListView
             // 
-            this.commonListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.commonListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.commonListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.commonNameCol,
             this.commonValueCol});
             this.commonListView.GridLines = true;
             this.commonListView.Location = new System.Drawing.Point(11, 22);
             this.commonListView.Name = "commonListView";
-            this.commonListView.Size = new System.Drawing.Size(381, 110);
+            this.commonListView.Size = new System.Drawing.Size(381, 122);
             this.commonListView.TabIndex = 7;
             this.commonListView.UseCompatibleStateImageBehavior = false;
             this.commonListView.View = System.Windows.Forms.View.Details;
@@ -138,7 +138,7 @@ namespace TracerX.Viewer {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.close;
-            this.ClientSize = new System.Drawing.Size(400, 452);
+            this.ClientSize = new System.Drawing.Size(400, 495);
             this.Controls.Add(this.lblOfN);
             this.Controls.Add(this.sessionCombo);
             this.Controls.Add(this.label3);

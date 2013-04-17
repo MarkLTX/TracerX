@@ -17,7 +17,7 @@
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>TracerX-Logger</HtmlHelpName>
     <Language>en-US</Language>
-    <HelpTitle>TracerX-Logger 6.0</HelpTitle>
+    <HelpTitle>TracerX-Logger 6.1</HelpTitle>
     <DocumentationSources>
       <DocumentationSource sourceFile="TracerX-Logger\TracerX-Logger.csproj" />
     </DocumentationSources>
@@ -30,8 +30,9 @@
     </ApiFilter>
     <VisibleItems>InheritedMembers, InheritedFrameworkMembers</VisibleItems>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
-    <CopyrightText>Copyright Mark A. Lauritsen 2010 - 2011</CopyrightText>
+    <CopyrightText>Copyright Mark A. Lauritsen 2010 - 2013</CopyrightText>
     <IncludeFavorites>True</IncludeFavorites>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional

@@ -47,6 +47,7 @@
             this.circularWrapsRad = new System.Windows.Forms.RadioButton();
             this.emptyRad = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.endWithNullRad = new System.Windows.Forms.RadioButton();
             this.chkUseKb = new System.Windows.Forms.CheckBox();
             this.use00Chk = new System.Windows.Forms.CheckBox();
             this.exceedMaxMbRad = new System.Windows.Forms.RadioButton();
@@ -272,7 +273,7 @@
             // noCircularRad
             // 
             this.noCircularRad.AutoSize = true;
-            this.noCircularRad.Location = new System.Drawing.Point(151, 71);
+            this.noCircularRad.Location = new System.Drawing.Point(231, 91);
             this.noCircularRad.Name = "noCircularRad";
             this.noCircularRad.Size = new System.Drawing.Size(86, 17);
             this.noCircularRad.TabIndex = 22;
@@ -313,6 +314,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.endWithNullRad);
             this.groupBox1.Controls.Add(this.chkUseKb);
             this.groupBox1.Controls.Add(this.use00Chk);
             this.groupBox1.Controls.Add(this.exceedMaxMbRad);
@@ -335,6 +337,16 @@
             this.groupBox1.TabIndex = 26;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Appending";
+            // 
+            // endWithNullRad
+            // 
+            this.endWithNullRad.AutoSize = true;
+            this.endWithNullRad.Location = new System.Drawing.Point(163, 71);
+            this.endWithNullRad.Name = "endWithNullRad";
+            this.endWithNullRad.Size = new System.Drawing.Size(107, 17);
+            this.endWithNullRad.TabIndex = 36;
+            this.endWithNullRad.Text = "End with null msg";
+            this.endWithNullRad.UseVisualStyleBackColor = true;
             // 
             // chkUseKb
             // 
@@ -600,9 +612,9 @@
             // 
             // viewerWrapper1
             // 
-            this.viewerWrapper1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewerWrapper1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.viewerWrapper1.AutoScroll = true;
             this.viewerWrapper1.AutoScrollMinSize = new System.Drawing.Size(100, 150);
             this.viewerWrapper1.BackColor = System.Drawing.Color.Bisque;
@@ -715,6 +727,7 @@
         private System.Windows.Forms.Button btnMultiFileMultiThread;
         private System.Windows.Forms.Button btnTextTest;
         private System.Windows.Forms.CheckBox chkUsePassword;
+        private System.Windows.Forms.RadioButton endWithNullRad;
     }
 }
 

@@ -15,7 +15,9 @@ namespace TracerX.Viewer
     // worker thread to get the HTML for the TracerX page.
     internal static class VersionChecker
     {
-        const string _url = "http://www.codeplex.com/TracerX";
+        public static event EventHandler NewVersionFound;
+
+        const string _url = "http://tracerx.codeplex.com/documentation";
 
         public static void CheckForNewVersion()
         {
@@ -30,19 +32,6 @@ namespace TracerX.Viewer
             }
         }
 
-        //public static void CheckForNewVersion()
-        //{
-        //    if (Settings.Default.VersionCheckingAllowed &&
-        //        Settings.Default.VersionLastChecked.Date.AddDays(Settings.Default.VersionCheckInterval) < DateTime.Now) //
-        //    {
-        //        WebClient client = new WebClient();
-        //        client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
-        //        var uri = new Uri(_url);
-        //        client.DownloadStringAsync(uri);
-        //        Settings.Default.VersionLastChecked = DateTime.Now;
-        //    }
-        //}
-
         static void bw_DoWork(object sender, DoWorkEventArgs e)
         {
             // Download the TracerX webpage from Codeplex.com.
@@ -50,7 +39,7 @@ namespace TracerX.Viewer
             // compare it to this assembly's version number, and tell the user 
             // if a new version is available. This requires manually updating 
             // the version number following the text "Latest viewer version: " 
-            // on the TracerX home page.
+            // on the _url page.
 
             WebClient client = new WebClient();
             string webPage = client.DownloadString(_url);
@@ -96,53 +85,10 @@ namespace TracerX.Viewer
 
                 if (e.Error == null && !e.Cancelled && e.Result != null && (bool)e.Result)
                 {
-                    DisplayMessage();
-                }
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.ToString());
-            }
-        }
-
-        // Find the "Latest viewer version" number in the downloaded HTML, 
-        // compare it to this assembly's version number, and tell the user 
-        // if a new version is available. This requires manually updating 
-        // the version number following the text "Latest viewer version: " 
-        // on the TracerX home page.
-        private static void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            // example: "Latest viewer version: 2.1.0809.18205<"
-            try
-            {
-                if (e.Error == null && !e.Cancelled)
-                {
-                    string key = "Latest viewer version: ";
-                    int pos = e.Result.IndexOf(key);
-                    if (pos != -1)
+                    //DisplayMessage();
+                    if (NewVersionFound != null)
                     {
-                        string sVer = null;
-
-                        pos += key.Length;
-                        for (int pos2 = pos + 1; pos2 < e.Result.Length; ++pos2)
-                        {
-                            char c = e.Result[pos2];
-                            if ((c < '0' || c > '9') && c != '.')
-                            {
-                                // We found the end of the version string.
-                                sVer = e.Result.Substring(pos, pos2 - pos);
-                                break;
-                            }
-                        }
-
-                        if (sVer != null)
-                        {
-                            Version newestVer = new Version(sVer);
-                            if (newestVer > Assembly.GetExecutingAssembly().GetName().Version)
-                            {
-                                DisplayMessage();
-                            }
-                        }
+                        NewVersionFound(null, EventArgs.Empty);
                     }
                 }
             }
@@ -150,29 +96,9 @@ namespace TracerX.Viewer
             {
                 //MessageBox.Show(ex.ToString());
             }
-        }
 
-        private static void DisplayMessage()
-        {
-            string msg = string.Format(
-                "A newer version of TracerX is available at {0}.\n\n" +
-                "Yes = View the TracerX website.\n" +
-                "No = Edit the version checking settings.\n" +
-                "Cancel = Continue using the viewer.",
-                _url);
-            DialogResult dr = MessageBox.Show(MainForm.TheMainForm, msg, "TracerX", MessageBoxButtons.YesNoCancel);
-
-            switch (dr)
-            {
-                case DialogResult.Yes:
-                    Process.Start(_url);
-                    break;
-                case DialogResult.No:
-                    OptionsDialog dlg = new OptionsDialog();
-                    dlg.tabControl1.SelectedTab = dlg.versionPage;
-                    dlg.ShowDialog();
-                    break;
-            }
+            // We only call it once, so drop the reference.
+            NewVersionFound = null;
         }
     }
 }

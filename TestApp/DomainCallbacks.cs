@@ -33,7 +33,7 @@ namespace TestApp
         private static string pw = "abc123";
 
         // AppendMode is used for testing the file append feature.
-        public enum AppendMode { Empty, NoCircular, CircularNoWrap, CircularWrap, ExceedMaxMb };
+        public enum AppendMode { Empty, NoCircular, CircularNoWrap, CircularWrap, ExceedMaxMb, EndWithNull };
         public AppendMode AppendTestMode;
         public uint MaxSessionSizeMb;
         public uint MaxAppendableFileMb;
@@ -668,6 +668,21 @@ namespace TestApp
 
                     Log.Info("File size did not grow, probably closed.");
                     break;
+
+                case AppendMode.EndWithNull:
+                    FileStream nullFile = null;
+                    string nullString = null;
+                    Log.Info("Null file follows - ", nullFile);
+                    Log.Info("Null string follows - ", nullString);
+                    Log.Info(nullFile, " - Preceeded by null file.");
+                    Log.Info(nullString, " - Preceeded by null string.");
+                    Log.Info("Next record is null file and null string.");
+                    Log.Info(nullFile, nullString);
+                    Log.Info("Next record has null file only.");
+                    Log.Info(nullFile);
+                    Log.Info("Next record has null string only.");
+                    Log.Info(nullString);
+                    break;
             }
 
             Logger.DefaultBinaryFile.Close();
@@ -717,6 +732,11 @@ namespace TestApp
                     }
 
                     Log.Info("File size did not grow, probably restarted.");
+                    break;
+
+                case AppendMode.EndWithNull:
+                    Log.Info("Next record has null message.");
+                    Log.Info((string)null);
                     break;
             }
 

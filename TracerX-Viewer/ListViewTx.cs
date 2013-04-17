@@ -20,6 +20,20 @@ namespace TracerX {
 
         public MainForm MainForm;
 
+        /// <summary>
+        /// Gets and Sets the Horizontal Scroll position of the control.
+        /// </summary>
+        public int HScrollPos
+        {
+            get { return GetScrollPos(this.Handle, System.Windows.Forms.Orientation.Horizontal); }
+            set { SetScrollPos(this.Handle, System.Windows.Forms.Orientation.Horizontal, value, true); }
+        }
+
+        public void SetHScrollPos(int pos)
+        {
+             SetScrollPos(this.Handle, System.Windows.Forms.Orientation.Horizontal, pos, true); 
+        }
+
         // Cache of ListViewItems used to improve the performance of the ListView control
         // in virtual mode (it tends to request the same item many times).
         private List<ViewItem> _itemCache = new List<ViewItem>(50);
@@ -79,10 +93,10 @@ namespace TracerX {
             }
         }
 
-        // Setting the virtual list size this way eliminates flickering.
-        // It only works properly when new items are added to the end.
+        // Setting the virtual list size this way eliminates flickering (when invalidate = false)
+        // and prevents the control from scrolling to the right.
         // This idea came from http://www.dotnetmonster.com/Uwe/Forum.aspx/winform-controls/5181/Ugly-flicker-when-updating-a-ListView-in-VirtualMode
-        public void SetVirtualListSizeWithoutRefresh(int count)
+        public void SetVirtualListSize(int count, bool invalidate)
         {
             if (listViewVirtualListSizeField == null)
             {
@@ -92,13 +106,16 @@ namespace TracerX {
             {
                 try
                 {
-                    SendMessage(Handle,
-                        ListViewMessages.LVM_SETITEMCOUNT,
-                        count,
-                        ListViewSetItemCountFlags.LVSICF_NOINVALIDATEALL |
-                        ListViewSetItemCountFlags.LVSICF_NOSCROLL);
+                    ListViewSetItemCountFlags flags = ListViewSetItemCountFlags.LVSICF_NOSCROLL;
 
-                    // The putlic ListView.VirtualListSize property drives a private member 
+                    if (!invalidate)
+                    {
+                        flags |= ListViewSetItemCountFlags.LVSICF_NOINVALIDATEALL;
+                    }
+
+                    SendMessage(Handle, ListViewMessages.LVM_SETITEMCOUNT, count, flags);
+
+                    // The public ListView.VirtualListSize property drives a private member 
                     // named virtualListSize that is used in the implementation of 
                     // ListViewItemCollection (returned by ListView.Items) to validate
                     // indices. If this is not updated, spurious ArgumentOutOfRangeExceptions
@@ -113,6 +130,7 @@ namespace TracerX {
             }
 
         }
+
 
         // Set the backcolor and forecolor of items in the cache so selected items
         // remain prominent even when the form loses focus.  I tried just setting
@@ -201,33 +219,6 @@ namespace TracerX {
             }
         }
 
-        public int HorizontalScrollPos
-        {
-            get { return GetScrollPos(this.Handle, SBS_HORZ); }
-            
-            set
-            {
-                try
-                {
-                    LockWindowUpdate(this.Handle);
-
-                    //Calculate the value the scroll needs to scroll back.
-                    int dx = value - GetScrollPos(this.Handle, SBS_HORZ);
-
-                    //if (dx != 0)
-                    {
-                        //Send the scroll message.
-                        SendMessage(this.Handle, ListViewMessages.LVM_SCROLL, dx, 0);
-                    }
-                }
-                finally
-                {
-                    LockWindowUpdate(IntPtr.Zero);
-                }
-            }
-        }
-
-
         [Flags]
         private enum ListViewSetItemCountFlags
         {
@@ -241,24 +232,18 @@ namespace TracerX {
         private enum ListViewMessages
         {
             LVM_FIRST = 0x1000,      // ListView messages
-            LVM_SCROLL = LVM_FIRST + 20,
             LVM_SETITEMCOUNT = (LVM_FIRST + 47),
+            LVM_SCROLL = (LVM_FIRST + 20),
         }
 
-
-        const int SBS_HORZ = 0;
+        [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto, SetLastError = false)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, ListViewMessages msg, int wParam, ListViewSetItemCountFlags lParam);
 
         [DllImport("user32.dll")]
-        static extern int GetScrollPos(System.IntPtr hWnd, int nBar);
+        static extern int GetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar);
+        
         [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
-        [DllImport("user32.dll")]
-        static extern bool LockWindowUpdate(IntPtr Handle);
-
-        private static IntPtr SendMessage(IntPtr hWnd, ListViewMessages msg, int wParam, ListViewSetItemCountFlags lParam)
-        {
-            return SendMessage(hWnd, (uint)msg, wParam, (int)lParam);
-        }
+        public static extern int SetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar, int nPos, bool bRedraw);
 
         private FieldInfo GetVirtualListSizeField()
         {
