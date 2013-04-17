@@ -827,16 +827,15 @@ namespace TracerX.Viewer
 
                 if (FlagsAreValid(flags))
                 {
+                    _reader.BytesRead += sizeof(DataFlags);
+
                     if ((flags & DataFlags.BlockStart) != 0)
                     {
                         thisBlockNum = _fileReader.ReadUInt32();
-                        _reader.BytesRead += sizeof(UInt32);
-
                         thisRecNum = _fileReader.ReadUInt64();
-                        _reader.BytesRead += sizeof(ulong);
-
                         long nextBlockPosition = _fileReader.ReadInt64();
-                        _reader.BytesRead += sizeof(long);
+
+                        _reader.BytesRead += sizeof(UInt32) + sizeof(ulong) + sizeof(long);
 
                         if (InCircularPart)
                         {

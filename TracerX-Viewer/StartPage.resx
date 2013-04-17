@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,7 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label3.Text" xml:space="preserve">
-    <value>This specifies whether the toolbar buttons pictured below search for threads by name or by number.  Thread numbers are guaranteed unique and cannot be changed once assigned.  Thread names are not necessarily unique, and a given thread's name can be changed many times by setting the Logger.ThreadName property.</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="linkWebsite.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIOSURBVDhPhZJRSFNRGMdPBIJP0UMP5VNvxYjpvdfb
+        piPCh1jGEBq+iDOidltuOQSlhwhfFExUTF8m+BQUNEoRfGgRwgjjphCs5Ww9FIQtsrmHpc7C+e98p53J
+        3NIP/pzvnPP9/ue75x4mQ1WNY4pi9Nfb/N95Dk33b+gXekyetxVKRAAokQhdv3mag9/898PZp4tp7OSB
+        Xb6bymyhbzj8W2kILtXVXT9BtWUGdnt3tW4LfH4c+Zhf2wSS6R0k1tOIpqIY/zCB9nkPzjy4mldsgYTF
+        0lrFO2JO5z2QhIGm+boHpp7nFn/EsLL+E6nsLua/fkKv2YuWiAvKsyacmjgJS3vHdm19Z2cBhMczJkyY
+        3tCVaIt4BTC5EsLC6ipeffmF4Xcz8EUH4JoyoYyo0Hrc8lQsL68hFFr6Z6A2ev80v2hC4M0NDMWGMJ3M
+        4Ek8h0HzvSiQcjiCZbBhhPjtO7zbl1+q8C60YvBtHKPmBvpfZ0WBjEowH5kw0BqDsSuzbnREHsGYS+PW
+        XKYIU/F+uDBnewbabb+zz8hdM2vRPB0+FJanFw3ErzkfSF4ac+VL4S4B0G1LmEaqIVBKhNXqq9kPn3U/
+        xLmLdwUoO5F7PPYekgxpQAX0lElW+504P0WsV4JJxaTwbTwFtUgDtSjm/4NJxeQ4Y0cqmBwIk0om8p0T
+        JHUQTCpfYOwomZAOgwGwv3GNeUShVpjbAAAAAElFTkSuQmCC
+</value>
   </data>
 </root>

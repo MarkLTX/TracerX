@@ -1044,7 +1044,7 @@ namespace TracerX
                     int count = 0;
                     for (StackEntry stackEntry = threadData.TopStackEntry; stackEntry != null; stackEntry = stackEntry.Caller)
                     {
-                        if ((stackEntry.Destinations & Destinations.BinaryFile) != 0)
+                        if (stackEntry.BinaryFileState == fileThreadState)
                         {
                             ++count;
                             _logfile.Write(stackEntry.EntryLine); // Changed to ulong in version 6.

@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -22,9 +23,12 @@
     <ApplicationIcon>Resources\scroll_view.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -37,11 +41,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkSubset>Client</TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +54,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,18 +67,23 @@
     </DocumentationFile>
     <CodeAnalysisRules>
     </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColoringRule.cs" />
@@ -114,6 +121,12 @@
       <DependentUpon>ListViewTx.cs</DependentUpon>
     </Compile>
     <Compile Include="MethodObject.cs" />
+    <Compile Include="PathList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PathList.Designer.cs">
+      <DependentUpon>PathList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -199,6 +212,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
+    <Compile Include="StartPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StartPage.Designer.cs">
+      <DependentUpon>StartPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="StringMatcher.cs" />
     <Compile Include="ThreadName.cs" />
     <Compile Include="ThreadObject.cs" />
@@ -238,11 +257,13 @@
     <Content Include="Icons\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
     <None Include="Resources\ExpandAll.png" />
+    <Content Include="Resources\Web Link 16.png" />
     <Content Include="Resources\AnyThreadNext.png" />
     <Content Include="Resources\AnyThreadPrev.png" />
     <Content Include="Resources\Bold.png" />
     <Content Include="Resources\clockPlus.png" />
     <Content Include="Resources\clockPrev.png" />
+    <Content Include="Resources\Close X Red 16.png" />
     <Content Include="Resources\colors_on.png" />
     <Content Include="Resources\colorwheel_16x16_plain.png" />
     <Content Include="Resources\clockNext.png" />
@@ -263,6 +284,7 @@
     <Content Include="Resources\SameThreadNext.png" />
     <Content Include="Resources\SameThreadPrev.png" />
     <Content Include="Resources\scroll_view.ico" />
+    <Content Include="Resources\scroll_view_16x16_plain.png" />
     <Content Include="Resources\Stopwatch.png" />
     <Content Include="Icons\Subline.ico" />
     <Content Include="Icons\Transparent.ico" />
@@ -288,6 +310,9 @@
     <EmbeddedResource Include="Forms\PaletteViewer.resx">
       <DependentUpon>PaletteViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PathList.resx">
+      <DependentUpon>PathList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -338,6 +363,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PasswordDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StartPage.resx">
+      <DependentUpon>StartPage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TracerXViewerControl.resx">
       <DependentUpon>TracerXViewerControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -353,7 +381,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -377,6 +405,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,7 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label3.Text" xml:space="preserve">
-    <value>This specifies whether the toolbar buttons pictured below search for threads by name or by number.  Thread numbers are guaranteed unique and cannot be changed once assigned.  Thread names are not necessarily unique, and a given thread's name can be changed many times by setting the Logger.ThreadName property.</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="linkLabel2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAAAd0SU1FB9MCGwAeJTrjrEcAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41
+        LjEwMPRyoQAAAl1JREFUOE+10k9MknEcx3G2ymOH7h06tbV1qHWoQ6e2bp2bpw7WpkD4h5DkeQQkdKCQ
+        MEjRUmtTHgGZboErlcNjZs0/BVNRYZI5q8cCtcc/wIDn09P229yz3Dq0Xsff833/nv2e5yf7L6LR3TMM
+        w8YCgTc/XC7/kM3Wd7Oiov8Uefx30WihOZcrYGVlHQsL62DZGAYHX287nb1DGo3xXm9v90kyejyOw0cQ
+        xWIJ2WwB+TwwN7eM9vYRUJR7q6pKdZeMS83M4ATH8eL4n2j6KXQ6K+JxwGBwzpBEamuLv5FO8wgEAtAb
+        TdA0UDAYm9DR4UEk8m7TYnkmLC4CdXW6FySRSqV2Kxgvg6lECrz41tks4P0GPGFeCjRN9/t8AYNCoXKW
+        l98uI4mU+NG0jSYzvovxjgBMZvJ4njhERwKoVqmWyZjUxESmLJnE1YMDlIVCrEX9kEJkGxjncvCt7cMd
+        3YVjSdygpiZDEimW/eQrFICNjfym3z8Zo2gjOtcAzxIPx/wOTO9/omdVwH2lIkYSqXD4A5dMfgXPZ1Eq
+        Cejq6oHDPwFzDGiOCvDEBbS5u2G12XMZ6noLyY54PCOuvr5XQjA4Jf6iL9jby2FgwPv7zFBV16KhgUaL
+        tS0ff2sDHl3ch+5KE0mPBIPT15xO77TLFRRGR5cwNsaCYcYxPDyPcDiCKe2tEHTnd/C5FrBcOizKz5lI
+        KqXXW+80Ntpm6+tNgt0eEi/PY5jNnVm5vPI0tJc1oC6kkTKg2eFJk+R4SqWqUi6vj6vVrVm1+oGSLMtQ
+        dVZhanVwSrVWT5b+hUz2C7bXo7evdIQhAAAAAElFTkSuQmCC
+</value>
   </data>
 </root>

@@ -53,10 +53,10 @@ namespace TracerX {
             this.leftBtn.TabIndex = 7;
             this.leftBtn.UseVisualStyleBackColor = true;
             this.leftBtn.Visible = false;
+            this.leftBtn.EnabledChanged += new System.EventHandler(this.leftBtn_EnabledChanged);
             this.leftBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.leftBtn_Paint);
             this.leftBtn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Btn_MouseDown);
             this.leftBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Btn_MouseUp);
-            this.leftBtn.EnabledChanged += new System.EventHandler(this.leftBtn_EnabledChanged);
             // 
             // rightBtn
             // 
@@ -69,10 +69,10 @@ namespace TracerX {
             this.rightBtn.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.rightBtn.UseVisualStyleBackColor = true;
             this.rightBtn.Visible = false;
+            this.rightBtn.EnabledChanged += new System.EventHandler(this.leftBtn_EnabledChanged);
             this.rightBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.rightBtn_Paint);
             this.rightBtn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Btn_MouseDown);
             this.rightBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Btn_MouseUp);
-            this.rightBtn.EnabledChanged += new System.EventHandler(this.leftBtn_EnabledChanged);
             // 
             // CrumbBar
             // 

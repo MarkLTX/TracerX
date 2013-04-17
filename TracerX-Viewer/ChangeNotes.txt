@@ -1,1 +1,11 @@
-Forced crumb bar link color to be blue.
+Added a "start page".
+Added "New Window" item to File menu.
+Added a close button to the toolbar.
+Put Version Checking results on the start page.
+Fixed incorrect icon that appears in column header after filtering is cancelled.
+Fixed inaccurate "percent complete" displayed when loading a large file.
+
+TODO:
+
+Add option for number of paths to display on start page?
+Better icon for threads.

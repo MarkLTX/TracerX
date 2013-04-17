@@ -187,13 +187,15 @@ namespace TracerX {
             if (_lastLinkLabel.Links.Count == 30) {
                 _lastLinkLabel.Text = builder.ToString();
                 builder.Length = 0;
+                
                 int loc = _lastLinkLabel.Right;
                 Color linkColor = _lastLinkLabel.LinkColor;
+
                 _lastLinkLabel = new LinkLabel();
                 _lastLinkLabel.Left = loc - _overlap;
                 _lastLinkLabel.AutoSize = true;
                 _lastLinkLabel.LinkClicked += linkLabel1_LinkClicked;
-                _lastLinkLabel.LinkColor = linkColor;
+                _lastLinkLabel.LinkColor = linkColor; 
                 _linkLabels.Add(_lastLinkLabel);
                 Controls.Add(_lastLinkLabel);
                 _lastLinkLabel.BringToFront();

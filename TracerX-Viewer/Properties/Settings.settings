@@ -108,7 +108,7 @@
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="AutoReload" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

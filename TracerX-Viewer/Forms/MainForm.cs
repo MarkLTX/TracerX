@@ -43,8 +43,8 @@ namespace TracerX.Viewer {
 
         public MainForm() : this(null) {}
 
-        // Constructor.  args[0] may contain the log file path to load.
-        public MainForm(string[] args) {
+        // Constructor.  The fileName may contain the log file path to load.
+        public MainForm(string fileName) {
             InitializeComponent();
 
             TheListView.MainForm = this;
@@ -55,7 +55,6 @@ namespace TracerX.Viewer {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
             TheMainForm = this;
 
-            //EventHandler filterChange = new EventHandler(FilterAddedOrRemoved);
             SessionObjects.AllVisibleChanged += FilterAddedOrRemoved;
             ThreadNames.AllVisibleChanged += FilterAddedOrRemoved;
             ThreadObjects.AllVisibleChanged += FilterAddedOrRemoved;
@@ -97,8 +96,14 @@ namespace TracerX.Viewer {
 
                 if (info.TotalPhysicalMemory >= 2000000000)
                 {
-                    // 2 gigabytes or more, use 1,000,000 records per gig.
-                    Settings.Default.MaxRecords = (int)(info.TotalPhysicalMemory / 1000);
+                    // 2 gigabytes or more, use about 1,000,000 records per gig.
+                    // Keep only 2 signigicant digits (for readability).
+
+                    double maxRecords = (double)(info.TotalPhysicalMemory) / 1024; 
+                    double scale = Math.Pow(10, Math.Floor(Math.Log10(maxRecords)) + 1);
+                    int sigDigits = 2;
+                    maxRecords = scale * Math.Round(maxRecords / scale, sigDigits);
+                    Settings.Default.MaxRecords = (int)maxRecords;
                 }
                 else
                 {
@@ -110,13 +115,37 @@ namespace TracerX.Viewer {
             _fileChangedDelegate = new FileSystemEventHandler(FileChanged);
             _fileRenamedDelegate = new RenamedEventHandler(FileRenamed);
 
-            if (args != null && args.Length > 0) {
-                StartReading(args[0]);
+            if (fileName != null && fileName.Length > 0) {
+                StartReading(fileName);
             }
 
-            //DisableFlicker(TheListView);
+            theStartPage.RecentlyCreatedListFile = _recentlyCreatedListFile;
+            theStartPage.FolderClicked += new EventHandler(theStartPage_FolderClicked);
+            theStartPage.FileClicked += new EventHandler(theStartPage_FileClicked);
 
-            VersionChecker.CheckForNewVersion();
+            // Don't show the "New Window" command unless this assembly is the main assembly.
+            Assembly thisAsm = Assembly.GetExecutingAssembly();
+            Assembly entryAsm = Assembly.GetEntryAssembly();
+            newWindowToolStripMenuItem.Visible = (thisAsm == entryAsm);
+
+            //VersionChecker.CheckForNewVersion();
+        }
+
+        void theStartPage_FileClicked(object sender, EventArgs e)
+        {
+            StartReading(theStartPage.ClickedPath);
+        }
+
+        void theStartPage_FolderClicked(object sender, EventArgs e)
+        {
+            if (Directory.Exists(theStartPage.ClickedPath))
+            {
+                BrowseForFile(theStartPage.ClickedPath);
+            }
+            else
+            {
+                ShowMessageBox("The selected folder no longer exists.\n\n" + theStartPage.ClickedPath);
+            }
         }
 
         public static void DisableFlicker(System.Windows.Forms.Control ctrl)
@@ -406,6 +435,7 @@ namespace TracerX.Viewer {
                 toolStripProgressBar1.Visible = (_fileState == FileState.Loading);
 
                 openFileCmd.Enabled = (_fileState != FileState.Loading);
+                theStartPage.Visible = (_fileState == FileState.NoFile);
 
                 if (_fileState != FileState.Loaded) {
                     NumRows = 0;
@@ -682,6 +712,9 @@ namespace TracerX.Viewer {
                 rowCount += session.InsertMissingRecords(_records);
             }
 
+            Application.DoEvents();
+            Debug.Print("total bytes = {0}, bytes read = {1}, ratio = {2}", totalBytes, _reader.BytesRead, (double)_reader.BytesRead / (double)totalBytes);
+
             // The logger can't open the file if we don't close it.
             _reader.CloseLogFile();
 
@@ -690,6 +723,13 @@ namespace TracerX.Viewer {
             // expands rows with embedded newlines.
             // Allocate enough rows to handle the case of all messages with embedded newlines being expanded.
             Rows = new List<Row>(rowCount);
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            int percent = Math.Min(100, e.ProgressPercentage);
+            toolStripProgressBar1.Value = percent;
+            ShowStatus(percent.ToString() + "%", false);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
@@ -707,6 +747,9 @@ namespace TracerX.Viewer {
             }
             else
             {
+                Application.DoEvents();
+                Debug.WriteLine(toolStripProgressBar1.Value + "//" + toolStripProgressBar1.Maximum);
+
                 toolStripProgressBar1.Visible = false;
                 statusMsg.Visible = false;
 
@@ -744,23 +787,29 @@ namespace TracerX.Viewer {
 
         private void RestoreScrollPosition(int rowNum) {
             // Attempt to maintain the same scroll position as before the refresh.
-
-            try {
-                if (rowNum == -1 || rowNum >= NumRows) {
+            try
+            {
+                if (rowNum == -1 || rowNum >= NumRows)
+                {
                     // Go to the very end and select the last row so the next refresh will also
                     // scroll to the end.
                     SelectRowIndex(NumRows - 1);
-                } else {
+                }
+                else
+                {
                     // Scroll to the same index as before the refresh.
                     // For some reason, setting the TopItem once doesn't work.  Setting
                     // it three times usually does, so try up to four.
-                    for (int i = 0; i < 4; ++i) {
-                        if (TheListView.TopItem.Index == rowNum) break;     // Exception reported here.
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        if (TheListView.TopItem.Index == rowNum) break;      // Exception reported here.
                         Debug.Print("Setting TopItem index to " + rowNum);
                         TheListView.TopItem = (TheListView.Items[rowNum]);
                     }
                 }
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Restoring the scroll position isn't critical.  Just let it go.
             }
         }
@@ -962,18 +1011,23 @@ namespace TracerX.Viewer {
             }
         }
 
-        void FileRenamed(object sender, RenamedEventArgs e) {
+        void FileRenamed(object sender, RenamedEventArgs e)
+        {
             Debug.Print(String.Format("{0} renamed to {1}({2})", e.OldName, e.Name, e.ChangeType));
             autoUpdate.Enabled = false;
             StopFileWatcher();
 
-            if (Settings.Default.AutoReload) {
+            if (Settings.Default.AutoReload)
+            {
                 // Allow some time for new log file to be started.
-                Thread.Sleep(250);
+
+                Thread.Sleep(500);
                 Application.DoEvents();
                 StartReading(null); // Null means refresh the current file.
                 RestoreScrollPosition(-1);
-            } else {
+            }
+            else
+            {
                 ShowMessageBox("The log file has been renamed.  It will no longer be monitored for changes unless you reload/refresh it.");
             }
         }
@@ -1011,12 +1065,6 @@ namespace TracerX.Viewer {
             lock (SessionObjects.Lock) {
                 SessionObjects.AllSessionObjects = new List<Reader.Session>();
             }
-        }
-
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            int percent = Math.Min(100, e.ProgressPercentage);
-            toolStripProgressBar1.Value = percent;
-            ShowStatus(e.ProgressPercentage.ToString() + "%", false);
         }
 
         #endregion
@@ -1094,14 +1142,15 @@ namespace TracerX.Viewer {
             if (startRow == NumRows) {
                 // In this case we are adding new rows for new records rather
                 // than unhiding existing records.  We can therefore use this
-                // kludge that prevents flickering.
-                TheListView.SetVirtualListSizeWithoutRefresh(curRow);
-            } else {
+                // kludge that prevents flickering by not invalidating.
+                TheListView.SetVirtualListSize(curRow, false);
+            }
+            else
+            {
                 // In this case we are probably expanding/collapsing a method call
-                // or changing the filter.  We need to use the conventional method
-                // of updating the number of virtual list items, or the ListView
-                // won't be redrawn properly.
-                NumRows = curRow;
+                // or changing the filter.  Allow it to invalidate.
+                TheListView.SetVirtualListSize(curRow, true);
+                //NumRows = curRow;
             }
 
             // Disable Find and FindNext/F3 if no text is visible.
@@ -1186,12 +1235,17 @@ namespace TracerX.Viewer {
             Settings.Default.Save();
         }
 
-        private void ExecuteOpenFile(object sender, EventArgs e) {
-            string openDir = Settings.Default.OpenDir;
-            OpenFileDialog dlg = new OpenFileDialog();
+        private void ExecuteOpenFile(object sender, EventArgs e)
+        {
+            BrowseForFile(Settings.Default.OpenDir);
+        }
 
-            if (openDir != null && openDir != string.Empty && Directory.Exists(openDir))
-                dlg.InitialDirectory = openDir;
+        private void BrowseForFile(string initialDir)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            if (initialDir != null && initialDir != string.Empty && Directory.Exists(initialDir))
+                dlg.InitialDirectory = initialDir;
             else
                 dlg.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
 
@@ -1201,7 +1255,8 @@ namespace TracerX.Viewer {
             dlg.Multiselect = false;
             dlg.Title = Application.ProductName;
 
-            if (DialogResult.OK == dlg.ShowDialog()) {
+            if (dlg.ShowDialog() == true)
+            {
                 Settings.Default.OpenDir = Path.GetDirectoryName(dlg.FileName);
                 StartReading(dlg.FileName);
             }
@@ -1373,85 +1428,103 @@ namespace TracerX.Viewer {
             MethodObjects.ShowAllMethods();
             VisibleTraceLevels = _reader.LevelsFound;
             FilterDialog.TextFilterDisable();
+
+            int horizontalScroll = TheListView.HScrollPos;
             RebuildAllRows();
+            //TheListView.HScrollPos = horizontalScroll;
         }
-
-
 
         // Called when the first filter is added or the last filter is
         // removed for a class of objects such as loggers or threads,
         // or whenever the presence/status of the filter icons that appear
         // in the column headers and the "clear all filtering" commands 
         // may need to be updated.
-        private void FilterAddedOrRemoved(object sender, EventArgs e) {
-
-            int horizontalScrollPos = TheListView.HorizontalScrollPos;
-
+        private void FilterAddedOrRemoved(object sender, EventArgs e)
+        {
             filterClearCmd.Enabled = false;
 
-            if (VisibleTraceLevels == ValidTraceLevels) {
+            if (VisibleTraceLevels == ValidTraceLevels)
+            {
                 headerLevel.ImageIndex = -1;
-                headerLevel.TextAlign = headerLevel.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerLevel.TextAlign = headerLevel.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 headerLevel.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (SessionObjects.AllVisible) {
+            if (SessionObjects.AllVisible)
+            {
                 headerSession.ImageIndex = -1;
-                headerSession.TextAlign = headerSession.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerSession.TextAlign = headerSession.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerSession.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (ThreadNames.AllVisible) {
+            if (ThreadNames.AllVisible)
+            {
                 headerThreadName.ImageIndex = -1;
-                headerThreadName.TextAlign = headerThreadName.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerThreadName.TextAlign = headerThreadName.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerThreadName.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (ThreadObjects.AllVisible) {
+            if (ThreadObjects.AllVisible)
+            {
                 headerThreadId.ImageIndex = -1;
-                headerThreadId.TextAlign = headerThreadId.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerThreadId.TextAlign = headerThreadId.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerThreadId.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (LoggerObjects.AllVisible) {
+            if (LoggerObjects.AllVisible)
+            {
                 headerLogger.ImageIndex = -1;
-                headerLogger.TextAlign = headerLogger.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerLogger.TextAlign = headerLogger.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerLogger.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (MethodObjects.AllVisible) {
+            if (MethodObjects.AllVisible)
+            {
                 headerMethod.ImageIndex = -1;
-                headerMethod.TextAlign = headerMethod.TextAlign; // Fixes problem on Windows Vista/7
-            } else {
+                headerMethod.TextAlign = headerMethod.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
+            else
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerMethod.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
             }
 
-            if (FilterDialog.TextFilterOn) {
+            if (FilterDialog.TextFilterOn)
+            {
                 // Show a filter in the header so user knows a filter is applied to the column.
                 headerText.ImageIndex = 9;
                 filterClearCmd.Enabled = true;
-            } else {
-                headerText.ImageIndex = -1;
-                headerText.TextAlign = headerText.TextAlign; // Fixes problem on Windows Vista/7
             }
-
-            TheListView.HorizontalScrollPos = horizontalScrollPos;
+            else
+            {
+                headerText.ImageIndex = -1;
+                headerText.TextAlign = headerText.TextAlign; // Fixes problem with wrong image appearing in Vista+.
+            }
         }
 
         // Hide selected thread names
@@ -1461,7 +1534,6 @@ namespace TracerX.Viewer {
             }
 
             RebuildAllRows();
-
         }
 
         // Show only selected thread names
@@ -2154,11 +2226,15 @@ namespace TracerX.Viewer {
             Settings.Default.RecentFolders.Add(folder);
         }
 
-        // Handler for opening the File menu.  Currently just sets 
-        // the "Recently Viewed" and "Recently Created" menus.
+        // Handler for opening the File menu. 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e) {
             FillRecentlyViewedMenu();
             FillRecentFolderdsMenu();
+            recentlyCreatedToolStripMenuItem.Enabled = File.Exists(_recentlyCreatedListFile);
+        }
+
+        private void recentlyCreatedToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
             FillRecentlyCreatedMenu();
         }
 
@@ -2558,7 +2634,7 @@ namespace TracerX.Viewer {
                         filterable.Colors = availableColors.First();
                         availableColors.Remove(filterable.Colors);
                     } else {
-                        MessageBox.Show(this, "Sorry, the color palette does not contain enough colors for all selected items.", "TracerX-Viewer");
+                        ShowMessageBox("Sorry, the color palette does not contain enough colors for all selected items.");
                         break;
                     }
                 }
@@ -2927,8 +3003,24 @@ namespace TracerX.Viewer {
             return result;
         }
 
-        private void clearFilterButton_Click(object sender, EventArgs e) {
+        private void newWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(Application.ExecutablePath);
+        }
 
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            switch (_FileState)
+            {
+                case FileState.NoFile:
+                    this.Close();
+                    break;
+                case FileState.Loaded:
+                    CloseFile();
+                    break;
+                case FileState.Loading:
+                    break;
+            }
         }
     }
 }

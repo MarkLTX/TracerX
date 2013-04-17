@@ -42,8 +42,8 @@ namespace TracerX.Viewer {
             // 
             // asmVer
             // 
-            this.asmVer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.asmVer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.asmVer.Location = new System.Drawing.Point(143, 51);
             this.asmVer.Name = "asmVer";
             this.asmVer.ReadOnly = true;
@@ -63,8 +63,8 @@ namespace TracerX.Viewer {
             // 
             // loadDir
             // 
-            this.loadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.loadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.loadDir.Location = new System.Drawing.Point(143, 81);
             this.loadDir.Name = "loadDir";
             this.loadDir.ReadOnly = true;
@@ -82,16 +82,17 @@ namespace TracerX.Viewer {
             // 
             // linkLabel1
             // 
-            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(86, 31);
+            this.linkLabel1.LinkColor = System.Drawing.Color.Blue;
             this.linkLabel1.Location = new System.Drawing.Point(12, 9);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(437, 39);
             this.linkLabel1.TabIndex = 10;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "TracerX is a combination logger and viewer for .NET written by Mark A. Lauritsen." +
-                " See http://www.codeplex.com/TracerX.";
+    " See http://www.codeplex.com/TracerX.";
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
@@ -99,7 +100,7 @@ namespace TracerX.Viewer {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(465, 158);
+            this.ClientSize = new System.Drawing.Size(465, 154);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.loadDir);
             this.Controls.Add(this.label5);

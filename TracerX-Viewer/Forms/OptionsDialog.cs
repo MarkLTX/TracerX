@@ -50,7 +50,15 @@ namespace TracerX.Viewer {
             if (indentChar.Text == string.Empty)
                 hex.Text = "An indentation character is required.";
             else
-                hex.Text = string.Format("0x{0:X2}", (int)indentChar.Text[0]);        
+                hex.Text = string.Format("0x{0:X2}", (int)indentChar.Text[0]);
+
+            if (sender == autoUpdate)
+            {
+                lblTip.Enabled = autoUpdate.Checked;
+                lblMaxRecs.Enabled = autoUpdate.Checked;
+                txtMaxRecords.Enabled = autoUpdate.Checked;
+                autoReload.Enabled = autoUpdate.Checked;
+            }
         }
 
         private void ok_Click(object sender, EventArgs e) {
@@ -261,8 +269,8 @@ namespace TracerX.Viewer {
             // Set MaxRecords first, because auto-update will resume in the event handler that
             // gets called when AutoUpdate is set to true.
             Settings.Default.MaxRecords = int.Parse(txtMaxRecords.Text);
-            Settings.Default.AutoUpdate = autoUpdate.Checked;
             Settings.Default.AutoReload = autoReload.Checked;
+            Settings.Default.AutoUpdate = autoUpdate.Checked;
         }
         #endregion Auto-Update
 
