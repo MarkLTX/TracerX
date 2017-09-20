@@ -23,7 +23,8 @@ using System;
 using System.IO;
 using System.Collections;
 
-namespace TracerX {
+namespace TracerX
+{
     /// <summary>
     /// This is the default object Renderer.  
     /// It renders most types by calling object.ToString().
@@ -32,7 +33,8 @@ namespace TracerX {
     /// To create renderers for other types, implement IObjectRenderer 
     /// and add the new renderer class to RendererMap.
     /// </summary>
-    internal sealed class DefaultRenderer : IObjectRenderer {
+    internal sealed class DefaultRenderer : IObjectRenderer
+    {
         #region Constructors
 
         /// <summary>
@@ -43,7 +45,8 @@ namespace TracerX {
         /// Default constructor
         /// </para>
         /// </remarks>
-        public DefaultRenderer() {
+        public DefaultRenderer()
+        {
         }
 
         #endregion
@@ -133,25 +136,30 @@ namespace TracerX {
         ///		</item>
         /// </list>
         /// </remarks>
-        public void RenderObject(object obj, TextWriter writer) {
-            if (obj == null) {
+        public void RenderObject(object obj, TextWriter writer)
+        {
+            if (obj == null)
+            {
                 writer.Write("<null>");
                 return;
             }
 
             Array objArray = obj as Array;
-            if (objArray != null) {
+            if (objArray != null)
+            {
                 RenderArray(objArray, writer);
                 return;
             }
 
             // Test if we are dealing with some form of collection object
             IEnumerable objEnumerable = obj as IEnumerable;
-            if (objEnumerable != null) {
+            if (objEnumerable != null)
+            {
                 // Get a collection interface if we can as its .Count property may be more
                 // performant than getting the IEnumerator object and trying to advance it.
                 ICollection objCollection = obj as ICollection;
-                if (objCollection != null && objCollection.Count == 0) {
+                if (objCollection != null && objCollection.Count == 0)
+                {
                     writer.Write("{}");
                     return;
                 }
@@ -162,7 +170,8 @@ namespace TracerX {
                 // DictionaryEntry ones. However the implementation of the plain IDictionary 
                 // interface on the generic Dictionary<> still returns DictionaryEntry objects.
                 IDictionary objDictionary = obj as IDictionary;
-                if (objDictionary != null) {
+                if (objDictionary != null)
+                {
                     RenderEnumerator(objDictionary.GetEnumerator(), writer);
                     return;
                 }
@@ -172,12 +181,14 @@ namespace TracerX {
             }
 
             IEnumerator objEnumerator = obj as IEnumerator;
-            if (objEnumerator != null) {
+            if (objEnumerator != null)
+            {
                 RenderEnumerator(objEnumerator, writer);
                 return;
             }
 
-            if (obj is DictionaryEntry) {
+            if (obj is DictionaryEntry)
+            {
                 RenderDictionaryEntry((DictionaryEntry)obj, writer);
                 return;
             }
@@ -206,16 +217,22 @@ namespace TracerX {
         ///	<c>Array.ToString()</c> is returned.
         ///	</para>
         /// </remarks>
-        private void RenderArray(Array array, TextWriter writer) {
-            if (array.Rank != 1) {
+        private void RenderArray(Array array, TextWriter writer)
+        {
+            if (array.Rank != 1)
+            {
                 writer.Write(array.ToString());
-            } else {
+            }
+            else
+            {
                 writer.Write(array.GetType().Name + " {");
                 int len = array.Length;
 
-                if (len > 0) {
+                if (len > 0)
+                {
                     RendererMap.FindAndRender(array.GetValue(0), writer);
-                    for (int i = 1; i < len; i++) {
+                    for (int i = 1; i < len; i++)
+                    {
                         writer.Write(", ");
                         RendererMap.FindAndRender(array.GetValue(i), writer);
                     }
@@ -237,13 +254,16 @@ namespace TracerX {
         ///	<c>{a, b, c}</c>.
         ///	</para>
         /// </remarks>
-        private void RenderEnumerator(IEnumerator enumerator, TextWriter writer) {
+        private void RenderEnumerator(IEnumerator enumerator, TextWriter writer)
+        {
             writer.Write("{");
 
-            if (enumerator != null && enumerator.MoveNext()) {
+            if (enumerator != null && enumerator.MoveNext())
+            {
                 RendererMap.FindAndRender(enumerator.Current, writer);
 
-                while (enumerator.MoveNext()) {
+                while (enumerator.MoveNext())
+                {
                     writer.Write(", ");
                     RendererMap.FindAndRender(enumerator.Current, writer);
                 }
@@ -263,7 +283,8 @@ namespace TracerX {
         ///	renderer). For example: <c>key=value</c>.
         ///	</para>
         /// </remarks>
-        private void RenderDictionaryEntry(DictionaryEntry entry, TextWriter writer) {
+        private void RenderDictionaryEntry(DictionaryEntry entry, TextWriter writer)
+        {
             RendererMap.FindAndRender(entry.Key, writer);
             writer.Write("=");
             RendererMap.FindAndRender(entry.Value, writer);

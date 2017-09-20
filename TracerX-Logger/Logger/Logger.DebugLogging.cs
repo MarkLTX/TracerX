@@ -1,12 +1,15 @@
 using System;
 using System.Threading;
 
-namespace TracerX {
-    public partial class Logger {
+namespace TracerX
+{
+    public partial class Logger
+    {
         /// <summary>
         /// Methods and configuration for logging via Trace.WriteLine().
         /// </summary>
-        public static class DebugLogging {
+        public static class DebugLogging
+        {
             /// <summary>
             /// Controls which fields are passed to Trace.WriteLine by all loggers
             /// where Logger.DebugTraceLevel is greater than or equal to the log statement's level.
@@ -21,10 +24,13 @@ namespace TracerX {
             /// {ind} = Indentation  
             /// {msg} = Message text 
             /// </summary>
-            public static string FormatString {
+            public static string FormatString
+            {
                 get { return _debugFormatString; }
-                set {
-                    lock (_debugLocker) {
+                set
+                {
+                    lock (_debugLocker)
+                    {
                         _debugFormatString = value;
                         _internalDebugFormatString = ParseFormatString(value);
                     }
@@ -40,8 +46,10 @@ namespace TracerX {
             private static object _debugLocker = new object();
 
             // Logs a message via Trace.WriteLine.
-            internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
-                lock (_debugLocker) {
+            internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg)
+            {
+                lock (_debugLocker)
+                {
                     string indent = new string(' ', 3 * threadData.DebugState.StackDepth);
                     ++_lineCount;
 
@@ -52,7 +60,7 @@ namespace TracerX {
                         threadData.TracerXID,
                         threadData.Name ?? "<null>",
                         DateTime.Now,
-                        threadData.DebugState.CurrentMethod ?? "<null>" ,
+                        threadData.DebugState.CurrentMethod ?? "<null>",
                         indent,
                         msg ?? "<null>"
                         );

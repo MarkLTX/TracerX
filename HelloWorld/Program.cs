@@ -4,7 +4,6 @@ namespace HelloWorld
 {
     class Program
     {
-
         // Create/get a Logger named after this class (could be anything).
         static Logger Log = Logger.GetLogger("Program");
 

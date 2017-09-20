@@ -2,26 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace TracerX.Viewer {
+namespace TracerX
+{
     // Used only while reading.
-    internal class ReaderThreadInfo {
+    internal class ReaderThreadInfo
+    {
         public ThreadObject Thread;
         public ThreadName ThreadName;
         public LoggerObject Logger;
         public MethodObject MethodName;
-        public TraceLevel Level;
+        public TraceLevelObject TLevel;
+        //public TraceLevel Level;
         public byte Depth;
         public Record StackTop;
 
         private bool _missingRecsGenerated;
 
         // Called when a MethodEntry line is read.
-        public void Push(Record entryRec) {
+        public void Push(Record entryRec)
+        {
             StackTop = entryRec;
         }
 
         // Called when a MethodExit line is read.
-        public void Pop() {
+        public void Pop()
+        {
             StackTop = StackTop.Caller;
         }
 
@@ -30,10 +35,12 @@ namespace TracerX.Viewer {
         // Called when we read the first line for this thread in the circular part of the log.
         // The thread's true call stack (logged with each thread's first record in each block) 
         // was just read from the log and is passed via the actualStack parameter.  
-        internal void MakeMissingRecords(ExplicitStackEntry[] actualStack, List<Record> generatedRecs, Reader.Session session) {
+        internal void MakeMissingRecords(ExplicitStackEntry[] actualStack, List<Record> generatedRecs, Reader.Session session)
+        {
             // We only do this once per thread, for the first record in the circular log for each
             // thread.  If MissingEntryRecords is not null, we already did it.
-            if (!_missingRecsGenerated) {
+            if (!_missingRecsGenerated)
+            {
                 _missingRecsGenerated = true;
                 var MissingEntryRecords = new List<Record>();
 
@@ -82,25 +89,35 @@ namespace TracerX.Viewer {
 
                 // We start at the top of each stack and loop until all entries are examined or
                 // we find the point where both stacks match.
-                while (StackTop != null || actualStackIndex < Depth) {
+                while (StackTop != null || actualStackIndex < Depth)
+                {
                     // At least one of the stacks is not exhausted.
-                    if (StackTop == null) {
+                    if (StackTop == null)
+                    {
                         // Only the actualStack has entries remaining, all of which represent
                         // methods whose method entry records were lost.
                         MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex], session));
                         ++actualStackIndex;
-                    } else if (actualStackIndex == Depth) {
+                    }
+                    else if (actualStackIndex == Depth)
+                    {
                         // Only the StackTop stack has entries remaining, all of which represent
                         // methods whose exits were lost.
                         generatedRecs.Add(new Record(StackTop));
                         Pop();
-                    } else if (StackTop.MsgNum > actualStack[actualStackIndex].EntryLineNum) {
+                    }
+                    else if (StackTop.MsgNum > actualStack[actualStackIndex].EntryLineNum)
+                    {
                         generatedRecs.Add(new Record(StackTop));
                         Pop();
-                    } else if (StackTop.MsgNum < actualStack[actualStackIndex].EntryLineNum) {
+                    }
+                    else if (StackTop.MsgNum < actualStack[actualStackIndex].EntryLineNum)
+                    {
                         MissingEntryRecords.Add(new Record(this, actualStack[actualStackIndex], session));
                         ++actualStackIndex;
-                    } else {
+                    }
+                    else
+                    {
                         // Once they are equal, all others will be equal.
                         break;
                     }
@@ -108,7 +125,8 @@ namespace TracerX.Viewer {
 
                 // Now do the Pushes for the generated entry records.
                 MissingEntryRecords.Reverse();
-                foreach (Record entryRec in MissingEntryRecords) {
+                foreach (Record entryRec in MissingEntryRecords)
+                {
                     entryRec.Caller = StackTop;
                     Push(entryRec);
                 }
@@ -120,12 +138,13 @@ namespace TracerX.Viewer {
 
     // An array of these, representing the current call stack, is read from the
     // first record for each thread in each block in the circular log.
-    internal class ExplicitStackEntry {
+    internal class ExplicitStackEntry
+    {
         public ulong EntryLineNum;
         public byte Depth;
-        public TraceLevel Level;
+        //public TraceLevel Level;
+        public TraceLevelObject TLevel;
         public LoggerObject Logger;
         public MethodObject Method;
     }
-
 }

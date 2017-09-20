@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using TracerX.Properties;
-using TracerX.Forms;
+//using TracerX.Forms;
 using System.Linq;
 
-namespace TracerX.Viewer {
+namespace TracerX
+{
     /// <summary>
     /// A Record object corresponds to a message logged by the logger.  The Record text may contain
     /// embedded newlines, which the viewer can expand into multiple Row objects.
     /// </summary>
-    internal class Record {
+    internal class Record
+    {
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Testing has proven that the ListView control will render only the
         // first 260 chars of any field.  Longer strings are simply truncated.
@@ -22,40 +24,49 @@ namespace TracerX.Viewer {
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public static int MaxViewableChars = 259;
 
-        public Record(DataFlags dataflags, ulong msgNum, DateTime time, ReaderThreadInfo threadInfo, Reader.Session session, string msg) {
+        public Record(DataFlags dataflags, ulong msgNum, DateTime time, ReaderThreadInfo threadInfo, Reader.Session session, string msg)
+        {
             MsgNum = msgNum;
             Time = time;
             Thread = threadInfo.Thread;
             ThreadName = threadInfo.ThreadName;
-            Level = threadInfo.Level;
+            TLevel = threadInfo.TLevel;
             Logger = threadInfo.Logger;
             StackDepth = threadInfo.Depth;
             MethodName = threadInfo.MethodName;
             Caller = threadInfo.StackTop;
             Session = session;
 
-            if ((dataflags & DataFlags.MethodEntry) != DataFlags.None) {
+            if ((dataflags & DataFlags.MethodEntry) != DataFlags.None)
+            {
                 // This is a method entry record.  It always contains exactly one line of text.
                 IsEntry = true;
                 Lines = new string[] { string.Format("{{{0}: entered", MethodName.Name) };
-            } else if ((dataflags & DataFlags.MethodExit) != DataFlags.None) {
+            }
+            else if ((dataflags & DataFlags.MethodExit) != DataFlags.None)
+            {
                 // Method exit records always contain exactly one line of text.
                 IsExit = true;
                 Lines = new string[] { string.Format("}}{0}: exiting", MethodName.Name) };
-            } else {
+            }
+            else
+            {
                 // The message text for this record may contain newlines.  Split the
                 // message into one or more lines.
                 Lines = msg.Split(_splitArg);
 
-                if (Lines.Length > 1) {
+                if (Lines.Length > 1)
+                {
                     // It's common for a carriage return to exist at the 
                     // end of each line.  Remove them.
-                    for (int i = 0; i < Lines.Length; ++i) {
+                    for (int i = 0; i < Lines.Length; ++i)
+                    {
                         Lines[i] = Lines[i].TrimEnd('\r');
                     }
 
                     // It's common for the last line to be empty.  If so, remove it.
-                    if (Lines.Last().Trim() == string.Empty) {
+                    if (Lines.Last().Trim() == string.Empty)
+                    {
                         Lines = Lines.Take(Lines.Length - 1).ToArray();
                     }
                 }
@@ -71,7 +82,8 @@ namespace TracerX.Viewer {
 
         // This constructs the missing MethodExit Record for the given MethodEntry record.
         // This is for MethodExit records lost due to wrapping.
-        public Record(Record counterpart) {
+        public Record(Record counterpart)
+        {
             Debug.Assert(counterpart.IsEntry);
             //IsEntry = false;
             IsExit = true;
@@ -80,7 +92,7 @@ namespace TracerX.Viewer {
             Index = 0; // TBD
             Thread = counterpart.Thread;
             ThreadName = counterpart.ThreadName;
-            Level = counterpart.Level;
+            TLevel = counterpart.TLevel;
             Logger = counterpart.Logger;
             StackDepth = counterpart.StackDepth;
             MethodName = counterpart.MethodName;
@@ -96,7 +108,8 @@ namespace TracerX.Viewer {
 
         // This constructs a missing MethodEntry Record from the given ReaderStackEntry.
         // This is for MethodEntry records lost due to wrapping.
-        public Record(ReaderThreadInfo threadInfo, ExplicitStackEntry methodEntry, Reader.Session session) {
+        public Record(ReaderThreadInfo threadInfo, ExplicitStackEntry methodEntry, Reader.Session session)
+        {
             IsEntry = true;
             //IsExit = false;
             MsgNum = 0; // TBD
@@ -104,7 +117,7 @@ namespace TracerX.Viewer {
             Index = 0; // TBD
             Thread = threadInfo.Thread;
             ThreadName = threadInfo.ThreadName;
-            Level = methodEntry.Level;
+            TLevel = methodEntry.TLevel;
             Logger = methodEntry.Logger;
             StackDepth = methodEntry.Depth;
             MethodName = methodEntry.Method;
@@ -118,10 +131,10 @@ namespace TracerX.Viewer {
         }
 
         // Array of strings obtained by splitting the record's message text at embedded newlines.
-        public string[] Lines ;
+        public string[] Lines;
 
         // Does the message text contain newlines?
-	    public bool HasNewlines { get { return Lines.Length > 1; } }
+        public bool HasNewlines { get { return Lines.Length > 1; } }
 
         // Is this a MethodEntry record?
         public bool IsEntry;
@@ -154,47 +167,47 @@ namespace TracerX.Viewer {
         // Index is this record's index in the array of all records.
         public int Index;
 
-        public int ThreadId {
+        public int ThreadId
+        {
             get { return Thread.Id; }
         }
 
         // Gets the IFilterable object whose Colors property determines
         // this Record's colors. 
-        public IFilterable ColorDriver
+        public IFilterable GetColorableItem(ColorDriver driver)
         {
-            get
+            switch (driver)
             {
-                switch (ColorRulesDialog.CurrentTab)
-                {
-                    case ColorRulesDialog.ColorTab.Loggers:
-                        return this.Logger;
-                    case ColorRulesDialog.ColorTab.Methods:
-                        return this.MethodName;
-                    case ColorRulesDialog.ColorTab.ThreadIDs:
-                        return this.Thread;
-                    case ColorRulesDialog.ColorTab.Sessions:
-                        return this.Session;
-                    case ColorRulesDialog.ColorTab.ThreadNames:
-                        return this.ThreadName;
-                    case ColorRulesDialog.ColorTab.Custom:
-                    case ColorRulesDialog.ColorTab.TraceLevels:
-                        return null;
-                    default:
-                        return null;
-                }
+                case ColorDriver.Loggers:
+                    return this.Logger;
+                case ColorDriver.Methods:
+                    return this.MethodName;
+                case ColorDriver.ThreadIDs:
+                    return this.Thread;
+                case ColorDriver.Sessions:
+                    return this.Session;
+                case ColorDriver.ThreadNames:
+                    return this.ThreadName;
+                case ColorDriver.TraceLevels:
+                    return this.TLevel;
+                case ColorDriver.Custom:
+                    return null;
+                default:
+                    return null;
             }
         }
 
         // MsgNum is the message number from the log file.  
         // This may not be equal to Index if the log has wrapped.
-        public ulong MsgNum ; 
-        public DateTime Time ;
+        public ulong MsgNum;
+        public DateTime Time;
         public ThreadObject Thread;
         public ThreadName ThreadName;
-        public TraceLevel Level;
-        public LoggerObject Logger ;
-        public MethodObject MethodName ;
-        public byte StackDepth ;
+        //public TraceLevel Level;
+        public TraceLevelObject TLevel;
+        public LoggerObject Logger;
+        public MethodObject MethodName;
+        public byte StackDepth;
         public Reader.Session Session;
 
         // When collapsing nested methods, this indicate the nesting depth.
@@ -202,7 +215,8 @@ namespace TracerX.Viewer {
         // still be invisible due to filtering.
         public short CollapsedDepth = 0;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return MsgNum.ToString() + ": " + (Lines[0] ?? "");
         }
 
@@ -211,7 +225,8 @@ namespace TracerX.Viewer {
         // Parameter curRowIndex will be the row index of the first visible
         // line in this record, if there is one.  If any lines are visible, this increments
         // curRowIndex and returns the index of the next row to be set.
-        public int SetVisibleRows(List<Row> rows, int curRowIndex) {
+        public int SetVisibleRows(List<Row> rows, int curRowIndex, char indentChar, int indentRate)
+        {
             int firstRowIndex = curRowIndex;
             FirstRowIndex = -1; // None visible for now.
 
@@ -222,13 +237,13 @@ namespace TracerX.Viewer {
                     ThreadName.Visible &&
                     Thread.Visible &&
                     Logger.Visible &&
-                    (MethodName.Visible || CallerIsVisible()) &&
-                    (Level & MainForm.TheMainForm.VisibleTraceLevels) != 0) //
+                    TLevel.Visible &&
+                    (MethodName.Visible || CallerIsVisible())) //
                 {
                     if (HasNewlines && IsCollapsed)
                     {
                         // Test all the lines appended together, as the user will see it.
-                        string allTogether = GetLine(0, ' ', 0, false);
+                        string allTogether = GetLine(0, indentChar, indentRate, false);
                         if (FilterDialog.TextFilterTestString(allTogether))
                         {
                             SetRow(rows, curRowIndex, 0);
@@ -243,7 +258,9 @@ namespace TracerX.Viewer {
                         // visible line with a Row in the rows array.
                         for (int lineNum = 0; lineNum < Lines.Length; ++lineNum)
                         {
-                            if (FilterDialog.TextFilterTestString(Lines[lineNum]))
+                            string indentedLine = GetIndentedLine(lineNum, indentChar, indentRate, false);
+
+                            if (FilterDialog.TextFilterTestString(indentedLine))
                             {
                                 SetRow(rows, curRowIndex, lineNum);
                                 RowIndices[lineNum] = curRowIndex;
@@ -266,14 +283,18 @@ namespace TracerX.Viewer {
             return curRowIndex;
         }
 
-        private bool CallerIsVisible() {
+        private bool CallerIsVisible()
+        {
             bool result = false;
 
-            if (Settings.Default.ShowCalledMethods) {
+            if (Settings.Default.ShowCalledMethods)
+            {
                 Record caller = Caller;
 
-                while (caller != null) {
-                    if (caller.MethodName.Visible) {
+                while (caller != null)
+                {
+                    if (caller.MethodName.Visible)
+                    {
                         result = true;
                         break;
                     }
@@ -285,14 +306,20 @@ namespace TracerX.Viewer {
             return result;
         }
 
-        public int LastRowIndex {
-            get {
-                if (IsCollapsed || !HasNewlines) {
+        public int LastRowIndex
+        {
+            get
+            {
+                if (IsCollapsed || !HasNewlines)
+                {
                     return FirstRowIndex;
-                } else {
+                }
+                else
+                {
                     int result = -1;
-                    for (int lineNum = Lines.Length - 1; result == -1 && lineNum >= 0; --lineNum) {
-                            result = RowIndices[lineNum];
+                    for (int lineNum = Lines.Length - 1; result == -1 && lineNum >= 0; --lineNum)
+                    {
+                        result = RowIndices[lineNum];
                     }
 
                     return result;
@@ -300,39 +327,84 @@ namespace TracerX.Viewer {
             }
         }
 
-        public bool SameThreadAs(Record other) {
-            if (Settings.Default.SearchThreadsByName) {
+        public bool SameThreadAs(Record other)
+        {
+            if (Settings.Default.SearchThreadsByName)
+            {
                 return other != null && other.ThreadName == this.ThreadName;
-            } else {
+            }
+            else
+            {
                 return other != null && other.Thread == this.Thread;
             }
         }
 
         // Assign the record to the specified row, reusing the
         // Row object or creating a new one if needed.
-        private void SetRow(List<Row> rows, int rowNum, int lineNum) {
-            if (rowNum >= rows.Count) {
+        private void SetRow(List<Row> rows, int rowNum, int lineNum)
+        {
+            if (rowNum >= rows.Count)
+            {
                 rows.Add(new Row(this, rowNum, lineNum));
-            } else if (rows[rowNum] == null) {
+            }
+            else if (rows[rowNum] == null)
+            {
                 rows[rowNum] = new Row(this, rowNum, lineNum);
-            } else {
+            }
+            else
+            {
                 rows[rowNum].Init(this, lineNum);
             }
         }
 
         // Gets the string to display in the Line Number column
         // for the specified sub-line number.
-        public string GetRecordNum(int lineNum) {
+        public string GetRecordNum(int lineNum)
+        {
             return GetRecordNum(lineNum, Settings.Default.LineNumSeparator);
+        }
+
+        // If this Record's Method doesn't have a subitem color, we may need to
+        // look up the call stack.
+        public ColorPair GetMethodColor()
+        {
+            if (MethodName.SubitemColors == null && ColorRulesDialog.ColorCalledMethods)
+            {
+                // Search up the call stack for a caller that's colored.
+
+                Record caller = Caller;
+
+                while (caller != null)
+                {
+                    if (caller.MethodName.SubitemColors == null)
+                    {
+                        caller = caller.Caller;
+                    }
+                    else
+                    {
+                        return caller.MethodName.SubitemColors;
+                    }
+                }
+
+                return null;
+            }
+            else
+            {
+                return MethodName.SubitemColors;
+            }
         }
 
         // Gets the string to display in the Line Number column
         // for the specified sub-line number.
-        public string GetRecordNum(int lineNum, bool useSeparator) {
-            if (HasNewlines && !IsCollapsed) {
+        public string GetRecordNum(int lineNum, bool useSeparator)
+        {
+            if (HasNewlines && !IsCollapsed)
+            {
                 if (useSeparator) return string.Format("{0:N0}.{1:N0}", MsgNum, lineNum);
                 else return string.Format("{0}.{1}", MsgNum, lineNum);
-            } else {
+            }
+            else
+            {
                 if (useSeparator) return MsgNum.ToString("N0");
                 else return MsgNum.ToString();
             }
@@ -340,12 +412,16 @@ namespace TracerX.Viewer {
 
         // Append all lines together to be displayed in the full text window.
         // Ensure the lines are separated by "\r\n", not just '\n'.
-        public string GetTextForWindow(int lineNum) {
-            if (HasNewlines && IsCollapsed) {
+        public string GetTextForWindow(int lineNum)
+        {
+            if (HasNewlines && IsCollapsed)
+            {
                 bool hasCR = true;
                 StringBuilder builder = new StringBuilder(500);
-                foreach (string line in Lines) {
-                    if (builder.Length != 0) {
+                foreach (string line in Lines)
+                {
+                    if (builder.Length != 0)
+                    {
                         if (hasCR)
                             builder.Append('\n');
                         else
@@ -357,43 +433,57 @@ namespace TracerX.Viewer {
                 }
 
                 return builder.ToString();
-            } else {
+            }
+            else
+            {
                 return GetIndentedLine(lineNum, ' ', 0, false);
             }
         }
 
         // Gets the specified sub-line of this record's message.
         // Optionally truncates at 259 chars to prevent crash in comctrl32.dll.
-        public string GetLine(int lineNum, char indentChar, int indentRate, bool truncate) {
-            if (HasNewlines) {
-                if (IsCollapsed) {
+        public string GetLine(int lineNum, char indentChar, int indentRate, bool truncate)
+        {
+            if (HasNewlines)
+            {
+                if (IsCollapsed)
+                {
                     // Construct a string with all lines concatenated together as originally logged.
                     StringBuilder builder = new StringBuilder(500);
                     builder.Append(GetIndentedLine(0, indentChar, indentRate, truncate));
-                    for (int i = 1; i < Lines.Length && (!truncate || builder.Length < MaxViewableChars); ++i) {
+                    for (int i = 1; i < Lines.Length && (!truncate || builder.Length < MaxViewableChars); ++i)
+                    {
                         builder.Append("\n");
                         builder.Append(Lines[i]);
                     }
 
                     if (truncate && builder.Length > MaxViewableChars) builder.Length = MaxViewableChars;
                     return builder.ToString();
-                } else {
+                }
+                else
+                {
                     // Return the specified Line, indented appropriately.
                     return GetIndentedLine(lineNum, indentChar, indentRate, truncate);
                 }
-            } else {
+            }
+            else
+            {
                 // No newlines means entire message text is in Lines[0].
                 return GetIndentedLine(0, indentChar, indentRate, truncate);
             }
         }
 
         // Return the specified Line, indented appropriately, possibly truncated to MaxViewableChars.
-        private string GetIndentedLine(int lineNum, char indentChar, int indentRate, bool truncate) {
+        private string GetIndentedLine(int lineNum, char indentChar, int indentRate, bool truncate)
+        {
             string retval;
 
-            if (indentRate == 0) {
+            if (indentRate == 0)
+            {
                 retval = Lines[lineNum];
-            } else {
+            }
+            else
+            {
                 retval = Lines[lineNum].PadLeft(indentRate * StackDepth + Lines[lineNum].Length, indentChar);
             }
 
@@ -403,7 +493,7 @@ namespace TracerX.Viewer {
             return retval;
         }
 
-        private static readonly char[] _splitArg = new char[] {'\n'};
+        private static readonly char[] _splitArg = new char[] { '\n' };
 
     }
 }

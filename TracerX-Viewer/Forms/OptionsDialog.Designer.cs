@@ -1,4 +1,4 @@
-namespace TracerX.Viewer {
+namespace TracerX {
     partial class OptionsDialog {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@ namespace TracerX.Viewer {
             this.ok = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.miscPage = new System.Windows.Forms.TabPage();
+            this.chkFastScrolling = new System.Windows.Forms.CheckBox();
             this.chkReapplyFilter = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -71,6 +72,13 @@ namespace TracerX.Viewer {
             this.txtVersionInterval = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.startPagePage = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtTimestampDays = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.chkTracerxLogs = new System.Windows.Forms.CheckBox();
+            this.chkServersPane = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.miscPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -84,13 +92,15 @@ namespace TracerX.Viewer {
             this.textPage.SuspendLayout();
             this.autoUpdatePage.SuspendLayout();
             this.versionPage.SuspendLayout();
+            this.startPagePage.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cancel
             // 
             this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(302, 184);
+            this.cancel.Location = new System.Drawing.Point(398, 240);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 6;
@@ -101,7 +111,7 @@ namespace TracerX.Viewer {
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.Enabled = false;
-            this.apply.Location = new System.Drawing.Point(221, 184);
+            this.apply.Location = new System.Drawing.Point(317, 240);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 5;
@@ -114,7 +124,7 @@ namespace TracerX.Viewer {
             this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.ok.Enabled = false;
-            this.ok.Location = new System.Drawing.Point(140, 184);
+            this.ok.Location = new System.Drawing.Point(236, 240);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 4;
@@ -127,6 +137,7 @@ namespace TracerX.Viewer {
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.startPagePage);
             this.tabControl1.Controls.Add(this.miscPage);
             this.tabControl1.Controls.Add(this.timePage);
             this.tabControl1.Controls.Add(this.threadsPage);
@@ -136,21 +147,38 @@ namespace TracerX.Viewer {
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(391, 176);
+            this.tabControl1.Size = new System.Drawing.Size(487, 232);
             this.tabControl1.TabIndex = 7;
             this.tabControl1.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Deselecting);
             // 
             // miscPage
             // 
+            this.miscPage.Controls.Add(this.chkFastScrolling);
             this.miscPage.Controls.Add(this.chkReapplyFilter);
             this.miscPage.Controls.Add(this.groupBox1);
             this.miscPage.Controls.Add(this.chkDigitGrouping);
             this.miscPage.Location = new System.Drawing.Point(4, 22);
             this.miscPage.Name = "miscPage";
-            this.miscPage.Size = new System.Drawing.Size(383, 150);
+            this.miscPage.Size = new System.Drawing.Size(479, 206);
             this.miscPage.TabIndex = 1;
             this.miscPage.Text = "Miscellaneous";
             this.miscPage.UseVisualStyleBackColor = true;
+            // 
+            // chkFastScrolling
+            // 
+            this.chkFastScrolling.AutoSize = true;
+            this.chkFastScrolling.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.chkFastScrolling.Checked = true;
+            this.chkFastScrolling.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFastScrolling.Location = new System.Drawing.Point(9, 160);
+            this.chkFastScrolling.Name = "chkFastScrolling";
+            this.chkFastScrolling.Size = new System.Drawing.Size(355, 43);
+            this.chkFastScrolling.TabIndex = 7;
+            this.chkFastScrolling.Text = "Use WS_EX_COMPOSITED in CreateParams() for fast page scrolling.\r\nImproves page up" +
+    "/down behavior, but hurts the scroll bars.\r\nChanges to this setting take effect " +
+    "when this application restarts.";
+            this.chkFastScrolling.UseVisualStyleBackColor = true;
+            this.chkFastScrolling.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
             // chkReapplyFilter
             // 
@@ -171,9 +199,9 @@ namespace TracerX.Viewer {
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.txtFileSize);
-            this.groupBox1.Location = new System.Drawing.Point(8, 52);
+            this.groupBox1.Location = new System.Drawing.Point(8, 55);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(365, 92);
+            this.groupBox1.Size = new System.Drawing.Size(461, 92);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Network files";
@@ -182,7 +210,7 @@ namespace TracerX.Viewer {
             // 
             this.label11.Location = new System.Drawing.Point(6, 58);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(352, 31);
+            this.label11.Size = new System.Drawing.Size(449, 31);
             this.label11.TabIndex = 6;
             this.label11.Text = "When loading larger files from network locations, TracerX makes a temp local copy" +
     " for faster loading.  Specify 0 to disable copying.";
@@ -234,7 +262,7 @@ namespace TracerX.Viewer {
             this.timePage.Location = new System.Drawing.Point(4, 22);
             this.timePage.Name = "timePage";
             this.timePage.Padding = new System.Windows.Forms.Padding(3);
-            this.timePage.Size = new System.Drawing.Size(383, 150);
+            this.timePage.Size = new System.Drawing.Size(479, 206);
             this.timePage.TabIndex = 0;
             this.timePage.Text = "Time";
             this.timePage.UseVisualStyleBackColor = true;
@@ -260,7 +288,7 @@ namespace TracerX.Viewer {
             this.groupBox2.Controls.Add(this.showRelative);
             this.groupBox2.Location = new System.Drawing.Point(7, 37);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(370, 85);
+            this.groupBox2.Size = new System.Drawing.Size(466, 85);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Format";
@@ -320,7 +348,7 @@ namespace TracerX.Viewer {
             this.threadsPage.Location = new System.Drawing.Point(4, 22);
             this.threadsPage.Name = "threadsPage";
             this.threadsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.threadsPage.Size = new System.Drawing.Size(383, 150);
+            this.threadsPage.Size = new System.Drawing.Size(479, 206);
             this.threadsPage.TabIndex = 5;
             this.threadsPage.Text = "Threads";
             this.threadsPage.UseVisualStyleBackColor = true;
@@ -329,7 +357,7 @@ namespace TracerX.Viewer {
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Image = global::TracerX.Properties.Resources.SameThreadNext;
-            this.pictureBox4.Location = new System.Drawing.Point(251, 96);
+            this.pictureBox4.Location = new System.Drawing.Point(251, 88);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(18, 18);
             this.pictureBox4.TabIndex = 6;
@@ -339,7 +367,7 @@ namespace TracerX.Viewer {
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Image = global::TracerX.Properties.Resources.SameThreadPrev;
-            this.pictureBox3.Location = new System.Drawing.Point(229, 96);
+            this.pictureBox3.Location = new System.Drawing.Point(229, 88);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(18, 18);
             this.pictureBox3.TabIndex = 5;
@@ -349,7 +377,7 @@ namespace TracerX.Viewer {
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = global::TracerX.Properties.Resources.AnyThreadNext;
-            this.pictureBox2.Location = new System.Drawing.Point(207, 96);
+            this.pictureBox2.Location = new System.Drawing.Point(207, 88);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(18, 18);
             this.pictureBox2.TabIndex = 4;
@@ -359,7 +387,7 @@ namespace TracerX.Viewer {
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Image = global::TracerX.Properties.Resources.AnyThreadPrev;
-            this.pictureBox1.Location = new System.Drawing.Point(185, 96);
+            this.pictureBox1.Location = new System.Drawing.Point(185, 88);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(18, 18);
             this.pictureBox1.TabIndex = 3;
@@ -368,7 +396,7 @@ namespace TracerX.Viewer {
             // radThreadName
             // 
             this.radThreadName.AutoSize = true;
-            this.radThreadName.Location = new System.Drawing.Point(11, 109);
+            this.radThreadName.Location = new System.Drawing.Point(11, 101);
             this.radThreadName.Name = "radThreadName";
             this.radThreadName.Size = new System.Drawing.Size(138, 17);
             this.radThreadName.TabIndex = 2;
@@ -380,7 +408,7 @@ namespace TracerX.Viewer {
             // radThreadNumber
             // 
             this.radThreadNumber.AutoSize = true;
-            this.radThreadNumber.Location = new System.Drawing.Point(11, 86);
+            this.radThreadNumber.Location = new System.Drawing.Point(11, 78);
             this.radThreadNumber.Name = "radThreadNumber";
             this.radThreadNumber.Size = new System.Drawing.Size(147, 17);
             this.radThreadNumber.TabIndex = 1;
@@ -393,7 +421,7 @@ namespace TracerX.Viewer {
             // 
             this.label3.Location = new System.Drawing.Point(8, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(365, 70);
+            this.label3.Size = new System.Drawing.Size(468, 70);
             this.label3.TabIndex = 0;
             this.label3.Text = resources.GetString("label3.Text");
             // 
@@ -408,7 +436,7 @@ namespace TracerX.Viewer {
             this.textPage.Location = new System.Drawing.Point(4, 22);
             this.textPage.Name = "textPage";
             this.textPage.Padding = new System.Windows.Forms.Padding(3);
-            this.textPage.Size = new System.Drawing.Size(383, 150);
+            this.textPage.Size = new System.Drawing.Size(479, 206);
             this.textPage.TabIndex = 2;
             this.textPage.Text = "Text";
             this.textPage.UseVisualStyleBackColor = true;
@@ -460,12 +488,13 @@ namespace TracerX.Viewer {
             // 
             // expandLinesWithNewlines
             // 
+            this.expandLinesWithNewlines.AutoSize = true;
             this.expandLinesWithNewlines.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.expandLinesWithNewlines.Location = new System.Drawing.Point(9, 7);
             this.expandLinesWithNewlines.Name = "expandLinesWithNewlines";
-            this.expandLinesWithNewlines.Size = new System.Drawing.Size(292, 33);
+            this.expandLinesWithNewlines.Size = new System.Drawing.Size(365, 17);
             this.expandLinesWithNewlines.TabIndex = 0;
-            this.expandLinesWithNewlines.Text = "Expand text with embedded newlines (yellow triangles) when file is loaded.";
+            this.expandLinesWithNewlines.Text = "Expand text with embedded newlines (blue triangles) when file is loaded.";
             this.expandLinesWithNewlines.UseVisualStyleBackColor = true;
             this.expandLinesWithNewlines.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
@@ -479,7 +508,7 @@ namespace TracerX.Viewer {
             this.autoUpdatePage.Location = new System.Drawing.Point(4, 22);
             this.autoUpdatePage.Name = "autoUpdatePage";
             this.autoUpdatePage.Padding = new System.Windows.Forms.Padding(3);
-            this.autoUpdatePage.Size = new System.Drawing.Size(383, 150);
+            this.autoUpdatePage.Size = new System.Drawing.Size(479, 206);
             this.autoUpdatePage.TabIndex = 3;
             this.autoUpdatePage.Text = "Auto-Update";
             this.autoUpdatePage.UseVisualStyleBackColor = true;
@@ -493,6 +522,7 @@ namespace TracerX.Viewer {
             this.autoReload.TabIndex = 8;
             this.autoReload.Text = "Automatically reload the file when it\'s restarted.";
             this.autoReload.UseVisualStyleBackColor = true;
+            this.autoReload.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
             // txtMaxRecords
             // 
@@ -544,7 +574,7 @@ namespace TracerX.Viewer {
             this.versionPage.Controls.Add(this.label6);
             this.versionPage.Location = new System.Drawing.Point(4, 22);
             this.versionPage.Name = "versionPage";
-            this.versionPage.Size = new System.Drawing.Size(383, 150);
+            this.versionPage.Size = new System.Drawing.Size(479, 206);
             this.versionPage.TabIndex = 4;
             this.versionPage.Text = "Version Checking";
             this.versionPage.UseVisualStyleBackColor = true;
@@ -599,16 +629,94 @@ namespace TracerX.Viewer {
             this.label6.Dock = System.Windows.Forms.DockStyle.Top;
             this.label6.Location = new System.Drawing.Point(0, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(383, 32);
+            this.label6.Size = new System.Drawing.Size(479, 32);
             this.label6.TabIndex = 0;
             this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
     "website?";
+            // 
+            // startPagePage
+            // 
+            this.startPagePage.Controls.Add(this.chkServersPane);
+            this.startPagePage.Controls.Add(this.chkTracerxLogs);
+            this.startPagePage.Controls.Add(this.panel1);
+            this.startPagePage.Location = new System.Drawing.Point(4, 22);
+            this.startPagePage.Name = "startPagePage";
+            this.startPagePage.Padding = new System.Windows.Forms.Padding(3);
+            this.startPagePage.Size = new System.Drawing.Size(479, 206);
+            this.startPagePage.TabIndex = 6;
+            this.startPagePage.Text = "Start Page";
+            this.startPagePage.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Name = "label5";
+            this.label5.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.label5.Size = new System.Drawing.Size(211, 16);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Remember each file\'s \"last viewed\" time for";
+            // 
+            // txtTimestampDays
+            // 
+            this.txtTimestampDays.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtTimestampDays.Location = new System.Drawing.Point(211, 0);
+            this.txtTimestampDays.Name = "txtTimestampDays";
+            this.txtTimestampDays.Size = new System.Drawing.Size(28, 20);
+            this.txtTimestampDays.TabIndex = 1;
+            this.txtTimestampDays.TextChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label13.Location = new System.Drawing.Point(239, 0);
+            this.label13.Name = "label13";
+            this.label13.Padding = new System.Windows.Forms.Padding(1, 3, 0, 0);
+            this.label13.Size = new System.Drawing.Size(33, 16);
+            this.label13.TabIndex = 2;
+            this.label13.Text = "days.";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.txtTimestampDays);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Location = new System.Drawing.Point(9, 6);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(479, 22);
+            this.panel1.TabIndex = 3;
+            // 
+            // chkTracerxLogs
+            // 
+            this.chkTracerxLogs.AutoSize = true;
+            this.chkTracerxLogs.Location = new System.Drawing.Point(9, 34);
+            this.chkTracerxLogs.Name = "chkTracerxLogs";
+            this.chkTracerxLogs.Size = new System.Drawing.Size(244, 17);
+            this.chkTracerxLogs.TabIndex = 4;
+            this.chkTracerxLogs.Text = "Show logs for the TracerX viewer and service.";
+            this.chkTracerxLogs.UseVisualStyleBackColor = true;
+            this.chkTracerxLogs.CheckedChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // chkServersPane
+            // 
+            this.chkServersPane.AutoSize = true;
+            this.chkServersPane.Checked = true;
+            this.chkServersPane.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkServersPane.Location = new System.Drawing.Point(9, 57);
+            this.chkServersPane.Name = "chkServersPane";
+            this.chkServersPane.Size = new System.Drawing.Size(150, 17);
+            this.chkServersPane.TabIndex = 5;
+            this.chkServersPane.Text = "Show the \"Servers\" pane.";
+            this.chkServersPane.UseVisualStyleBackColor = true;
+            this.chkServersPane.Click += new System.EventHandler(this.SomethingChanged);
             // 
             // OptionsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(391, 217);
+            this.ClientSize = new System.Drawing.Size(487, 273);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.apply);
@@ -642,6 +750,10 @@ namespace TracerX.Viewer {
             this.autoUpdatePage.PerformLayout();
             this.versionPage.ResumeLayout(false);
             this.versionPage.PerformLayout();
+            this.startPagePage.ResumeLayout(false);
+            this.startPagePage.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -695,5 +807,13 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.TextBox txtMaxRecords;
         private System.Windows.Forms.Label lblMaxRecs;
         private System.Windows.Forms.CheckBox autoReload;
+        private System.Windows.Forms.CheckBox chkFastScrolling;
+        private System.Windows.Forms.TabPage startPagePage;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox txtTimestampDays;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox chkTracerxLogs;
+        private System.Windows.Forms.CheckBox chkServersPane;
     }
 }

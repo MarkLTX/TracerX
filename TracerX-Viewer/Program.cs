@@ -3,32 +3,67 @@ using System.Collections.Generic;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
-using TracerX.Viewer;
+using TracerX.ExtensionMethods;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     class Program
     {
+        private static Logger Log = Logger.GetLogger("Program");
+        private static bool _didOpenLog = InitLogging();
+
         [STAThread()]
         static void Main()
         {
-            string arg = GetArg();
-            Application.EnableVisualStyles();
-            Application.Run(new MainForm(arg));
+            _didOpenLog = !!_didOpenLog; // InitLogging() doesn't get called without this reference to _didOpenLog!
+
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.Run(new MainForm());
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in Main: ", ex);
+            }
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Debug.Print(e.ExceptionObject.ToString());
+            Log.Error("Unhandled exception passed to CurrentDomain_UnhandledException:", e.ExceptionObject);
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            Debug.Print(e.Exception.ToString());
+            Log.Error("Unhandled exception passed to Application_ThreadException:", e.Exception);
         }
 
+        private static bool InitLogging()
+        {
+            if (System.Threading.Thread.CurrentThread.Name == null)
+            {
+                System.Threading.Thread.CurrentThread.Name = "Main Thread";
+            }
+
+            Logger.Root.BinaryFileTraceLevel = TraceLevel.Debug;
+            Logger.Root.DebugTraceLevel = TraceLevel.Warn;
+            Logger.DefaultBinaryFile.MaxSizeMb = 10;
+            Logger.DefaultBinaryFile.CircularStartSizeKb = 20;
+            Logger.DefaultBinaryFile.Directory = "%LOCAL_APPDATA%\\TracerX\\ViewerLogs";
+
+            // Open the output file.
+            bool result = Logger.DefaultBinaryFile.Open();
+            Logger.GrantReadAccess(Logger.DefaultBinaryFile.Directory,  authenticatedUsers: true);
+            Log.Info("Log file path = ", Logger.DefaultBinaryFile.FullPath);
+
+            Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            return result;
+        }
 
         public static string FormatTimeSpan(TimeSpan ts)
         {
@@ -50,57 +85,29 @@ namespace TracerX.Viewer
             }
         }
 
-        // Since we only accept one argument (a file path), this gets the first command line argument, if any.  
-        // It handles arguments passed via a ClickOnce shortcut as well as "regular" arguments.
-        private static string GetArg()
+        // Renders an ExceptionDetail and its nested InnerExceptions into a 
+        // single string containing the exception types and messages.
+        public static string GetNestedDetails(ExceptionDetail detail)
         {
+            int depth = 0;
             string result = null;
 
-            try
+            if (detail.InnerException == null)
             {
-                if (ApplicationDeployment.IsNetworkDeployed)
-                {
-                    // This means we were called via the ClickOnce shortcut, and we have to get our fileName this way.
-
-                    if (AppDomain.CurrentDomain.SetupInformation != null &&
-                        AppDomain.CurrentDomain.SetupInformation.ActivationArguments != null &&
-                        AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData != null)
-                    {
-                        string[] inputArgs = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-
-                        if (inputArgs.Length > 0)
-                        {
-                            // Always, inputArgs.Length == 1 and inputArgs[0] contains everything we're ever going to get.
-                            // The way to pass multiple fileName this way is to put everything in quotes on the command line.
-                            // This means inputArgs[0] may actually contain multiple blank-separated arguments, but cannot
-                            // contain any quotes.  
-
-                            if (inputArgs[0].ToLower().StartsWith("http://"))
-                            {
-                                // This is the first (automatic) execution from being installed via clickOnce.  Ignore it.
-                            }
-                            else
-                            {
-                                // The file name will contain "%20" for blanks, and maybe other wierdness.
-                                // This URI treatment should fix that.
-
-                                Uri uri = new Uri(inputArgs[0]);
-                                result = uri.LocalPath;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Return the second argument (or null).  The first argument is the executable name.
-
-                    string[] array = Environment.GetCommandLineArgs();
-                    result = array.Skip(1).FirstOrDefault();
-                }
+                result = detail.Type + ": " + detail.Message;
             }
-            catch (Exception ex)
+            else
             {
-                Debug.Print(ex.ToString());
+                result = "Outer " + detail.Type + ": " + detail.Message;
+                detail = detail.InnerException;
+
+                while (detail != null)
+                {
+                    ++depth;
+                    result += "\nInner (depth {0}) {1}: {2}".Fmt(depth, detail.Type, detail.Message ?? "<null message>");
+                    detail = detail.InnerException;
+                }
+
             }
 
             return result;

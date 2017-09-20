@@ -26,12 +26,15 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace TracerX {
-    public partial class Logger {
+namespace TracerX
+{
+    public partial class Logger
+    {
         /// <summary>
         /// You can use this class to initialize the TracerX environment using an XML file or XMLElement.
         /// </summary>
-        public static class Xml {
+        public static class Xml
+        {
             #region Configure methods
             /// <summary>
             /// Automatically configures the TracerX system based on the 
@@ -49,23 +52,33 @@ namespace TracerX {
             /// Returns true if no errors or warnings occurred. If false is returned,
             /// look in the application event log for relevant events logged by TracerX.
             /// </returns>
-            static public bool Configure() {
+            static public bool Configure()
+            {
                 bool ret = false;
-                try {
+                try
+                {
                     object o = System.Configuration.ConfigurationManager.GetSection("TracerX");
                     XmlElement configElement = o as XmlElement;
-                    if (configElement == null) {
+                    if (configElement == null)
+                    {
                         // Failed to load the TracerX element.
                         EventLogging.Log("XmlConfig: Failed to find configuration section 'TracerX' in the application's .config file. Check your .config file for the <TracerX> and <configSections> elements. The configuration section should look like: <section name=\"TracerX\" type=\"TracerX.XmlConfigSectionHandler, TracerX\" />", EventLogging.XmlConfigError);
-                    } else {
+                    }
+                    else
+                    {
                         // Configure using the xml loaded from the config file
                         ret = ConfigureFromXml(configElement);
                     }
-                } catch (System.Configuration.ConfigurationException confEx) {
-                    if (confEx.BareMessage.IndexOf("Unrecognized element") >= 0) {
+                }
+                catch (System.Configuration.ConfigurationException confEx)
+                {
+                    if (confEx.BareMessage.IndexOf("Unrecognized element") >= 0)
+                    {
                         // Looks like the XML file is not valid
                         EventLogging.Log("XmlConfig: Failed to parse config file. Check your .config file is well formed XML." + confEx.ToString(), EventLogging.XmlConfigError);
-                    } else {
+                    }
+                    else
+                    {
                         // This exception is typically due to the assembly name not being correctly specified in the section type.
                         string configSectionStr = "<section name=\"TracerX\" type=\"TracerX.XmlConfigSectionHandler, TracerX\" />\n\n";
                         EventLogging.Log("XmlConfig: Failed to parse config file. Is the <configSections> specified as: " + configSectionStr + confEx.ToString(), EventLogging.XmlConfigError);
@@ -84,7 +97,8 @@ namespace TracerX {
             /// at least one element called <c>TracerX</c> that holds
             /// the TracerX configuration data.
             /// </remarks>
-            static public bool Configure(string configFilePath) {
+            static public bool Configure(string configFilePath)
+            {
                 return Configure(new FileInfo(configFilePath));
             }
 
@@ -97,25 +111,35 @@ namespace TracerX {
             /// at least one element called <c>TracerX</c> that holds
             /// the TracerX configuration data.
             /// </remarks>
-            static public bool Configure(FileInfo configFile) {
+            static public bool Configure(FileInfo configFile)
+            {
                 bool ret = false;
 
-                if (configFile == null) {
+                if (configFile == null)
+                {
                     EventLogging.Log("XmlConfig: Configure called with null 'configFile' parameter", EventLogging.XmlConfigError);
-                } else {
+                }
+                else
+                {
                     // Have to use File.Exists() rather than configFile.Exists()
                     // because configFile.Exists() caches the value, not what we want.
-                    if (File.Exists(configFile.FullName)) {
+                    if (File.Exists(configFile.FullName))
+                    {
                         // Open the file for reading
                         FileStream fs = null;
 
                         // Try hard to open the file
-                        for (int retry = 5; --retry >= 0; ) {
-                            try {
+                        for (int retry = 5; --retry >= 0; )
+                        {
+                            try
+                            {
                                 fs = configFile.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
                                 break;
-                            } catch (IOException ex) {
-                                if (retry == 0) {
+                            }
+                            catch (IOException ex)
+                            {
+                                if (retry == 0)
+                                {
                                     EventLogging.Log("XmlConfig: Failed to open XML config file [" + configFile.Name + "]\n" + ex.ToString(), EventLogging.XmlConfigError);
 
                                     // The stream cannot be valid
@@ -125,16 +149,27 @@ namespace TracerX {
                             }
                         }
 
-                        if (fs != null) {
-                            try {
+                        if (fs != null)
+                        {
+                            try
+                            {
                                 // Load the configuration from the stream
                                 ret = Configure(fs);
-                            } finally {
+
+                                if (!ret)
+                                {
+                                    EventLogging.Log("XmlConfig: config file [" + configFile.FullName + "] contained error(s).", EventLogging.XmlConfigError);
+                                }
+                            }
+                            finally
+                            {
                                 // Force the file closed whatever happens
                                 fs.Close();
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         EventLogging.Log("XmlConfig: config file [" + configFile.FullName + "] not found. Configuration unchanged.", EventLogging.XmlConfigError);
                     }
                 }
@@ -156,15 +191,20 @@ namespace TracerX {
             /// Note that this method will NOT close the stream parameter.
             /// </para>
             /// </remarks>
-            static public bool Configure(Stream configStream) {
+            static public bool Configure(Stream configStream)
+            {
                 bool ret = false;
 
-                if (configStream == null) {
+                if (configStream == null)
+                {
                     EventLogging.Log("XmlConfig: Configure called with null 'configStream' parameter", EventLogging.XmlConfigError);
-                } else {
+                }
+                else
+                {
                     // Load the config file into a document
                     XmlDocument doc = new XmlDocument();
-                    try {
+                    try
+                    {
                         // Allow the DTD to specify entity includes
                         XmlReaderSettings settings = new XmlReaderSettings();
                         settings.ProhibitDtd = false;
@@ -174,21 +214,29 @@ namespace TracerX {
 
                         // load the data into the document
                         doc.Load(xmlReader);
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         EventLogging.Log("XmlConfig: Error while loading XML configuration.\n" + ex.ToString(), EventLogging.XmlConfigError);
 
                         // The document is invalid
                         doc = null;
                     }
 
-                    if (doc != null) {
+                    if (doc != null)
+                    {
                         // Configure using the 'TracerX' element
                         XmlNodeList configNodeList = doc.GetElementsByTagName("TracerX");
-                        if (configNodeList.Count == 0) {
-                            EventLogging.Log("XmlConfig: XML configuration does not contain an <TracerX> element. Configuration Aborted.", EventLogging.XmlConfigError);
-                        } else if (configNodeList.Count > 1) {
+                        if (configNodeList.Count == 0)
+                        {
+                            EventLogging.Log("XmlConfig: XML configuration does not contain a <TracerX> element. Configuration Aborted.", EventLogging.XmlConfigError);
+                        }
+                        else if (configNodeList.Count > 1)
+                        {
                             EventLogging.Log("XmlConfig: XML configuration contains [" + configNodeList.Count + "] <TracerX> elements. Only one is allowed. Configuration Aborted.", EventLogging.XmlConfigError);
-                        } else {
+                        }
+                        else
+                        {
                             ret = ConfigureFromXml(configNodeList[0] as XmlElement);
                         }
                     }
@@ -211,11 +259,15 @@ namespace TracerX {
             /// to load the configuration from an <see cref="XmlElement"/>.
             /// </para>
             /// </remarks>
-            static public bool ConfigureFromXml(XmlElement element) {
-                if (element == null) {
+            static public bool ConfigureFromXml(XmlElement element)
+            {
+                if (element == null)
+                {
                     EventLogging.Log("XmlConfig: ConfigureFromXml called with null 'element' parameter", EventLogging.XmlConfigError);
                     return false;
-                } else {
+                }
+                else
+                {
                     // Copy the xml data into the root of a new document
                     // this isolates the xml config data from the rest of
                     // the document.
@@ -223,13 +275,16 @@ namespace TracerX {
                     XmlElement newElement = (XmlElement)newDoc.AppendChild(newDoc.ImportNode(element, true));
                     element = null;
 
-                    foreach (XmlNode node in newElement.ChildNodes) {
+                    foreach (XmlNode node in newElement.ChildNodes)
+                    {
                         //System.Diagnostics.Debug.Print("Node type " + node.NodeType + " with name " + node.Name);
-                        switch (node.NodeType) {
+                        switch (node.NodeType)
+                        {
                             case XmlNodeType.Element:
                                 // Should be FileLogging, MaxEventNumber, or Logger.
                                 XmlElement e = (XmlElement)node;
-                                switch (e.Name.ToLower()) {
+                                switch (e.Name.ToLower())
+                                {
                                     case "logfile":
                                     case "binaryfile":
                                         ParseLogFile(e);
@@ -282,7 +337,8 @@ namespace TracerX {
                         } // switch (NodeType)
                     } // foreach node in TracerX.
 
-                    if (_warnings != string.Empty) {
+                    if (_warnings != string.Empty)
+                    {
                         // Log the warnings and reset _warnings.
                         EventLogging.Log("The following warnings occurred while processing the TracerX XML configuration.\n\n" + _warnings, EventLogging.XmlConfigWarning);
                         _warnings = string.Empty;
@@ -295,7 +351,7 @@ namespace TracerX {
 
             #endregion Configure static methods
 
-            #region ConfigureAndWatch 
+            #region ConfigureAndWatch
 
             /// <summary>
             /// Configures TracerX using the file specified, monitors the file for changes, 
@@ -313,20 +369,27 @@ namespace TracerX {
             /// and depends on the behavior of that class.
             /// </para>
             /// </remarks>
-            static public bool ConfigureAndWatch(FileInfo configFile) {
+            static public bool ConfigureAndWatch(FileInfo configFile)
+            {
                 bool ret = false;
 
-                if (configFile == null) {
+                if (configFile == null)
+                {
                     EventLogging.Log("XmlConfig: ConfigureAndWatch called with null 'configStream' parameter", EventLogging.XmlConfigError);
-                } else {
+                }
+                else
+                {
                     // Configure TracerX now
                     ret = Configure(configFile);
 
-                    try {
+                    try
+                    {
                         // Create a watch handler that will reload the
                         // configuration whenever the config file is modified.
                         ConfigureAndWatchHandler.StartWatching(configFile);
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         EventLogging.Log("XmlConfig: Failed to initialize configuration file watcher for file [" + configFile.FullName + "]\n" + ex.ToString(), EventLogging.XmlConfigWarning);
                     }
                 }
@@ -334,18 +397,22 @@ namespace TracerX {
                 return ret;
             }
 
-            #endregion ConfigureAndWatch 
+            #endregion ConfigureAndWatch
 
             #region Privates
             // Warnings are collected here and logged all at once.
             static string _warnings = string.Empty;
 
             // Get a uint attribute value from an element.  Append a warning message if problems occur.
-            static private uint GetUintVal(XmlElement element, string valName, uint curval) {
+            static private uint GetUintVal(XmlElement element, string valName, uint curval)
+            {
                 string val = element.GetAttribute(valName);
-                try {
+                try
+                {
                     return uint.Parse(val);
-                } catch {
+                }
+                catch
+                {
                     string msg = "XML element '{0}' does not contain required attribute '{1}' or the value could not be converted to uint.\n\n";
                     _warnings += string.Format(msg, element.Name, valName);
                     return curval;
@@ -353,11 +420,15 @@ namespace TracerX {
             }
 
             // Get a bool attribute value from an element.  Append a warning message if problems occur.
-            static private bool GetBoolVal(XmlElement element, string valName, bool curval) {
+            static private bool GetBoolVal(XmlElement element, string valName, bool curval)
+            {
                 string val = element.GetAttribute(valName);
-                try {
+                try
+                {
                     return bool.Parse(val);
-                } catch {
+                }
+                catch
+                {
                     string msg = "XML element '{0}' does not contain required attribute '{1}' or the value could not be converted to bool.\n\n";
                     _warnings += string.Format(msg, element.Name, valName);
                     return curval;
@@ -365,11 +436,15 @@ namespace TracerX {
             }
 
             // Get a string attribute value from an element.  Append a warning message if problems occur.
-            static private bool GetStrVal(XmlElement element, string valName, bool curval) {
+            static private bool GetStrVal(XmlElement element, string valName, bool curval)
+            {
                 string val = element.GetAttribute(valName);
-                try {
+                try
+                {
                     return bool.Parse(val);
-                } catch {
+                }
+                catch
+                {
                     string msg = "XML element '{0}' does not contain required attribute '{1}' or the value could not be converted to bool.\n\n";
                     _warnings += string.Format(msg, element.Name, valName);
                     return curval;
@@ -377,13 +452,17 @@ namespace TracerX {
             }
 
             // Parse the FileLogging element.
-            static private void ParseLogFile(XmlElement element) {
-                foreach (XmlNode node in element.ChildNodes) {
+            static private void ParseLogFile(XmlElement element)
+            {
+                foreach (XmlNode node in element.ChildNodes)
+                {
                     //System.Diagnostics.Debug.Print("Node type " + node.NodeType + " with name " + node.Name);
-                    switch (node.NodeType) {
+                    switch (node.NodeType)
+                    {
                         case XmlNodeType.Element:
                             XmlElement subElement = (XmlElement)node;
-                            switch (node.Name.ToLower()) {
+                            switch (node.Name.ToLower())
+                            {
                                 case "directory":
                                 case "logdirectory":
                                     Logger.DefaultBinaryFile.Directory = subElement.GetAttribute("value");
@@ -450,13 +529,17 @@ namespace TracerX {
             }
 
             // Parse the TextFileLogging element.
-            static private void ParseTextFile(XmlElement element) {
-                foreach (XmlNode node in element.ChildNodes) {
+            static private void ParseTextFile(XmlElement element)
+            {
+                foreach (XmlNode node in element.ChildNodes)
+                {
                     //System.Diagnostics.Debug.Print("Node type " + node.NodeType + " with name " + node.Name);
-                    switch (node.NodeType) {
+                    switch (node.NodeType)
+                    {
                         case XmlNodeType.Element:
                             XmlElement subElement = (XmlElement)node;
-                            switch (node.Name.ToLower()) {
+                            switch (node.Name.ToLower())
+                            {
                                 case "directory":
                                     Logger.DefaultTextFile.Directory = subElement.GetAttribute("value");
                                     break;
@@ -493,7 +576,7 @@ namespace TracerX {
                                 case "circularstartdelayseconds":
                                     Logger.DefaultTextFile.CircularStartDelaySeconds = GetUintVal(subElement, "value", Logger.DefaultTextFile.CircularStartDelaySeconds);
                                     break;
-                                case "formatstring" :
+                                case "formatstring":
                                     Logger.DefaultTextFile.FormatString = subElement.GetAttribute("value");
                                     break;
                                 default:
@@ -517,13 +600,15 @@ namespace TracerX {
                 } // foreach node in TracerX.
             }
 
-            static private void ParseLogger(XmlElement element) {
+            static private void ParseLogger(XmlElement element)
+            {
                 string name = element.GetAttribute("name");
                 string levelStr;
                 TraceLevel level;
                 Logger logger;
 
-                if (name == null || name == string.Empty) {
+                if (name == null || name == string.Empty)
+                {
                     string msg = "XML element '{0}' has a missing or invalid 'Name' attribute.  This element will be ignored.\n\n";
                     _warnings += string.Format(msg, element.Name);
                     return;
@@ -531,23 +616,29 @@ namespace TracerX {
 
                 logger = Logger.GetLogger(name);
 
-                foreach (XmlNode node in element.ChildNodes) {
+                foreach (XmlNode node in element.ChildNodes)
+                {
                     //System.Diagnostics.Debug.Print("Node type " + node.NodeType + " with name " + node.Name);
-                    switch (node.NodeType) {
+                    switch (node.NodeType)
+                    {
                         case XmlNodeType.Element:
                             // Should be one of the trace level elements with a 'value' attribute. 
                             // Parse out the value.
-                            try {
+                            try
+                            {
                                 XmlElement levelElement = (XmlElement)node;
                                 levelStr = levelElement.GetAttribute("value");
                                 level = (TraceLevel)Enum.Parse(typeof(TraceLevel), levelStr, true);
-                            } catch {
+                            }
+                            catch
+                            {
                                 string msg = "The 'level' element under the 'logger' element with name='{0}' has a missing or invalid 'value' attribute.\n\n";
                                 _warnings += string.Format(msg, name);
                                 level = TraceLevel.Inherited;
                             }
 
-                            switch (node.Name.ToLower()) {
+                            switch (node.Name.ToLower())
+                            {
                                 case "level":
                                 case "filetracelevel":
                                 case "binaryfiletracelevel":
@@ -607,12 +698,14 @@ namespace TracerX {
             /// elapse.
             /// </para>
             /// </remarks>
-            private sealed class ConfigureAndWatchHandler {
+            private sealed class ConfigureAndWatchHandler
+            {
                 /// <summary>
                 /// Watch a specified config file used to configure TracerX
                 /// </summary>
                 /// <param name="configFile">The configuration file to watch.</param>
-                internal static void StartWatching(FileInfo configFile) {
+                internal static void StartWatching(FileInfo configFile)
+                {
                     new ConfigureAndWatchHandler(configFile);
                 }
 
@@ -641,7 +734,8 @@ namespace TracerX {
                 /// Initializes a new instance of the <see cref="ConfigureAndWatchHandler" /> class.
                 /// </para>
                 /// </remarks>
-                private ConfigureAndWatchHandler(FileInfo configFile) {
+                private ConfigureAndWatchHandler(FileInfo configFile)
+                {
                     m_configFile = configFile;
 
                     // Create a new FileSystemWatcher and set its properties.
@@ -676,7 +770,8 @@ namespace TracerX {
                 /// This handler reloads the configuration from the file when the event is fired.
                 /// </para>
                 /// </remarks>
-                private void ConfigureAndWatchHandler_OnChanged(object source, FileSystemEventArgs e) {
+                private void ConfigureAndWatchHandler_OnChanged(object source, FileSystemEventArgs e)
+                {
                     EventLogging.Log("ConfigureAndWatchHandler: " + e.ChangeType + " [" + m_configFile.FullName + "]", EventLogging.ConfigFileChanged);
 
                     // Deliver the event in TimeoutMillis time
@@ -694,7 +789,8 @@ namespace TracerX {
                 /// This handler reloads the configuration from the file when the event is fired.
                 /// </para>
                 /// </remarks>
-                private void ConfigureAndWatchHandler_OnRenamed(object source, RenamedEventArgs e) {
+                private void ConfigureAndWatchHandler_OnRenamed(object source, RenamedEventArgs e)
+                {
                     EventLogging.Log("ConfigureAndWatchHandler: " + e.ChangeType + " [" + m_configFile.FullName + "]", EventLogging.ConfigFileChanged);
 
                     // Deliver the event in TimeoutMillis time
@@ -706,7 +802,8 @@ namespace TracerX {
                 /// Called by the timer when the configuration has been updated.
                 /// </summary>
                 /// <param name="state">null</param>
-                private void OnWatchedFileChange(object state) {
+                private void OnWatchedFileChange(object state)
+                {
                     Configure(m_configFile);
                 }
             }

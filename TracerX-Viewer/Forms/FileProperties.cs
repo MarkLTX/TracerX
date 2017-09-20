@@ -8,16 +8,20 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-namespace TracerX.Viewer {
-    internal partial class FileProperties : Form {
+namespace TracerX
+{
+    internal partial class FileProperties : Form
+    {
         private Reader _reader;
 
-        public FileProperties() {
+        public FileProperties()
+        {
             InitializeComponent();
             this.Icon = Properties.Resources.scroll_view;
         }
 
-        public FileProperties(Reader reader) {
+        public FileProperties(Reader reader)
+        {
             InitializeComponent();
 
             this.Icon = Properties.Resources.scroll_view;
@@ -26,17 +30,23 @@ namespace TracerX.Viewer {
             commonListView.Items.Add(new ListViewItem(new string[] { "Location", Path.GetDirectoryName(reader.OriginalFile) }));
             commonListView.Items.Add(new ListViewItem(new string[] { "Name", Path.GetFileName(reader.OriginalFile) }));
             commonListView.Items.Add(new ListViewItem(new string[] { "Format version", reader.FormatVersion.ToString() }));
-            commonListView.Items.Add(new ListViewItem(new string[] { "Size (bytes)", reader.Size.ToString("N0") }));
+            commonListView.Items.Add(new ListViewItem(new string[] { "Size (bytes)", reader.InitialSize.ToString("N0") }));
 
             commonNameCol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             commonValueCol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-            if (SessionObjects.AllSessionObjects.Count == 0) {
-                sessionCombo.Enabled = false;
-            } else {
-                sessionCombo.Items.AddRange(SessionObjects.AllSessionObjects.ToArray());
-                sessionCombo.SelectedIndex = 0;
-                lblOfN.Text = "of " + SessionObjects.AllSessionObjects.Count;
+            lock (SessionObjects.Lock)
+            {
+                if (SessionObjects.AllSessionObjects.Count == 0)
+                {
+                    sessionCombo.Enabled = false;
+                }
+                else
+                {
+                    sessionCombo.Items.AddRange(SessionObjects.AllSessionObjects.ToArray());
+                    sessionCombo.SelectedIndex = 0;
+                    lblOfN.Text = "of " + SessionObjects.AllSessionObjects.Count;
+                }
             }
         }
 
@@ -54,19 +64,26 @@ namespace TracerX.Viewer {
             return local.ToString() + " " + localTZ;
         }
 
-        private void sessionCombo_SelectedIndexChanged(object sender, EventArgs e) {
+        private void sessionCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
             Reader.Session session = (Reader.Session)sessionCombo.SelectedItem;
             long sessionSize = 0;
             double sessionPercent = 0;
 
-            if (session == SessionObjects.AllSessionObjects.Last()) {
-                sessionSize = _reader.Size - session.SessionStartPos;
-            } else {
-                Reader.Session nextSession = SessionObjects.AllSessionObjects[session.Index + 1];
-                sessionSize = nextSession.SessionStartPos - session.SessionStartPos;
+            lock (SessionObjects.Lock)
+            {
+                if (session == SessionObjects.AllSessionObjects.Last())
+                {
+                    sessionSize = _reader.InitialSize - session.SessionStartPos;
+                }
+                else
+                {
+                    Reader.Session nextSession = SessionObjects.AllSessionObjects[session.Index + 1];
+                    sessionSize = nextSession.SessionStartPos - session.SessionStartPos;
+                }
             }
 
-            sessionPercent = (double)sessionSize / (double)_reader.Size;
+            sessionPercent = (double)sessionSize / (double)_reader.InitialSize;
             string sizeMsg = string.Format("{0:N0} ({1:P1} of file)", sessionSize, sessionPercent);
 
             sessionListView.Items.Clear();
@@ -81,7 +98,7 @@ namespace TracerX.Viewer {
             sessionListView.Items.Add(new ListViewItem(new string[] { "Record count", session.RecordsRead.ToString("N0") }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Records lost by wrapping", (session.LastRecordNum - session.RecordsRead).ToString("N0") }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Max session size (KB)", session.MaxKb.ToString("N0") }));
-            sessionListView.Items.Add(new ListViewItem(new string[] { "Session size (bytes)", sizeMsg}));
+            sessionListView.Items.Add(new ListViewItem(new string[] { "Session size (bytes)", sizeMsg }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "Loggers assembly version", session.LoggersAssemblyVersion }));
             sessionListView.Items.Add(new ListViewItem(new string[] { "GUID", session.FileGuid.ToString() }));
 

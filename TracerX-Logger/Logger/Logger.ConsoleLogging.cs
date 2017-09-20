@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace TracerX {
-    public partial class Logger {
+namespace TracerX
+{
+    public partial class Logger
+    {
 
         /// <summary>
         /// Methods and configuration for logging to the console.
         /// </summary>
-        public static class ConsoleLogging {
+        public static class ConsoleLogging
+        {
             /// <summary>
             /// Controls which fields are written to the console by all all loggers
             /// where Logger.ConsoleTraceLevel is greater than or equal to the log statement's level.
@@ -23,10 +26,13 @@ namespace TracerX {
             /// {ind} = Indentation  
             /// {msg} = Message text 
             /// </summary>
-            public static string FormatString {
+            public static string FormatString
+            {
                 get { return _consoleFormatString; }
-                set {
-                    lock (_consoleLocker) {
+                set
+                {
+                    lock (_consoleLocker)
+                    {
                         _consoleFormatString = value;
                         _internalConsoleFormatString = ParseFormatString(value);
                     }
@@ -42,8 +48,10 @@ namespace TracerX {
             private static object _consoleLocker = new object();
 
             // Logs a message to the console.
-            internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg) {
-                lock (_consoleLocker) {
+            internal static void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg)
+            {
+                lock (_consoleLocker)
+                {
                     string indent = new string(' ', 3 * threadData.ConsoleState.StackDepth);
                     ++_lineCount;
 

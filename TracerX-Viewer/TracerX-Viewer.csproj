@@ -10,14 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TracerX</RootNamespace>
     <AssemblyName>TracerX-Viewer</AssemblyName>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <StartupObject>
     </StartupObject>
     <ApplicationIcon>Resources\scroll_view.ico</ApplicationIcon>
@@ -27,22 +23,28 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <InstallUrl>\\localhost\C%24\Users\markl\Documents\Visual Studio 2013\Projects\TracerX\CodePlex\Dev\TX\TracerX-Viewer\publish\</InstallUrl>
+    <ProductName>TracerX-Viewer</ProductName>
+    <PublisherName>DevTest</PublisherName>
+    <WebPage>default.html</WebPage>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>false</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,6 +71,24 @@
     </CodeAnalysisRules>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>3570FEA91DD2FA03C7E7CCD91922583661A5954B</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>TracerX-Viewer_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PresentationCore" />
@@ -81,20 +101,101 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppArgs.cs" />
     <Compile Include="ColoringRule.cs" />
-    <Compile Include="CrumbBar.cs">
+    <Compile Include="ColorPair.cs" />
+    <Compile Include="ColorUtil.cs" />
+    <Compile Include="DeploymentDescription.cs" />
+    <Compile Include="Controls\FlatButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\CleanUpFilesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CleanUpFilesDialog.Designer.cs">
+      <DependentUpon>CleanUpFilesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormDataGridViewColumnSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDataGridViewColumnSelector.designer.cs">
+      <DependentUpon>FormDataGridViewColumnSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RelatedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RelatedForm.Designer.cs">
+      <DependentUpon>RelatedForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ServerConnEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ServerConnEditor.Designer.cs">
+      <DependentUpon>ServerConnEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ListAndTreeOfFilterable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CrumbBar.Designer.cs">
+    <Compile Include="Controls\ListAndTreeOfFilterable.Designer.cs">
+      <DependentUpon>ListAndTreeOfFilterable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NewStartPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NewStartPage.Designer.cs">
+      <DependentUpon>NewStartPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NoDblClickTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PathControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PathControl.Designer.cs">
+      <DependentUpon>PathControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CategoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CategoryDialog.Designer.cs">
+      <DependentUpon>CategoryDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CredentialsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CredentialsDialog.Designer.cs">
+      <DependentUpon>CredentialsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PathSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PathSelector.Designer.cs">
+      <DependentUpon>PathSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ServerListEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ServerListEditor.Designer.cs">
+      <DependentUpon>ServerListEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GridPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ListViewSorter.cs" />
+    <Compile Include="Controls\CrumbBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CrumbBar.Designer.cs">
       <DependentUpon>CrumbBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Enums-Viewer.cs" />
-    <Compile Include="FileWatcher.cs" />
     <Compile Include="Forms\ColorRulesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,19 +215,15 @@
       <DependentUpon>PaletteViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="IFilterable.cs" />
-    <Compile Include="ListViewTx.cs">
+    <Compile Include="Controls\ListViewTx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ListViewTx.Designer.cs">
+    <Compile Include="Controls\ListViewTx.Designer.cs">
       <DependentUpon>ListViewTx.cs</DependentUpon>
     </Compile>
     <Compile Include="MethodObject.cs" />
-    <Compile Include="PathList.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PathList.Designer.cs">
-      <DependentUpon>PathList.cs</DependentUpon>
-    </Compile>
+    <Compile Include="PathGridRow.cs" />
+    <Compile Include="PathItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -180,7 +277,6 @@
     <Compile Include="Forms\License.Designer.cs">
       <DependentUpon>License.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListViewItemSorter.cs" />
     <Compile Include="LoggerObject.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Forms\OptionsDialog.cs">
@@ -195,6 +291,7 @@
     <Compile Include="Forms\PasswordDialog.Designer.cs">
       <DependentUpon>PasswordDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="RecentFilesAndFolders.cs" />
     <Compile Include="Record.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -205,26 +302,29 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reader.cs" />
+    <Compile Include="RemoteFileStream.cs" />
+    <Compile Include="RemoteFileWatcher.cs" />
+    <Compile Include="RemoteServer.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SavedServer.cs" />
+    <Compile Include="Controls\ServerTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Session.cs" />
-    <Compile Include="StartPage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StartPage.Designer.cs">
-      <DependentUpon>StartPage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="StringMatcher.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="TestConnectionResult.cs" />
     <Compile Include="ThreadName.cs" />
     <Compile Include="ThreadObject.cs" />
-    <Compile Include="TracerXViewerControl.cs">
+    <Compile Include="TraceLevelObject.cs" />
+    <Compile Include="Controls\TracerXViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TracerXViewerControl.Designer.cs">
+    <Compile Include="Controls\TracerXViewerControl.Designer.cs">
       <DependentUpon>TracerXViewerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UICommand.cs">
@@ -244,12 +344,47 @@
     <Compile Include="ViewItem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\CleanUpFilesDialog.resx">
+      <DependentUpon>CleanUpFilesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDataGridViewColumnSelector.resx">
+      <DependentUpon>FormDataGridViewColumnSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RelatedForm.resx">
+      <DependentUpon>RelatedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ServerConnEditor.resx">
+      <DependentUpon>ServerConnEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ListAndTreeOfFilterable.resx">
+      <DependentUpon>ListAndTreeOfFilterable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NewStartPage.resx">
+      <DependentUpon>NewStartPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PathControl.resx">
+      <DependentUpon>PathControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CategoryDialog.resx">
+      <DependentUpon>CategoryDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CredentialsDialog.resx">
+      <DependentUpon>CredentialsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PathSelector.resx">
+      <DependentUpon>PathSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ServerListEditor.resx">
+      <DependentUpon>ServerListEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NotTheLicense.txt" />
     <Content Include="ChangeNotes.txt" />
     <Content Include="Icons\ArrowDown.ico" />
     <Content Include="Icons\ArrowUp.ico" />
     <Content Include="Icons\BookmarkArrowDown.ico" />
     <Content Include="Icons\BookmarkArrowUp.ico" />
+    <None Include="Properties\app.manifest" />
     <None Include="Resources\BookmarkClear.bmp" />
     <Content Include="Icons\BookmarkLastSubline.ico" />
     <None Include="Resources\BookmarkNext.bmp" />
@@ -257,6 +392,25 @@
     <Content Include="Icons\BookmarkSubline.ico" />
     <None Include="Resources\BookmarkToggle2.bmp" />
     <None Include="Resources\ExpandAll.png" />
+    <Content Include="Icons\servers.ico" />
+    <Content Include="Resources\01.png" />
+    <Content Include="Resources\broom.png" />
+    <Content Include="Resources\ClearColumnColors.png" />
+    <Content Include="Resources\Close File or Folder 16.png" />
+    <Content Include="Resources\CloseDocument.png" />
+    <Content Include="Resources\CollapseAll.png" />
+    <Content Include="Resources\colors-edit.png" />
+    <Content Include="Resources\folder-open.png" />
+    <Content Include="Resources\Green Plus 16.png" />
+    <Content Include="Resources\minus-circle.png" />
+    <Content Include="Resources\navigate_down_16x16_plain.png" />
+    <Content Include="Resources\navigate_up_16x16_plain.png" />
+    <Content Include="Resources\Pencil 16.png" />
+    <Content Include="Resources\plus-circle.png" />
+    <Content Include="Resources\Red Minus 16.png" />
+    <Content Include="Resources\server--minus.png" />
+    <Content Include="Resources\server--plus.png" />
+    <Content Include="Resources\servers-network.png" />
     <Content Include="Resources\Web Link 16.png" />
     <Content Include="Resources\AnyThreadNext.png" />
     <Content Include="Resources\AnyThreadPrev.png" />
@@ -293,9 +447,10 @@
     <Content Include="Icons\BookmarkPlus.ico" />
     <Content Include="Icons\Minus.ico" />
     <Content Include="Icons\Plus.ico" />
+    <None Include="TracerX-Viewer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CrumbBar.resx">
+    <EmbeddedResource Include="Controls\CrumbBar.resx">
       <DependentUpon>CrumbBar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -310,9 +465,6 @@
     <EmbeddedResource Include="Forms\PaletteViewer.resx">
       <DependentUpon>PaletteViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PathList.resx">
-      <DependentUpon>PathList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -363,10 +515,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>PasswordDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="StartPage.resx">
-      <DependentUpon>StartPage.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ServerTree.resx">
+      <DependentUpon>ServerTree.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TracerXViewerControl.resx">
+    <EmbeddedResource Include="Controls\TracerXViewerControl.resx">
       <DependentUpon>TracerXViewerControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -376,6 +528,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +557,617 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TracerX-Common\TracerX-Common.csproj">
+      <Project>{13F8EE48-FAE6-456B-B6AB-C3A169911894}</Project>
+      <Name>TracerX-Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
+      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
+      <Name>TracerX-Logger</Name>
+      <Aliases>global</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="ChangeNotes.txt">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\ArrowDown.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\ArrowUp.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Bookmark.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkArrowDown.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkArrowUp.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkLastSubline.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkMinus.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkPlus.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\BookmarkSubline.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\LastSubline.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Minus.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Play.bmp">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Plus.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\servers.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Stop.bmp">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Subline.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Icons\Transparent.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\01.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\AnyThreadNext.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\AnyThreadPrev.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Bold.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\ClearColumnColors.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\clockNext.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\clockPlus.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\clockPrev.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Close File or Folder 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Close X Red 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\CloseDocument.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\CollapseAll.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\colors-edit.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\colors_on.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\colorwheel_16x16_plain.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Columns.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Date and Time.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Filter.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\FilterNot.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\find.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\findNext.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\findPrev.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\folder-open.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Green Plus 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\minus-circle.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\navigate_down_16x16_plain.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\navigate_up_16x16_plain.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\OpenFolder.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Options.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Pencil 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\plus-circle.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Red Minus 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Refresh.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\SameThreadNext.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\SameThreadPrev.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\scroll_view_16x16_plain.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\server--minus.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\server--plus.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\servers-network.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Stopwatch.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Resources\Web Link 16.png">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".tx1">
+      <Visible>False</Visible>
+      <Description>TracerX Log File</Description>
+      <Progid>%3f</Progid>
+      <DefaultIcon>Resources\scroll_view.ico</DefaultIcon>
+    </FileAssociation>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

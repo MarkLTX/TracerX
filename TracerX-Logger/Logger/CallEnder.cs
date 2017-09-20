@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace TracerX {
+namespace TracerX
+{
 
     /// <summary>
     /// The Logger.*Call methods log a call to a method and return an instance of this class. 
@@ -13,16 +14,18 @@ namespace TracerX {
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    public class CallEnder : MarshalByRefObject, IDisposable {
+    public class CallEnder : MarshalByRefObject, IDisposable
+    {
         /// <summary>
         /// Internal ctor keeps logging clients from creating instances.
         /// </summary>
         internal CallEnder() { }
 
         /// <summary>
-        /// If MaybeLogCall logged entry into a call, this logs the exit.
+        /// If MaybeLogCall() logged entry into a call, this logs the exit.
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             ThreadData.CurrentThreadData.LogCallExit();
         }
     } // CallEnder

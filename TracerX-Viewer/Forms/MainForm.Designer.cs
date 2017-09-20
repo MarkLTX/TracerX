@@ -1,4 +1,4 @@
-namespace TracerX.Viewer {
+namespace TracerX {
     partial class MainForm {
         /// <summary>
         /// Required designer variable.
@@ -26,28 +26,11 @@ namespace TracerX.Viewer {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showOnlySelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showSelectedThreadNamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showSelectedThreadsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loggersToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.ShowTraceLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideSelectedThreadNamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideSelectedThreadsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loggersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.HideTraceLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bookmarkSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bookmarkThreadsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bookmarkLoggersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bookmarkTraceLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.colorSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedThreadNamesMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedThreadIDsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedTraceLevelsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedLoggersMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedMethodsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorSelectedSessionsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHideSelected = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuShowSelected = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuBookmarkSelected = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuColorSelected = new System.Windows.Forms.ToolStripMenuItem();
             this.uncolorSelectedMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.showCallStackMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,20 +42,17 @@ namespace TracerX.Viewer {
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.serverLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.filenameLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.statusMsg = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnCancel = new System.Windows.Forms.ToolStripDropDownButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recentlyViewedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recentlyCreatedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recentFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,15 +68,21 @@ namespace TracerX.Viewer {
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearFilterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearColumnColorsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.coloringMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableColoringMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.columnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllWindowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
+            this.showTracerXLogsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showServerPickerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.commandLineMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.relatedFilesFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.openFileButton = new System.Windows.Forms.ToolStripButton();
             this.propertiesButton = new System.Windows.Forms.ToolStripButton();
@@ -129,11 +115,13 @@ namespace TracerX.Viewer {
             this.dupTimeButton = new System.Windows.Forms.ToolStripButton();
             this.relativeTimeButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.clearColumnColorsBtn = new System.Windows.Forms.ToolStripButton();
             this.enableColorsBtn = new System.Windows.Forms.ToolStripButton();
             this.editColorsBtn = new System.Windows.Forms.ToolStripButton();
             this.boldBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.expandAllButton = new System.Windows.Forms.ToolStripButton();
+            this.collapseAllButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.prevTimeButton = new System.Windows.Forms.ToolStripButton();
             this.nextTimeButton = new System.Windows.Forms.ToolStripButton();
@@ -146,7 +134,7 @@ namespace TracerX.Viewer {
             this.colMenuColumnItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colMenuHideItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.theStartPage = new TracerX.StartPage();
+            this.theStartPage = new TracerX.NewStartPage();
             this.TheListView = new TracerX.ListViewTx();
             this.headerText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.headerSession = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -170,6 +158,7 @@ namespace TracerX.Viewer {
             this.bookmarkClearCmd = new Commander.UICommand(this.components);
             this.filterDlgCmd = new Commander.UICommand(this.components);
             this.filterClearCmd = new Commander.UICommand(this.components);
+            this.clearColumnColors = new Commander.UICommand(this.components);
             this.editColors = new Commander.UICommand(this.components);
             this.enableColors = new Commander.UICommand(this.components);
             this.columnsCmd = new Commander.UICommand(this.components);
@@ -185,11 +174,11 @@ namespace TracerX.Viewer {
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showOnlySelectedToolStripMenuItem,
-            this.hideSelectedToolStripMenuItem,
-            this.bookmarkSelectedMenuItem,
             this.toolStripSeparator4,
-            this.colorSelectedToolStripMenuItem,
+            this.mnuHideSelected,
+            this.mnuShowSelected,
+            this.mnuBookmarkSelected,
+            this.mnuColorSelected,
             this.uncolorSelectedMenu,
             this.toolStripSeparator16,
             this.showCallStackMenuItem,
@@ -198,206 +187,52 @@ namespace TracerX.Viewer {
             this.setZeroTimeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.ShowImageMargin = false;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(169, 214);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(168, 214);
             this.commandProvider.SetUICommand(this.contextMenuStrip1, null);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-            // 
-            // showOnlySelectedToolStripMenuItem
-            // 
-            this.showOnlySelectedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showSelectedThreadNamesMenuItem,
-            this.showSelectedThreadsMenuItem,
-            this.loggersToolStripMenuItem1,
-            this.ShowTraceLevelsMenuItem});
-            this.showOnlySelectedToolStripMenuItem.Name = "showOnlySelectedToolStripMenuItem";
-            this.showOnlySelectedToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.showOnlySelectedToolStripMenuItem.Text = "Show Only Selected";
-            this.commandProvider.SetUICommand(this.showOnlySelectedToolStripMenuItem, null);
-            // 
-            // showSelectedThreadNamesMenuItem
-            // 
-            this.showSelectedThreadNamesMenuItem.Name = "showSelectedThreadNamesMenuItem";
-            this.showSelectedThreadNamesMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.showSelectedThreadNamesMenuItem.Text = "Thread Names";
-            this.commandProvider.SetUICommand(this.showSelectedThreadNamesMenuItem, null);
-            this.showSelectedThreadNamesMenuItem.Click += new System.EventHandler(this.showSelectedThreadNamesMenuItem_Click);
-            // 
-            // showSelectedThreadsMenuItem
-            // 
-            this.showSelectedThreadsMenuItem.Name = "showSelectedThreadsMenuItem";
-            this.showSelectedThreadsMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.showSelectedThreadsMenuItem.Text = "Thread IDs";
-            this.commandProvider.SetUICommand(this.showSelectedThreadsMenuItem, null);
-            this.showSelectedThreadsMenuItem.Click += new System.EventHandler(this.showSelectedThreadsMenuItem_Click);
-            // 
-            // loggersToolStripMenuItem1
-            // 
-            this.loggersToolStripMenuItem1.Name = "loggersToolStripMenuItem1";
-            this.loggersToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
-            this.loggersToolStripMenuItem1.Text = "Loggers";
-            this.commandProvider.SetUICommand(this.loggersToolStripMenuItem1, null);
-            this.loggersToolStripMenuItem1.Click += new System.EventHandler(this.ShowSelectedLoggersMenuItem_Click);
-            // 
-            // ShowTraceLevelsMenuItem
-            // 
-            this.ShowTraceLevelsMenuItem.Name = "ShowTraceLevelsMenuItem";
-            this.ShowTraceLevelsMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.ShowTraceLevelsMenuItem.Text = "Trace Levels";
-            this.commandProvider.SetUICommand(this.ShowTraceLevelsMenuItem, null);
-            this.ShowTraceLevelsMenuItem.Click += new System.EventHandler(this.ShowTraceLevelsMenuItem_Click);
-            // 
-            // hideSelectedToolStripMenuItem
-            // 
-            this.hideSelectedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideSelectedThreadNamesMenuItem,
-            this.hideSelectedThreadsMenuItem,
-            this.loggersToolStripMenuItem,
-            this.HideTraceLevelsMenuItem});
-            this.hideSelectedToolStripMenuItem.Name = "hideSelectedToolStripMenuItem";
-            this.hideSelectedToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.hideSelectedToolStripMenuItem.Text = "Hide Selected";
-            this.commandProvider.SetUICommand(this.hideSelectedToolStripMenuItem, null);
-            // 
-            // hideSelectedThreadNamesMenuItem
-            // 
-            this.hideSelectedThreadNamesMenuItem.Name = "hideSelectedThreadNamesMenuItem";
-            this.hideSelectedThreadNamesMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.hideSelectedThreadNamesMenuItem.Text = "Thread Names";
-            this.commandProvider.SetUICommand(this.hideSelectedThreadNamesMenuItem, null);
-            this.hideSelectedThreadNamesMenuItem.Click += new System.EventHandler(this.hideSelectedThreadNamesMenuItem_Click);
-            // 
-            // hideSelectedThreadsMenuItem
-            // 
-            this.hideSelectedThreadsMenuItem.Name = "hideSelectedThreadsMenuItem";
-            this.hideSelectedThreadsMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.hideSelectedThreadsMenuItem.Text = "Thread IDs";
-            this.commandProvider.SetUICommand(this.hideSelectedThreadsMenuItem, null);
-            this.hideSelectedThreadsMenuItem.Click += new System.EventHandler(this.hideSelectedThreadsMenuItem_Click);
-            // 
-            // loggersToolStripMenuItem
-            // 
-            this.loggersToolStripMenuItem.Name = "loggersToolStripMenuItem";
-            this.loggersToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.loggersToolStripMenuItem.Text = "Loggers";
-            this.commandProvider.SetUICommand(this.loggersToolStripMenuItem, null);
-            this.loggersToolStripMenuItem.Click += new System.EventHandler(this.HideSelectedLoggersMenuItem_Click);
-            // 
-            // HideTraceLevelsMenuItem
-            // 
-            this.HideTraceLevelsMenuItem.Name = "HideTraceLevelsMenuItem";
-            this.HideTraceLevelsMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.HideTraceLevelsMenuItem.Text = "Trace Levels";
-            this.commandProvider.SetUICommand(this.HideTraceLevelsMenuItem, null);
-            this.HideTraceLevelsMenuItem.Click += new System.EventHandler(this.HideTraceLevelsMenuItem_Click);
-            // 
-            // bookmarkSelectedMenuItem
-            // 
-            this.bookmarkSelectedMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bookmarkThreadsMenuItem,
-            this.bookmarkLoggersMenuItem,
-            this.bookmarkTraceLevelsMenuItem});
-            this.bookmarkSelectedMenuItem.Enabled = false;
-            this.bookmarkSelectedMenuItem.Name = "bookmarkSelectedMenuItem";
-            this.bookmarkSelectedMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.bookmarkSelectedMenuItem.Text = "Bookmark Selected";
-            this.commandProvider.SetUICommand(this.bookmarkSelectedMenuItem, null);
-            // 
-            // bookmarkThreadsMenuItem
-            // 
-            this.bookmarkThreadsMenuItem.Name = "bookmarkThreadsMenuItem";
-            this.bookmarkThreadsMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.bookmarkThreadsMenuItem.Text = "Threads";
-            this.commandProvider.SetUICommand(this.bookmarkThreadsMenuItem, null);
-            this.bookmarkThreadsMenuItem.Click += new System.EventHandler(this.bookmarkThreadsMenuItem_Click);
-            // 
-            // bookmarkLoggersMenuItem
-            // 
-            this.bookmarkLoggersMenuItem.Name = "bookmarkLoggersMenuItem";
-            this.bookmarkLoggersMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.bookmarkLoggersMenuItem.Text = "Loggers";
-            this.commandProvider.SetUICommand(this.bookmarkLoggersMenuItem, null);
-            this.bookmarkLoggersMenuItem.Click += new System.EventHandler(this.bookmarkLoggersMenuItem_Click);
-            // 
-            // bookmarkTraceLevelsMenuItem
-            // 
-            this.bookmarkTraceLevelsMenuItem.Name = "bookmarkTraceLevelsMenuItem";
-            this.bookmarkTraceLevelsMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.bookmarkTraceLevelsMenuItem.Text = "Trace Levels";
-            this.commandProvider.SetUICommand(this.bookmarkTraceLevelsMenuItem, null);
-            this.bookmarkTraceLevelsMenuItem.Click += new System.EventHandler(this.bookmarkTraceLevelsMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(165, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(164, 6);
             this.commandProvider.SetUICommand(this.toolStripSeparator4, null);
             // 
-            // colorSelectedToolStripMenuItem
+            // mnuHideSelected
             // 
-            this.colorSelectedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.colorSelectedThreadNamesMenu,
-            this.colorSelectedThreadIDsMenu,
-            this.colorSelectedTraceLevelsMenu,
-            this.colorSelectedLoggersMenu,
-            this.colorSelectedMethodsMenu,
-            this.colorSelectedSessionsMenu});
-            this.colorSelectedToolStripMenuItem.Name = "colorSelectedToolStripMenuItem";
-            this.colorSelectedToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.colorSelectedToolStripMenuItem.Text = "Color Selected";
-            this.commandProvider.SetUICommand(this.colorSelectedToolStripMenuItem, null);
+            this.mnuHideSelected.Name = "mnuHideSelected";
+            this.mnuHideSelected.Size = new System.Drawing.Size(167, 22);
+            this.mnuHideSelected.Text = "Hide Selected";
+            this.commandProvider.SetUICommand(this.mnuHideSelected, null);
+            this.mnuHideSelected.Click += new System.EventHandler(this.mnuHideSelected_Click);
             // 
-            // colorSelectedThreadNamesMenu
+            // mnuShowSelected
             // 
-            this.colorSelectedThreadNamesMenu.Name = "colorSelectedThreadNamesMenu";
-            this.colorSelectedThreadNamesMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedThreadNamesMenu.Text = "Thread Names";
-            this.commandProvider.SetUICommand(this.colorSelectedThreadNamesMenu, null);
-            this.colorSelectedThreadNamesMenu.Click += new System.EventHandler(this.colorSelectedThreadNamesMenu_Click);
+            this.mnuShowSelected.Name = "mnuShowSelected";
+            this.mnuShowSelected.Size = new System.Drawing.Size(167, 22);
+            this.mnuShowSelected.Text = "Show Only Selected";
+            this.commandProvider.SetUICommand(this.mnuShowSelected, null);
+            this.mnuShowSelected.Click += new System.EventHandler(this.mnuShowSelected_Click);
             // 
-            // colorSelectedThreadIDsMenu
+            // mnuBookmarkSelected
             // 
-            this.colorSelectedThreadIDsMenu.Name = "colorSelectedThreadIDsMenu";
-            this.colorSelectedThreadIDsMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedThreadIDsMenu.Text = "Thread IDs";
-            this.commandProvider.SetUICommand(this.colorSelectedThreadIDsMenu, null);
-            this.colorSelectedThreadIDsMenu.Click += new System.EventHandler(this.colorSelectedThreadIDsMenu_Click);
+            this.mnuBookmarkSelected.Name = "mnuBookmarkSelected";
+            this.mnuBookmarkSelected.Size = new System.Drawing.Size(167, 22);
+            this.mnuBookmarkSelected.Text = "Bookmark Selected";
+            this.commandProvider.SetUICommand(this.mnuBookmarkSelected, null);
+            this.mnuBookmarkSelected.Click += new System.EventHandler(this.mnuBookmarkSelected_Click);
             // 
-            // colorSelectedTraceLevelsMenu
+            // mnuColorSelected
             // 
-            this.colorSelectedTraceLevelsMenu.Name = "colorSelectedTraceLevelsMenu";
-            this.colorSelectedTraceLevelsMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedTraceLevelsMenu.Text = "Trace Levels";
-            this.commandProvider.SetUICommand(this.colorSelectedTraceLevelsMenu, null);
-            this.colorSelectedTraceLevelsMenu.Click += new System.EventHandler(this.colorSelectedTraceLevelsMenu_Click);
-            // 
-            // colorSelectedLoggersMenu
-            // 
-            this.colorSelectedLoggersMenu.Name = "colorSelectedLoggersMenu";
-            this.colorSelectedLoggersMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedLoggersMenu.Text = "Loggers";
-            this.commandProvider.SetUICommand(this.colorSelectedLoggersMenu, null);
-            this.colorSelectedLoggersMenu.Click += new System.EventHandler(this.colorSelectedLoggersMenu_Click);
-            // 
-            // colorSelectedMethodsMenu
-            // 
-            this.colorSelectedMethodsMenu.Name = "colorSelectedMethodsMenu";
-            this.colorSelectedMethodsMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedMethodsMenu.Text = "Methods";
-            this.commandProvider.SetUICommand(this.colorSelectedMethodsMenu, null);
-            this.colorSelectedMethodsMenu.Click += new System.EventHandler(this.colorSelectedMethodsMenu_Click);
-            // 
-            // colorSelectedSessionsMenu
-            // 
-            this.colorSelectedSessionsMenu.Name = "colorSelectedSessionsMenu";
-            this.colorSelectedSessionsMenu.Size = new System.Drawing.Size(151, 22);
-            this.colorSelectedSessionsMenu.Text = "Sessions";
-            this.commandProvider.SetUICommand(this.colorSelectedSessionsMenu, null);
-            this.colorSelectedSessionsMenu.Click += new System.EventHandler(this.colorSelectedSessionsMenu_Click);
+            this.mnuColorSelected.Name = "mnuColorSelected";
+            this.mnuColorSelected.Size = new System.Drawing.Size(167, 22);
+            this.mnuColorSelected.Text = "Color Selected";
+            this.commandProvider.SetUICommand(this.mnuColorSelected, null);
+            this.mnuColorSelected.Click += new System.EventHandler(this.mnuColorSelected_Click);
             // 
             // uncolorSelectedMenu
             // 
             this.uncolorSelectedMenu.Name = "uncolorSelectedMenu";
-            this.uncolorSelectedMenu.Size = new System.Drawing.Size(168, 22);
+            this.uncolorSelectedMenu.Size = new System.Drawing.Size(167, 22);
             this.uncolorSelectedMenu.Text = "Uncolor Selected";
             this.commandProvider.SetUICommand(this.uncolorSelectedMenu, null);
             this.uncolorSelectedMenu.Click += new System.EventHandler(this.uncolorSelectedMenu_Click);
@@ -405,13 +240,13 @@ namespace TracerX.Viewer {
             // toolStripSeparator16
             // 
             this.toolStripSeparator16.Name = "toolStripSeparator16";
-            this.toolStripSeparator16.Size = new System.Drawing.Size(165, 6);
+            this.toolStripSeparator16.Size = new System.Drawing.Size(164, 6);
             this.commandProvider.SetUICommand(this.toolStripSeparator16, null);
             // 
             // showCallStackMenuItem
             // 
             this.showCallStackMenuItem.Name = "showCallStackMenuItem";
-            this.showCallStackMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.showCallStackMenuItem.Size = new System.Drawing.Size(167, 22);
             this.showCallStackMenuItem.Text = "View Call Stack...";
             this.commandProvider.SetUICommand(this.showCallStackMenuItem, null);
             this.showCallStackMenuItem.Click += new System.EventHandler(this.showCallStackMenuItem_Click);
@@ -419,7 +254,7 @@ namespace TracerX.Viewer {
             // viewTextWindowToolStripMenuItem
             // 
             this.viewTextWindowToolStripMenuItem.Name = "viewTextWindowToolStripMenuItem";
-            this.viewTextWindowToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.viewTextWindowToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.viewTextWindowToolStripMenuItem.Text = "View in Text Window...";
             this.commandProvider.SetUICommand(this.viewTextWindowToolStripMenuItem, null);
             this.viewTextWindowToolStripMenuItem.Click += new System.EventHandler(this.viewTextWindowToolStripMenuItem_Click);
@@ -430,7 +265,7 @@ namespace TracerX.Viewer {
             this.startOfMethodMenuItem,
             this.endOfMethodMenuItem});
             this.goToToolStripMenuItem.Name = "goToToolStripMenuItem";
-            this.goToToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.goToToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.goToToolStripMenuItem.Text = "Go To";
             this.commandProvider.SetUICommand(this.goToToolStripMenuItem, null);
             // 
@@ -453,7 +288,7 @@ namespace TracerX.Viewer {
             // setZeroTimeToolStripMenuItem
             // 
             this.setZeroTimeToolStripMenuItem.Name = "setZeroTimeToolStripMenuItem";
-            this.setZeroTimeToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.setZeroTimeToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.setZeroTimeToolStripMenuItem.Text = "Set Zero Time";
             this.commandProvider.SetUICommand(this.setZeroTimeToolStripMenuItem, null);
             this.setZeroTimeToolStripMenuItem.Click += new System.EventHandler(this.setZeroTimeToolStripMenuItem_Click);
@@ -482,14 +317,13 @@ namespace TracerX.Viewer {
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.serverLabel,
             this.filenameLabel,
-            this.toolStripProgressBar1,
             this.statusMsg,
             this.btnCancel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 642);
@@ -499,20 +333,21 @@ namespace TracerX.Viewer {
             this.statusStrip1.Text = "statusStrip1";
             this.commandProvider.SetUICommand(this.statusStrip1, null);
             // 
+            // serverLabel
+            // 
+            this.serverLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.serverLabel.Name = "serverLabel";
+            this.serverLabel.Size = new System.Drawing.Size(4, 17);
+            this.commandProvider.SetUICommand(this.serverLabel, null);
+            // 
             // filenameLabel
             // 
             this.filenameLabel.Name = "filenameLabel";
-            this.filenameLabel.Size = new System.Drawing.Size(0, 17);
+            this.filenameLabel.Size = new System.Drawing.Size(816, 17);
+            this.filenameLabel.Spring = true;
+            this.filenameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.commandProvider.SetUICommand(this.filenameLabel, null);
-            // 
-            // toolStripProgressBar1
-            // 
-            this.toolStripProgressBar1.AutoToolTip = true;
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
-            this.toolStripProgressBar1.Step = 1;
-            this.toolStripProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.commandProvider.SetUICommand(this.toolStripProgressBar1, null);
+            this.filenameLabel.VisibleChanged += new System.EventHandler(this.filenameLabel_VisibleChanged);
             // 
             // statusMsg
             // 
@@ -556,42 +391,28 @@ namespace TracerX.Viewer {
             this.fileToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
-            this.closeToolStripMenuItem,
             this.newWindowToolStripMenuItem,
             this.exportToCSVToolStripMenuItem,
             this.propertiesToolStripMenuItem,
-            this.recentlyViewedToolStripMenuItem,
-            this.recentlyCreatedToolStripMenuItem,
-            this.recentFoldersToolStripMenuItem});
+            this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             this.commandProvider.SetUICommand(this.fileToolStripMenuItem, null);
-            this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.fileToolStripMenuItem_DropDownOpening);
-            this.fileToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Image = global::TracerX.Properties.Resources.OpenFolder;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.ToolTipText = "Open file";
             this.commandProvider.SetUICommand(this.openToolStripMenuItem, this.openFileCmd);
             // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Image = global::TracerX.Properties.Resources.Close_X_Red_16;
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.closeToolStripMenuItem.Text = "Close";
-            this.commandProvider.SetUICommand(this.closeToolStripMenuItem, null);
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
             // newWindowToolStripMenuItem
             // 
             this.newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
-            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.newWindowToolStripMenuItem.Text = "New Window";
             this.commandProvider.SetUICommand(this.newWindowToolStripMenuItem, null);
             this.newWindowToolStripMenuItem.Click += new System.EventHandler(this.newWindowToolStripMenuItem_Click);
@@ -599,7 +420,7 @@ namespace TracerX.Viewer {
             // exportToCSVToolStripMenuItem
             // 
             this.exportToCSVToolStripMenuItem.Name = "exportToCSVToolStripMenuItem";
-            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.exportToCSVToolStripMenuItem.Text = "Export to CSV...";
             this.commandProvider.SetUICommand(this.exportToCSVToolStripMenuItem, null);
             this.exportToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportToCSVToolStripMenuItem_Click);
@@ -609,38 +430,19 @@ namespace TracerX.Viewer {
             this.propertiesToolStripMenuItem.Enabled = false;
             this.propertiesToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("propertiesToolStripMenuItem.Image")));
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.propertiesToolStripMenuItem.Text = "Properties...";
             this.propertiesToolStripMenuItem.ToolTipText = "File properties";
             this.commandProvider.SetUICommand(this.propertiesToolStripMenuItem, this.propertiesCmd);
             // 
-            // recentlyViewedToolStripMenuItem
+            // closeToolStripMenuItem
             // 
-            this.recentlyViewedToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.recentlyViewedToolStripMenuItem.Name = "recentlyViewedToolStripMenuItem";
-            this.recentlyViewedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.recentlyViewedToolStripMenuItem.Text = "Recently Viewed";
-            this.commandProvider.SetUICommand(this.recentlyViewedToolStripMenuItem, null);
-            this.recentlyViewedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
-            // 
-            // recentlyCreatedToolStripMenuItem
-            // 
-            this.recentlyCreatedToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.recentlyCreatedToolStripMenuItem.Name = "recentlyCreatedToolStripMenuItem";
-            this.recentlyCreatedToolStripMenuItem.ShowShortcutKeys = false;
-            this.recentlyCreatedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.recentlyCreatedToolStripMenuItem.Text = "Recently Created";
-            this.commandProvider.SetUICommand(this.recentlyCreatedToolStripMenuItem, null);
-            this.recentlyCreatedToolStripMenuItem.DropDownOpening += new System.EventHandler(this.recentlyCreatedToolStripMenuItem_DropDownOpening);
-            this.recentlyCreatedToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.RecentMenu_DropDownItemClicked);
-            // 
-            // recentFoldersToolStripMenuItem
-            // 
-            this.recentFoldersToolStripMenuItem.Name = "recentFoldersToolStripMenuItem";
-            this.recentFoldersToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.recentFoldersToolStripMenuItem.Text = "Recent Folders";
-            this.commandProvider.SetUICommand(this.recentFoldersToolStripMenuItem, null);
-            this.recentFoldersToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.recentFoldersToolStripMenuItem_DropDownItemClicked);
+            this.closeToolStripMenuItem.Image = global::TracerX.Properties.Resources.Close_X_Red_16;
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.closeToolStripMenuItem.Text = "Exit";
+            this.commandProvider.SetUICommand(this.closeToolStripMenuItem, null);
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -775,12 +577,16 @@ namespace TracerX.Viewer {
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.filterToolStripMenuItem,
             this.clearFilterMenuItem,
+            this.clearColumnColorsMenuItem,
             this.coloringMenuItem,
             this.enableColoringMenu,
             this.columnsToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.refreshMenuItem,
-            this.closeAllWindowsToolStripMenuItem});
+            this.closeAllWindowsToolStripMenuItem,
+            this.toolStripSeparator18,
+            this.showTracerXLogsMenuItem,
+            this.showServerPickerMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -792,7 +598,7 @@ namespace TracerX.Viewer {
             this.filterToolStripMenuItem.Enabled = false;
             this.filterToolStripMenuItem.Image = global::TracerX.Properties.Resources.Filter1;
             this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-            this.filterToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.filterToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.filterToolStripMenuItem.Text = "Filter...";
             this.filterToolStripMenuItem.ToolTipText = "Open filter dialog";
             this.commandProvider.SetUICommand(this.filterToolStripMenuItem, this.filterDlgCmd);
@@ -802,16 +608,25 @@ namespace TracerX.Viewer {
             this.clearFilterMenuItem.Enabled = false;
             this.clearFilterMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("clearFilterMenuItem.Image")));
             this.clearFilterMenuItem.Name = "clearFilterMenuItem";
-            this.clearFilterMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.clearFilterMenuItem.Size = new System.Drawing.Size(184, 22);
             this.clearFilterMenuItem.Text = "Clear All Filtering";
             this.clearFilterMenuItem.ToolTipText = "Clear all filtering";
             this.commandProvider.SetUICommand(this.clearFilterMenuItem, this.filterClearCmd);
             // 
+            // clearColumnColorsMenuItem
+            // 
+            this.clearColumnColorsMenuItem.Image = global::TracerX.Properties.Resources.ClearColumnColors;
+            this.clearColumnColorsMenuItem.Name = "clearColumnColorsMenuItem";
+            this.clearColumnColorsMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.clearColumnColorsMenuItem.Text = "Clear Column Colors";
+            this.clearColumnColorsMenuItem.ToolTipText = "Clear column colors";
+            this.commandProvider.SetUICommand(this.clearColumnColorsMenuItem, this.clearColumnColors);
+            // 
             // coloringMenuItem
             // 
-            this.coloringMenuItem.Image = global::TracerX.Properties.Resources.colorwheel_16x16_plain;
+            this.coloringMenuItem.Image = global::TracerX.Properties.Resources.colors_edit;
             this.coloringMenuItem.Name = "coloringMenuItem";
-            this.coloringMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.coloringMenuItem.Size = new System.Drawing.Size(184, 22);
             this.coloringMenuItem.Text = "Coloring Rules...";
             this.coloringMenuItem.ToolTipText = "Edit color rules";
             this.commandProvider.SetUICommand(this.coloringMenuItem, this.editColors);
@@ -820,7 +635,7 @@ namespace TracerX.Viewer {
             // 
             this.enableColoringMenu.Image = global::TracerX.Properties.Resources.colors_on;
             this.enableColoringMenu.Name = "enableColoringMenu";
-            this.enableColoringMenu.Size = new System.Drawing.Size(172, 22);
+            this.enableColoringMenu.Size = new System.Drawing.Size(184, 22);
             this.enableColoringMenu.Text = "Enable Coloring";
             this.enableColoringMenu.ToolTipText = "Enable coloring";
             this.commandProvider.SetUICommand(this.enableColoringMenu, this.enableColors);
@@ -829,7 +644,7 @@ namespace TracerX.Viewer {
             // 
             this.columnsToolStripMenuItem.Image = global::TracerX.Properties.Resources.Columns;
             this.columnsToolStripMenuItem.Name = "columnsToolStripMenuItem";
-            this.columnsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.columnsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.columnsToolStripMenuItem.Text = "Columns...";
             this.columnsToolStripMenuItem.ToolTipText = "Columns";
             this.commandProvider.SetUICommand(this.columnsToolStripMenuItem, this.columnsCmd);
@@ -838,7 +653,7 @@ namespace TracerX.Viewer {
             // 
             this.optionsToolStripMenuItem.Image = global::TracerX.Properties.Resources.Options;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.optionsToolStripMenuItem.Text = "Options...";
             this.optionsToolStripMenuItem.ToolTipText = "Options";
             this.commandProvider.SetUICommand(this.optionsToolStripMenuItem, this.optionsCmd);
@@ -849,7 +664,7 @@ namespace TracerX.Viewer {
             this.refreshMenuItem.Image = global::TracerX.Properties.Resources.Refresh;
             this.refreshMenuItem.Name = "refreshMenuItem";
             this.refreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.refreshMenuItem.Size = new System.Drawing.Size(184, 22);
             this.refreshMenuItem.Text = "Reload";
             this.refreshMenuItem.ToolTipText = "Reload";
             this.commandProvider.SetUICommand(this.refreshMenuItem, this.refreshCmd);
@@ -857,17 +672,41 @@ namespace TracerX.Viewer {
             // closeAllWindowsToolStripMenuItem
             // 
             this.closeAllWindowsToolStripMenuItem.Name = "closeAllWindowsToolStripMenuItem";
-            this.closeAllWindowsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.closeAllWindowsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.closeAllWindowsToolStripMenuItem.Text = "Close All Windows";
             this.commandProvider.SetUICommand(this.closeAllWindowsToolStripMenuItem, null);
             this.closeAllWindowsToolStripMenuItem.Click += new System.EventHandler(this.closeAllWindowsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator18
+            // 
+            this.toolStripSeparator18.Name = "toolStripSeparator18";
+            this.toolStripSeparator18.Size = new System.Drawing.Size(181, 6);
+            this.commandProvider.SetUICommand(this.toolStripSeparator18, null);
+            // 
+            // showTracerXLogsMenuItem
+            // 
+            this.showTracerXLogsMenuItem.Name = "showTracerXLogsMenuItem";
+            this.showTracerXLogsMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.showTracerXLogsMenuItem.Text = "Show TracerX Logs";
+            this.commandProvider.SetUICommand(this.showTracerXLogsMenuItem, null);
+            this.showTracerXLogsMenuItem.Click += new System.EventHandler(this.showTracerXLogsMenuItem_Click);
+            // 
+            // showServerPickerMenuItem
+            // 
+            this.showServerPickerMenuItem.Name = "showServerPickerMenuItem";
+            this.showServerPickerMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.showServerPickerMenuItem.Text = "Show \"Servers\" Pane";
+            this.commandProvider.SetUICommand(this.showServerPickerMenuItem, null);
+            this.showServerPickerMenuItem.Click += new System.EventHandler(this.showServerPickerMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem,
-            this.licenseToolStripMenuItem});
+            this.licenseToolStripMenuItem,
+            this.commandLineMenuItem,
+            this.relatedFilesFoldersToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -877,7 +716,7 @@ namespace TracerX.Viewer {
             // 
             this.aboutToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.commandProvider.SetUICommand(this.aboutToolStripMenuItem, null);
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
@@ -885,10 +724,26 @@ namespace TracerX.Viewer {
             // licenseToolStripMenuItem
             // 
             this.licenseToolStripMenuItem.Name = "licenseToolStripMenuItem";
-            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.licenseToolStripMenuItem.Text = "License...";
             this.commandProvider.SetUICommand(this.licenseToolStripMenuItem, null);
             this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
+            // 
+            // commandLineMenuItem
+            // 
+            this.commandLineMenuItem.Name = "commandLineMenuItem";
+            this.commandLineMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.commandLineMenuItem.Text = "Command Line...";
+            this.commandProvider.SetUICommand(this.commandLineMenuItem, null);
+            this.commandLineMenuItem.Click += new System.EventHandler(this.commandLineMenuItem_Click);
+            // 
+            // relatedFilesFoldersToolStripMenuItem
+            // 
+            this.relatedFilesFoldersToolStripMenuItem.Name = "relatedFilesFoldersToolStripMenuItem";
+            this.relatedFilesFoldersToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.relatedFilesFoldersToolStripMenuItem.Text = "Related Files && Folders...";
+            this.commandProvider.SetUICommand(this.relatedFilesFoldersToolStripMenuItem, null);
+            this.relatedFilesFoldersToolStripMenuItem.Click += new System.EventHandler(this.relatedFilesFoldersToolStripMenuItem_Click);
             // 
             // toolStrip1
             // 
@@ -925,11 +780,13 @@ namespace TracerX.Viewer {
             this.dupTimeButton,
             this.relativeTimeButton,
             this.toolStripSeparator1,
+            this.clearColumnColorsBtn,
             this.enableColorsBtn,
             this.editColorsBtn,
             this.boldBtn,
             this.toolStripSeparator13,
             this.expandAllButton,
+            this.collapseAllButton,
             this.toolStripSeparator17,
             this.prevTimeButton,
             this.nextTimeButton,
@@ -1251,6 +1108,17 @@ namespace TracerX.Viewer {
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             this.commandProvider.SetUICommand(this.toolStripSeparator1, null);
             // 
+            // clearColumnColorsBtn
+            // 
+            this.clearColumnColorsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.clearColumnColorsBtn.Image = global::TracerX.Properties.Resources.ClearColumnColors;
+            this.clearColumnColorsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.clearColumnColorsBtn.Name = "clearColumnColorsBtn";
+            this.clearColumnColorsBtn.Size = new System.Drawing.Size(23, 22);
+            this.clearColumnColorsBtn.Text = "Clear column colors";
+            this.clearColumnColorsBtn.ToolTipText = "Clear column colors";
+            this.commandProvider.SetUICommand(this.clearColumnColorsBtn, this.clearColumnColors);
+            // 
             // enableColorsBtn
             // 
             this.enableColorsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -1265,7 +1133,7 @@ namespace TracerX.Viewer {
             // editColorsBtn
             // 
             this.editColorsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.editColorsBtn.Image = global::TracerX.Properties.Resources.colorwheel_16x16_plain;
+            this.editColorsBtn.Image = global::TracerX.Properties.Resources.colors_edit;
             this.editColorsBtn.Name = "editColorsBtn";
             this.editColorsBtn.Size = new System.Drawing.Size(23, 22);
             this.editColorsBtn.Text = "Edit color rules";
@@ -1299,6 +1167,17 @@ namespace TracerX.Viewer {
             this.expandAllButton.Text = "Expand all";
             this.commandProvider.SetUICommand(this.expandAllButton, null);
             this.expandAllButton.Click += new System.EventHandler(this.expandAllButton_Click);
+            // 
+            // collapseAllButton
+            // 
+            this.collapseAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.collapseAllButton.Image = ((System.Drawing.Image)(resources.GetObject("collapseAllButton.Image")));
+            this.collapseAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.collapseAllButton.Name = "collapseAllButton";
+            this.collapseAllButton.Size = new System.Drawing.Size(23, 22);
+            this.collapseAllButton.Text = "Collapse All";
+            this.commandProvider.SetUICommand(this.collapseAllButton, null);
+            this.collapseAllButton.Click += new System.EventHandler(this.collapseAllButton_Click);
             // 
             // toolStripSeparator17
             // 
@@ -1338,7 +1217,7 @@ namespace TracerX.Viewer {
             "Hour",
             "Day"});
             this.timeUnitCombo.Name = "timeUnitCombo";
-            this.timeUnitCombo.Size = new System.Drawing.Size(60, 23);
+            this.timeUnitCombo.Size = new System.Drawing.Size(62, 23);
             this.timeUnitCombo.ToolTipText = "Specifies time unit for next/prev time buttons.";
             this.commandProvider.SetUICommand(this.timeUnitCombo, null);
             this.timeUnitCombo.SelectedIndexChanged += new System.EventHandler(this.timeUnitCombo_SelectedIndexChanged);
@@ -1412,15 +1291,16 @@ namespace TracerX.Viewer {
             // 
             // theStartPage
             // 
-            this.theStartPage.AutoScroll = true;
-            this.theStartPage.BackColor = System.Drawing.Color.AliceBlue;
+            this.theStartPage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.theStartPage.BackColor = System.Drawing.SystemColors.Window;
+            this.theStartPage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.theStartPage.ColumnHeaderBackColor = System.Drawing.Color.PapayaWhip;
             this.theStartPage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.theStartPage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.theStartPage.Location = new System.Drawing.Point(0, 64);
-            this.theStartPage.MaxNumPaths = 10;
             this.theStartPage.Name = "theStartPage";
-            this.theStartPage.Padding = new System.Windows.Forms.Padding(10, 10, 0, 0);
             this.theStartPage.Size = new System.Drawing.Size(886, 578);
-            this.theStartPage.TabIndex = 8;
+            this.theStartPage.TabIndex = 0;
             this.commandProvider.SetUICommand(this.theStartPage, null);
             // 
             // TheListView
@@ -1456,6 +1336,7 @@ namespace TracerX.Viewer {
             this.TheListView.SelectedIndexChanged += new System.EventHandler(this.TheListView_SelectedIndexChanged);
             this.TheListView.VirtualItemsSelectionRangeChanged += new System.Windows.Forms.ListViewVirtualItemsSelectionRangeChangedEventHandler(this.TheListView_VirtualItemsSelectionRangeChanged);
             this.TheListView.Leave += new System.EventHandler(this.TheListView_Leave);
+            this.TheListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TheListView_MouseClick);
             this.TheListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TheListView_MouseDoubleClick);
             // 
             // headerText
@@ -1607,11 +1488,19 @@ namespace TracerX.Viewer {
             this.filterClearCmd.ToolTipText = "Clear all filtering";
             this.filterClearCmd.Execute += new System.EventHandler(this.ExecuteClearFilter);
             // 
+            // clearColumnColors
+            // 
+            this.clearColumnColors.Checked = false;
+            this.clearColumnColors.Enabled = true;
+            this.clearColumnColors.Image = global::TracerX.Properties.Resources.ClearColumnColors;
+            this.clearColumnColors.ToolTipText = "Clear column colors";
+            this.clearColumnColors.Execute += new System.EventHandler(this.clearColumnColors_Execute);
+            // 
             // editColors
             // 
             this.editColors.Checked = false;
             this.editColors.Enabled = true;
-            this.editColors.Image = global::TracerX.Properties.Resources.colorwheel_16x16_plain;
+            this.editColors.Image = global::TracerX.Properties.Resources.colors_edit;
             this.editColors.ToolTipText = "Edit color rules";
             this.editColors.Execute += new System.EventHandler(this.coloringCmd_Execute);
             // 
@@ -1681,7 +1570,6 @@ namespace TracerX.Viewer {
 
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
@@ -1695,10 +1583,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripMenuItem previousBookmarkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearAllBookmarksToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem hideSelectedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hideSelectedThreadsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showOnlySelectedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showSelectedThreadsMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton clearFilterButton;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
@@ -1709,10 +1593,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripMenuItem clearFilterMenuItem;
         private System.Windows.Forms.ToolStripMenuItem columnsToolStripMenuItem;
         public ListViewTx TheListView;
-        private System.Windows.Forms.ToolStripMenuItem loggersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loggersToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem HideTraceLevelsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ShowTraceLevelsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showCallStackMenuItem;
         private System.Windows.Forms.ToolStripMenuItem goToToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startOfMethodMenuItem;
@@ -1723,10 +1603,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripStatusLabel statusMsg;
         private System.Windows.Forms.ToolStripStatusLabel filenameLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem bookmarkSelectedMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem bookmarkThreadsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem bookmarkLoggersMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem bookmarkTraceLevelsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshMenuItem;
         private System.Windows.Forms.ContextMenuStrip columnContextMenu;
         private System.Windows.Forms.ToolStripMenuItem colMenuFilterItem;
@@ -1740,8 +1616,6 @@ namespace TracerX.Viewer {
         public System.Windows.Forms.ColumnHeader headerThreadId;
         public System.Windows.Forms.ColumnHeader headerThreadName;
         public System.Windows.Forms.ColumnHeader headerLevel;
-        private System.Windows.Forms.ToolStripMenuItem showSelectedThreadNamesMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hideSelectedThreadNamesMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem colMenuOptionsItem;
         public System.Windows.Forms.ColumnHeader headerLine;
@@ -1789,8 +1663,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripButton expandAllButton;
         private System.Windows.Forms.ToolStripButton relativeTimeButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
-        private System.Windows.Forms.ToolStripMenuItem recentlyViewedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem recentlyCreatedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeAllWindowsToolStripMenuItem;
         private Commander.UICommand editColors;
         private Commander.UICommand enableColors;
@@ -1802,13 +1674,7 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem exportToCSVToolStripMenuItem;
         private CrumbBar crumbBar1;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedThreadNamesMenu;
         private System.Windows.Forms.ToolStripMenuItem uncolorSelectedMenu;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedThreadIDsMenu;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedTraceLevelsMenu;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedLoggersMenu;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedMethodsMenu;
         private System.Windows.Forms.ToolStripButton nextAnyThreadBtn;
         private System.Windows.Forms.ToolStripButton prevAnyThreadBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
@@ -1817,8 +1683,6 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripButton nextSameThreadBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         public System.Windows.Forms.ColumnHeader headerSession;
-        private System.Windows.Forms.ToolStripMenuItem colorSelectedSessionsMenu;
-        private System.Windows.Forms.ToolStripMenuItem recentFoldersToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton boldBtn;
         private System.Windows.Forms.ToolStripMenuItem colMenuHideItem;
         private System.Windows.Forms.ToolStripButton dupTimeButton;
@@ -1826,8 +1690,22 @@ namespace TracerX.Viewer {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
         private System.Windows.Forms.ToolStripButton prevTimeButton;
         private System.Windows.Forms.ToolStripButton nextTimeButton;
-        private StartPage theStartPage;
+        private NewStartPage theStartPage;
         private System.Windows.Forms.ToolStripMenuItem newWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton closeBtn;
+        private System.Windows.Forms.ToolStripMenuItem clearColumnColorsMenuItem;
+        private Commander.UICommand clearColumnColors;
+        private System.Windows.Forms.ToolStripButton clearColumnColorsBtn;
+        private System.Windows.Forms.ToolStripStatusLabel serverLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
+        private System.Windows.Forms.ToolStripMenuItem showTracerXLogsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showServerPickerMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem commandLineMenuItem;
+        private System.Windows.Forms.ToolStripButton collapseAllButton;
+        private System.Windows.Forms.ToolStripMenuItem mnuShowSelected;
+        private System.Windows.Forms.ToolStripMenuItem mnuHideSelected;
+        private System.Windows.Forms.ToolStripMenuItem mnuBookmarkSelected;
+        private System.Windows.Forms.ToolStripMenuItem mnuColorSelected;
+        private System.Windows.Forms.ToolStripMenuItem relatedFilesFoldersToolStripMenuItem;
     }
 }

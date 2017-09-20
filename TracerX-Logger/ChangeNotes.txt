@@ -1,1 +1,0 @@
-Fixed bug that occurs when logging to multiple binary files, logging method calls, and using circular logging at the same time.

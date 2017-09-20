@@ -9,7 +9,7 @@ using TracerX.Properties;
 using System.Threading;
 using System.ComponentModel;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     // This class looks for a newer version of TracerX on the CodePlex website using a
     // worker thread to get the HTML for the TracerX page.

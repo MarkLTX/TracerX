@@ -8,7 +8,7 @@ using DebugLogging = TracerX.Logger.DebugLogging;
 using EventHandlerLogging = TracerX.Logger.EventHandlerLogging;
 using System.Collections.Generic;
 
-namespace TracerX 
+namespace TracerX
 {
     // Each instance of ThreadData has one of these for each destination.
     internal class DestinationState
@@ -58,11 +58,12 @@ namespace TracerX
     // Each thread (instance of ThreadData) has its own stack of these.
     internal class StackEntry
     {
-        internal StackEntry(Logger logger, TraceLevel level, string method, StackEntry caller, Destinations destinations)
+        internal StackEntry(Logger logger, TraceLevel level, string method, StackEntry caller, Destinations destinations, string oldThreadName)
         {
             Logger = logger;
             Level = level;
             MethodName = method;
+            OldThreadName = oldThreadName;
             Caller = caller;
             Destinations = destinations;
         }
@@ -73,6 +74,7 @@ namespace TracerX
         internal ulong EntryLine;   // Line number of method entry in Binary log file.
         internal TextFileState TextFileState; // If one of the destinations was TextFile, this is its thread-specific state data.
         internal string MethodName; // The method that was called.
+        internal string OldThreadName; // The name to restore when this StackEntry is removed from the stack.
         internal TraceLevel Level;  // TraceLevel at which the call was called.
         internal Logger Logger;     // The Logger used to log the call.
     }
@@ -95,7 +97,8 @@ namespace TracerX
     /// same ManagedThreadId as another thread that recently terminated.  This means
     /// ManagedThreadId isn't unique for the life of the process (and therefore the log).
     /// </summary>
-    internal class ThreadData {
+    internal class ThreadData
+    {
 
         //~ThreadData() {
         //    // This proves that the ThreadData object is finalized after the thread terminates.
@@ -106,8 +109,10 @@ namespace TracerX
         /// This returns the thread-local (i.e. ThreadStatic) instance of ThreadData
         /// for the calling thread, creating it on the first reference from a given thread. 
         /// </summary>
-        internal static ThreadData CurrentThreadData {
-            get {
+        internal static ThreadData CurrentThreadData
+        {
+            get
+            {
                 // I read somewhere that it takes 60 times as long to reference a [ThreadStatic] field
                 // as a regular field, so this is coded to minimize such references.  That same article
                 // said [ThreadStatic] is the fastest way to do this.
@@ -136,7 +141,8 @@ namespace TracerX
         internal int TracerXID = Interlocked.Increment(ref _threadCounter);
 
         // The overridden thread name or Thread.CurrentThread.Name if not overridden.
-        internal string Name {
+        internal string Name
+        {
             get { return _name ?? Thread.CurrentThread.Name; }
             set { _name = value; }
         }
@@ -263,13 +269,15 @@ namespace TracerX
         // A thread-safe place to append several message parts into one message before logging it.
         internal readonly StringWriter StringWriter = new StringWriter();
 
-        internal string ResetStringWriter() {
+        internal string ResetStringWriter()
+        {
             // Clear the StringWriter's underlying StringBuilder in preparation for the next message.
             // Return the string so it can be logged.
             StringBuilder builder = StringWriter.GetStringBuilder();
             string str = builder.ToString();
             builder.Length = 0;
-            if (builder.Capacity > 512) {
+            if (builder.Capacity > 512)
+            {
                 // Free the excess memory.
                 builder.Capacity = 256;
             }
@@ -277,39 +285,66 @@ namespace TracerX
             return str;
         }
 
-        // Possibly logs the entry of a method call. Returns true if the message is logged, meaning
-        // the corresponding method-exit should also be logged when it occurs.
-        internal bool LogCallEntry(Logger logger, TraceLevel level, string method, Destinations destinations)
+        const string _doNotRestore = "do not restore the thread name";
+
+        // Possibly logs the entry of a method call and/or changes the current thread's name. 
+        // Returns true if the message is logged or the thread name is changed, meaning the 
+        // corresponding method-exit should also be logged (and/or the thread name changed back)
+        // when LogCallExit() is called.
+        internal bool LogCallEntry(Logger logger, TraceLevel level, string method, Destinations destinations, string threadName)
         {
             bool result = true;
+            bool cancelled = false;
+            string originalThreadName;
 
             if (MasterStackDepth < byte.MaxValue)
             {
+                if (threadName == null)
+                {
+                    // _doNotRestore is a special value that prevents LogCallExit() from
+                    // restoring the thread name.
+                    originalThreadName = _doNotRestore;
+                }
+                else
+                {
+                    // Because the user specified a thread name, we arrange for the current
+                    // thread name to be restored by LogCallExit() before changing it.
+                    originalThreadName = _name;
+                    _name = threadName;
+                }
+
+                // The EventHandler destination is processed first because the event it raises is cancellable.
+                // If the event's handler cancels the event, the method call won't be logged to the other
+                // destinations.  However, the thread name can still be changed.
+
                 if ((destinations & Destinations.EventHandler) == Destinations.EventHandler)
                 {
                     string originalMethod = EventHandlerState.CurrentMethod;
                     EventHandlerState.CurrentMethod = method;
 
                     // The LogMsg method returns true if the event is cancelled.
-                    result = !EventHandlerLogging.LogMsg(logger, this, level, method + " entered", true, false);
+                    cancelled = EventHandlerLogging.LogMsg(logger, this, level, method + " entered", true, false);
 
-                    if (result)
-                    {
-                        ++EventHandlerState.StackDepth;
-                    }
-                    else
+                    if (cancelled)
                     {
                         // Event was cancelled, so restore the original method.
                         EventHandlerState.CurrentMethod = originalMethod;
                     }
+                    else
+                    {
+                        ++EventHandlerState.StackDepth;
+                    }
                 }
 
-                if (result)
+                if (!cancelled || threadName != null)
                 {
-                    StackEntry stackEntry = new StackEntry(logger, level, method, TopStackEntry, destinations);
+                    StackEntry stackEntry = new StackEntry(logger, level, method, TopStackEntry, destinations, originalThreadName);
 
                     // Don't put the stack entry on the stack (i.e. set TopStackEntry) until after the method-entry
                     // is logged because of code in BinaryFile.WriteLine().
+
+                    // Note that each destination effectively has it's own stack because a given method entry isn't 
+                    // necessarily logged to all of them.
 
                     if ((destinations & Destinations.BinaryFile) == Destinations.BinaryFile)
                     {
@@ -362,6 +397,7 @@ namespace TracerX
 
                     ++MasterStackDepth;
                     TopStackEntry = stackEntry;
+                    result = true;
                 }
             }
             else
@@ -381,7 +417,7 @@ namespace TracerX
             if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
                 // Although this LogMsg() call raises a cancellable event, method-exit messages aren't really cancellable because
-                // we must "balance" the original method-entry message.
+                // we must "balance" the original method-entry messages that may have been logged to the other destinations.
                 --EventHandlerState.StackDepth;
                 EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting", false, true);
                 EventHandlerState.CurrentMethod = GetCaller(Destinations.EventHandler);
@@ -437,6 +473,7 @@ namespace TracerX
             }
 
             LastLoggerAnyDest = TopStackEntry.Logger;
+            if (!object.ReferenceEquals(TopStackEntry.OldThreadName, _doNotRestore)) _name = TopStackEntry.OldThreadName; 
             TopStackEntry = TopStackEntry.Caller;
             --MasterStackDepth;
         }

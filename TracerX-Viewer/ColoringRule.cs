@@ -5,11 +5,13 @@ using System.Drawing;
 using System.Xml.Serialization;
 using System.Diagnostics;
 
-namespace TracerX {
+namespace TracerX
+{
 
     // Public so it can be serialized/deserialized (XML)
     [Flags]
-    public enum ColoringFields {
+    public enum ColoringFields
+    {
         None = 0,
         All = 1,
         Text = 2,
@@ -20,13 +22,16 @@ namespace TracerX {
     }
 
     // Public so it can be serialized/deserialized (XML)
-    public class ColoringRule {
+    public class ColoringRule
+    {
         // I believe a default ctor is needed for deserialization.
-        public ColoringRule() {
+        public ColoringRule()
+        {
         }
 
         // Copy ctor.
-        public ColoringRule(ColoringRule source) {
+        public ColoringRule(ColoringRule source)
+        {
             Name = source.Name;
             Enabled = source.Enabled;
             TextColor = source.TextColor;
@@ -51,12 +56,14 @@ namespace TracerX {
         public ColoringFields Fields = ColoringFields.Text;
 
 
-        public string TextColorHtml {
+        public string TextColorHtml
+        {
             get { return ColorTranslator.ToHtml(TextColor); }
             set { TextColor = ColorTranslator.FromHtml(value); }
         }
 
-        public string BackColorHtml {
+        public string BackColorHtml
+        {
             get { return ColorTranslator.ToHtml(BackColor); }
             set { BackColor = ColorTranslator.FromHtml(value); }
         }
@@ -66,25 +73,35 @@ namespace TracerX {
         [XmlIgnore]
         internal StringMatcher MustNotMatch;
 
-        public string MakeReady() {
+        public string MakeReady()
+        {
             // Set MustMatch and MustNotMatch to use for testing strings.
             // Set them even if not Enabled in order to verify regular expressions are valid.
 
-            try {
-                if (ContainsText == null) {
+            try
+            {
+                if (ContainsText == null)
+                {
                     MustMatch = null;
-                } else {
+                }
+                else
+                {
                     MustMatch = new StringMatcher(ContainsText, MatchCase, MatchType);
                 }
 
-                if (LacksText == null) {
+                if (LacksText == null)
+                {
                     MustNotMatch = null;
-                } else {
+                }
+                else
+                {
                     MustNotMatch = new StringMatcher(LacksText, MatchCase, MatchType);
                 }
 
                 Debug.Assert(!Enabled || MustMatch != null || MustNotMatch != null);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Enabled = false;
                 string msg = "An error occurred in rule \"{0}\": {1}";
                 return string.Format(msg, Name, ex.Message);
@@ -94,7 +111,8 @@ namespace TracerX {
         }
 
         // This determines what appears in the CheckedListbox
-        public override string ToString() {
+        public override string ToString()
+        {
             return Name;
         }
     }

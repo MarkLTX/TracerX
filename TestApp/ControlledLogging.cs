@@ -57,13 +57,19 @@ namespace TestApp
             _timer.Dispose();
         }
 
-        private void UpdateStats() {
-            if (InvokeRequired) {
-                if (!IsDisposed) {
+        private void UpdateStats()
+        {
+            if (InvokeRequired)
+            {
+                if (!IsDisposed)
+                {
                     Action del = UpdateStats;
-                    try {
+                    try
+                    {
                         Invoke(del);
-                    } catch {
+                    }
+                    catch
+                    {
                         // Sometimes get ObjectDisposedException
                     }
                 }
@@ -116,7 +122,9 @@ namespace TestApp
                     {
                         _timer.Change(ms, ms);
                     }
-                } else {
+                }
+                else
+                {
                     MessageBox.Show("Could not parse string to an int.");
                     checkBox1.Checked = false;
                 }
@@ -180,7 +188,7 @@ namespace TestApp
                         --data.CurrentDepth;
                     }
                 }
-            }         
+            }
 
         }
 
@@ -199,29 +207,34 @@ namespace TestApp
         }
 
         // Causes worker2 to increase stack depth by 1.
-        private void depth2Plus_Click(object sender, EventArgs e) {
+        private void depth2Plus_Click(object sender, EventArgs e)
+        {
             ++_workerData2.TargetDepth;
             _workerData2.Event.Set();
         }
 
         // Causes worker2 to decrease stack depth by 1.
-        private void depth2Minus_Click(object sender, EventArgs e) {
+        private void depth2Minus_Click(object sender, EventArgs e)
+        {
             --_workerData2.TargetDepth;
             _workerData2.Event.Set();
         }
 
-        private void wrapBtn_Click(object sender, EventArgs e) {
+        private void wrapBtn_Click(object sender, EventArgs e)
+        {
             uint startPos = Logger.DefaultBinaryFile.CurrentPosition;
 
             Cursor = Cursors.WaitCursor;
 
-            while (Logger.DefaultBinaryFile.CurrentPosition >= startPos) {
+            while (Logger.DefaultBinaryFile.CurrentPosition >= startPos)
+            {
                 Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.DefaultBinaryFile.CurrentSize, Logger.DefaultBinaryFile.CurrentPosition, Logger.DefaultBinaryFile.CircularStarted, Logger.DefaultBinaryFile.Wrapped);
             }
 
             Log.Info("Now back at beginning of circular part.");
 
-            while (Logger.DefaultBinaryFile.CurrentPosition < startPos) {
+            while (Logger.DefaultBinaryFile.CurrentPosition < startPos)
+            {
                 Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.DefaultBinaryFile.CurrentSize, Logger.DefaultBinaryFile.CurrentPosition, Logger.DefaultBinaryFile.CircularStarted, Logger.DefaultBinaryFile.Wrapped);
             }
 
@@ -230,12 +243,14 @@ namespace TestApp
             Cursor = Cursors.Default;
         }
 
-        private void wrap2Btn_Click(object sender, EventArgs e) {
+        private void wrap2Btn_Click(object sender, EventArgs e)
+        {
             uint startPos = Logger.DefaultBinaryFile.CurrentPosition;
 
             Cursor = Cursors.WaitCursor;
 
-            while (Logger.DefaultBinaryFile.CurrentPosition >= startPos) {
+            while (Logger.DefaultBinaryFile.CurrentPosition >= startPos)
+            {
                 Log.InfoFormat("Size = {0}, Position = {1}, InCircular = {2}, wrapped = {3}", Logger.DefaultBinaryFile.CurrentSize, Logger.DefaultBinaryFile.CurrentPosition, Logger.DefaultBinaryFile.CircularStarted, Logger.DefaultBinaryFile.Wrapped);
             }
 
@@ -257,6 +272,16 @@ namespace TestApp
             depth2Plus.Enabled = true;
 
             Thread.Sleep(250);
+            UpdateStats();
+        }
+
+        private void btnLog10_Click(object sender, EventArgs e)
+        {
+            for (int i = 1; i <= 10; ++i)
+            {
+                Log.Debug("Blasting line ", i, " of 10");
+            }
+
             UpdateStats();
         }
     }

@@ -118,94 +118,130 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="scroll_view" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\scroll_view.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="clockNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\clocknext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BookmarkClear" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BookmarkClear.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BookmarkNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BookmarkNext.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BookmarkPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BookmarkPrev.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BookmarkToggle2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\bookmarktoggle2.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="find" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\find.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="findNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\findnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="findPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\findprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Filter1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\filter.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FilterNot1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\filternot.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Options" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Columns" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\columns.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Date_and_Time" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\date and time.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ExpandAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ExpandAll.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="OpenFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\openfolder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Properties" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Properties.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stopwatch" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stopwatch.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="colors_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\colors_on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="colorwheel_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\colorwheel_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AnyThreadNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\anythreadnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AnyThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\anythreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SameThreadNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\samethreadnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SameThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\samethreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Green_Plus_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\green plus 16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="findPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\findprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Bold" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\bold.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="folder_open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\folder-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="scroll_view" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\scroll_view.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="find" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\find.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="colorwheel_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\colorwheel_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Filter1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\filter.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Close_File_or_Folder_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\close file or folder 16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="navigate_down_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\navigate_down_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnyThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\anythreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BookmarkToggle2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\bookmarktoggle2.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExpandAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExpandAll.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BookmarkNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BookmarkNext.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Options" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="findNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\findnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="navigate_up_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\navigate_up_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Close_X_Red_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\close x red 16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SameThreadPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\samethreadprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Properties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Properties.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnyThreadNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\anythreadnext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FilterNot1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\filternot.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Date_and_Time" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\date and time.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="clockPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\clockplus.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="clockNext" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\clocknext.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="clockPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\clockprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="scroll_view_16x16_plain" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\scroll_view_16x16_plain.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Close_X_Red_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\close x red 16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Columns" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\columns.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="colors_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\colors_on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BookmarkPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BookmarkPrev.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BookmarkClear" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BookmarkClear.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CloseDocument" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\closedocument.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Red_Minus_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\red minus 16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ClearColumnColors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\clearcolumncolors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\openfolder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="clockPrev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\clockprev.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stopwatch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stopwatch.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="colors_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\colors-edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CollapseAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CollapseAll.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="broom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\broom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

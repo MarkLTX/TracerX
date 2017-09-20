@@ -1,4 +1,4 @@
-namespace TracerX.Viewer {
+namespace TracerX {
     partial class FindDialog {
         /// <summary>
         /// Required designer variable.

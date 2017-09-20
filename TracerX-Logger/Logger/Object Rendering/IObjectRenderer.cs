@@ -20,7 +20,8 @@
 #endregion
 using System.IO;
 
-namespace TracerX {
+namespace TracerX 
+{
     /// <summary>
     /// Implement this interface and add the new class to the
     /// RendererMap in order to render objects as strings.
@@ -33,7 +34,8 @@ namespace TracerX {
     /// interface, which has only one method.
     /// </para>
     /// </remarks>
-    public interface IObjectRenderer {
+    public interface IObjectRenderer 
+    {
         /// <summary>
         /// Render the object <paramref name="obj"/> to a string.
         /// </summary>

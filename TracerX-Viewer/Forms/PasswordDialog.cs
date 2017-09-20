@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.Linq;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     public partial class PasswordDialog : Form
     {

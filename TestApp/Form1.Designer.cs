@@ -1,5 +1,7 @@
-﻿namespace TestApp {
-    partial class Form1 {
+﻿namespace TestApp
+{
+    partial class Form1
+    {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -9,8 +11,10 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -22,7 +26,8 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             this.emptyBtn = new System.Windows.Forms.Button();
             this.oneLineBtn = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -76,6 +81,7 @@
             this.btnTextTest = new System.Windows.Forms.Button();
             this.chkUsePassword = new System.Windows.Forms.CheckBox();
             this.viewerWrapper1 = new TestApp.ViewerWrapper();
+            this.btnTreeOfLoggers = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -206,7 +212,7 @@
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(293, 23);
             this.button11.TabIndex = 13;
-            this.button11.Text = "Log More Than Uint.MaxValue lines (takes forever)";
+            this.button11.Text = "50 threads log twice per second";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
@@ -621,14 +627,25 @@
             this.viewerWrapper1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.viewerWrapper1.Location = new System.Drawing.Point(339, 0);
             this.viewerWrapper1.Name = "viewerWrapper1";
-            this.viewerWrapper1.Size = new System.Drawing.Size(676, 801);
+            this.viewerWrapper1.Size = new System.Drawing.Size(676, 834);
             this.viewerWrapper1.TabIndex = 29;
+            // 
+            // btnTreeOfLoggers
+            // 
+            this.btnTreeOfLoggers.Location = new System.Drawing.Point(13, 799);
+            this.btnTreeOfLoggers.Name = "btnTreeOfLoggers";
+            this.btnTreeOfLoggers.Size = new System.Drawing.Size(145, 23);
+            this.btnTreeOfLoggers.TabIndex = 45;
+            this.btnTreeOfLoggers.Text = "Tree of Loggers";
+            this.btnTreeOfLoggers.UseVisualStyleBackColor = true;
+            this.btnTreeOfLoggers.Click += new System.EventHandler(this.btnTreeOfLoggers_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1015, 801);
+            this.ClientSize = new System.Drawing.Size(1015, 834);
+            this.Controls.Add(this.btnTreeOfLoggers);
             this.Controls.Add(this.chkUsePassword);
             this.Controls.Add(this.btnTextTest);
             this.Controls.Add(this.btnMultiFileMultiThread);
@@ -728,6 +745,6 @@
         private System.Windows.Forms.Button btnTextTest;
         private System.Windows.Forms.CheckBox chkUsePassword;
         private System.Windows.Forms.RadioButton endWithNullRad;
+        private System.Windows.Forms.Button btnTreeOfLoggers;
     }
 }
-

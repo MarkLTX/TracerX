@@ -10,63 +10,21 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 using System.Linq;
 using TracerX;
-using TracerX.Viewer;
 using System.IO;
 
-namespace TracerX.Forms {
-    internal partial class ColorRulesDialog : Form {
-
-        // ColorTab identifies each of the tabs on the ColorRulesDialog.
-        public enum ColorTab { Custom, TraceLevels, Loggers, ThreadNames, ThreadIDs, Methods, Sessions };
-
-        public class ColorPair {
-            public ColorPair() {
-                BackColor = Color.White;
-                ForeColor = Color.Black;
-            }
-
-            public ColorPair(Color backColor) {
-                BackColor = backColor;
-                ForeColor = Color.Black;
-            }
-
-            public ColorPair(Color backColor, Color foreColor) {
-                BackColor = backColor;
-                ForeColor = foreColor;
-            }
-
-            // The Enabled field only applies to TraceLevels.
-            public bool Enabled = false;
-            public Color ForeColor;
-            public Color BackColor;
-        }
-
-        // Colors used for everything except TraceLevels.
-        public static readonly ColorPair[] Palette;
-
-        // The CurrentTab determines which color rules are applied.
-        public static ColorTab CurrentTab
-        {
-            get { return _currentTab; }
-            set { 
-                _currentTab = value;   
-            }
-        }
-
-        private static ColorTab _currentTab = ColorTab.Custom;
+namespace TracerX
+{
+    internal partial class ColorRulesDialog : Form
+    {
 
         public static bool ColorCalledMethods = true;
 
-        // This is where the color for each TraceLevel is stored.  
-        // This is not persisted.
-        public static Dictionary<TraceLevel, ColorPair> TraceLevelColors = new Dictionary<TraceLevel, ColorPair>();
-
-        private ListViewItemSorter _sessionSorter;
-        private ListViewItemSorter _threadIdSorter;
-        private ListViewItemSorter _threadNameSorter;
-        private ListViewItemSorter _loggerSorter;
-        private ListViewItemSorter _methodSorter;
-        private ListViewItemSorter _traceLevelSorter;
+        private ListViewSorter _sessionSorter;
+        private ListViewSorter _threadIdSorter;
+        private ListViewSorter _threadNameSorter;
+        private ListViewSorter _loggerSorter;
+        private ListViewSorter _methodSorter;
+        private ListViewSorter _traceLevelSorter;
         private ColoringRule _currentRule;
         private bool _suppressEvents = true;
 
@@ -76,8 +34,10 @@ namespace TracerX.Forms {
         private Dictionary<ThreadName, ColorPair> _threadNameColors = new Dictionary<ThreadName, ColorPair>();
         private Dictionary<LoggerObject, ColorPair> _loggerColors = new Dictionary<LoggerObject, ColorPair>();
         private Dictionary<MethodObject, ColorPair> _methodColors = new Dictionary<MethodObject, ColorPair>();
+        private Dictionary<TraceLevelObject, ColorPair> _traceLevelColors = new Dictionary<TraceLevelObject, ColorPair>();
 
-        public static DialogResult ShowModal() {
+        public static DialogResult ShowModal()
+        {
             ColorRulesDialog form = new ColorRulesDialog();
             return form.ShowDialog();
         }
@@ -89,33 +49,33 @@ namespace TracerX.Forms {
             this.Icon = Properties.Resources.scroll_view;
             enableChk.Checked = Settings.Default.ColoringEnabled;
 
-            switch (CurrentTab)
+            switch (ColorUtil.RowColorDriver)
             {
-                case ColorTab.Custom:
+                case ColorDriver.Custom:
                     tabControl1.SelectedTab = customPage;
                     break;
-                case ColorTab.Sessions:
+                case ColorDriver.Sessions:
                     tabControl1.SelectedTab = sessionPage;
                     break;
-                case ColorTab.Loggers:
+                case ColorDriver.Loggers:
                     tabControl1.SelectedTab = loggerPage;
                     break;
-                case ColorTab.Methods:
+                case ColorDriver.Methods:
                     tabControl1.SelectedTab = methodPage;
                     break;
-                case ColorTab.TraceLevels:
+                case ColorDriver.TraceLevels:
                     tabControl1.SelectedTab = traceLevelPage;
                     break;
-                case ColorTab.ThreadIDs:
+                case ColorDriver.ThreadIDs:
                     tabControl1.SelectedTab = threadIDPage;
                     break;
-                case ColorTab.ThreadNames:
+                case ColorDriver.ThreadNames:
                     tabControl1.SelectedTab = threadNamePage;
                     break;
             }
 
-            importBtn.Visible = CurrentTab == ColorTab.Custom;
-            exportBtn.Visible = CurrentTab == ColorTab.Custom;
+            importBtn.Visible = ColorUtil.RowColorDriver == ColorDriver.Custom;
+            exportBtn.Visible = ColorUtil.RowColorDriver == ColorDriver.Custom;
 
             InitCustomRules();
             InitSessions();
@@ -126,25 +86,9 @@ namespace TracerX.Forms {
             InitMethods();
         }
 
-        static ColorRulesDialog() {
-            TraceLevelColors[TraceLevel.Fatal] = new ColorPair(Color.Red);
-            TraceLevelColors[TraceLevel.Error] = new ColorPair(Color.Red);
-            TraceLevelColors[TraceLevel.Warn] = new ColorPair(Color.Orange);
-            TraceLevelColors[TraceLevel.Info] = new ColorPair(Color.LightBlue);
-            TraceLevelColors[TraceLevel.Debug] = new ColorPair(Color.LightGreen);
-            TraceLevelColors[TraceLevel.Verbose] = new ColorPair(Color.Gainsboro);
-
-            // List of ARGB colors generated with the Palette form.
-            int[] rgb = new int[] { -16711936, -129, -65281, -8421505, -8388609, -8388737, -32897, -16711809, -16711681, -8421377, -8388864, -65409, -33024, -32769, -256, -16744449, -65536};
-            Palette = new ColorPair[rgb.Length];
-            for (int i = 0; i<rgb.Length; ++i) {
-                Palette[i] = new ColorPair(Color.FromArgb(rgb[i]));
-            }
-        }
-
         // This delegate compares the Checked states of two ListViewItems
         // for sorting via ListViewItemSorter.
-        private ListViewItemSorter.RowComparer _checkComparer = delegate(ListViewItem x, ListViewItem y)
+        private ListViewSorter.RowComparer _checkComparer = delegate(ListViewItem x, ListViewItem y)
         {
             if (x.Checked == y.Checked) return 0;
             if (x.Checked) return 1;
@@ -157,8 +101,8 @@ namespace TracerX.Forms {
 
             // Since the Custom tab has so many controls, we just always leave the
             // OK and Apply buttons enabled rather than trying to detect every change.
-            okBtn.Enabled = CurrentTab == ColorTab.Custom;
-            applyBtn.Enabled = CurrentTab == ColorTab.Custom;
+            okBtn.Enabled = ColorUtil.RowColorDriver == ColorDriver.Custom;
+            applyBtn.Enabled = ColorUtil.RowColorDriver == ColorDriver.Custom;
 
             _suppressEvents = false;
         }
@@ -167,17 +111,17 @@ namespace TracerX.Forms {
         {
             if (_suppressEvents) return;
 
-            if (e.TabPage == customPage) CurrentTab = ColorTab.Custom;
-            else if (e.TabPage == traceLevelPage) CurrentTab = ColorTab.TraceLevels;
-            else if (e.TabPage == loggerPage) CurrentTab = ColorTab.Loggers;
-            else if (e.TabPage == methodPage) CurrentTab = ColorTab.Methods;
-            else if (e.TabPage == threadIDPage) CurrentTab = ColorTab.ThreadIDs;
-            else if (e.TabPage == threadNamePage) CurrentTab = ColorTab.ThreadNames;
-            else if (e.TabPage == sessionPage) CurrentTab = ColorTab.Sessions;
+            //if (e.TabPage == customPage) ColorUtil.RowColorDriver = ColorDriver.Custom;
+            //else if (e.TabPage == traceLevelPage) ColorUtil.RowColorDriver = ColorDriver.TraceLevels;
+            //else if (e.TabPage == loggerPage) ColorUtil.RowColorDriver = ColorDriver.Loggers;
+            //else if (e.TabPage == methodPage) ColorUtil.RowColorDriver = ColorDriver.Methods;
+            //else if (e.TabPage == threadIDPage) ColorUtil.RowColorDriver = ColorDriver.ThreadIDs;
+            //else if (e.TabPage == threadNamePage) ColorUtil.RowColorDriver = ColorDriver.ThreadNames;
+            //else if (e.TabPage == sessionPage) ColorUtil.RowColorDriver = ColorDriver.Sessions;
 
             // The import and export buttons only apply to the Custom tab.
-            importBtn.Visible = CurrentTab == ColorTab.Custom;
-            exportBtn.Visible = CurrentTab == ColorTab.Custom;
+            importBtn.Visible = e.TabPage == customPage;
+            exportBtn.Visible = e.TabPage == customPage;
 
             okBtn.Enabled = true;
             applyBtn.Enabled = true;
@@ -185,7 +129,8 @@ namespace TracerX.Forms {
 
         #region Custom tab
 
-        private void InitCustomRules() {
+        private void InitCustomRules()
+        {
             // For some reason, the X locations of these checkboxes change slightly
             // from what we specify in the designer.
             int indent = 20;
@@ -196,31 +141,40 @@ namespace TracerX.Forms {
             levelChk.Left = allChk.Left + indent;
 
             customListBox.Items.Clear();
-            if (Settings.Default.ColoringRules != null) {
-                foreach (ColoringRule rule in Settings.Default.ColoringRules) {
+            if (Settings.Default.ColoringRules != null)
+            {
+                foreach (ColoringRule rule in Settings.Default.ColoringRules)
+                {
                     // We make a copy of each rule in case the user cancels his edits.
                     customListBox.Items.Add(new ColoringRule(rule), rule.Enabled);
                 }
 
                 customListBox.SelectedIndex = 0;
-            } else {
+            }
+            else
+            {
                 EnableControls();
             }
         }
 
-        private void customListBox_SelectedIndexChanged(object sender, EventArgs e) {
+        private void customListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
             // Do nothing if we just re-selected the current rule.
             if (customListBox.SelectedItem == _currentRule) return;
             string errorMsg = null;
 
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 EnableControls();
 
                 _currentRule = customListBox.SelectedItem as ColoringRule;
-                if (_currentRule != null) {
+                if (_currentRule != null)
+                {
                     ShowRule(_currentRule);
                 }
-            } else {
+            }
+            else
+            {
                 // Reselect the previous rule and show the
                 // error message.
                 customListBox.SelectedItem = _currentRule;
@@ -230,10 +184,12 @@ namespace TracerX.Forms {
 
         // Save the current control settings to the specified rule unless
         // there's a problem.
-        private bool SaveRule(ColoringRule rule, out string errorMsg) {
+        private bool SaveRule(ColoringRule rule, out string errorMsg)
+        {
             errorMsg = null;
 
-            if (rule != null) {
+            if (rule != null)
+            {
                 // Verify current settings are valid before
                 // saving them to the specified rule.
                 // If we're not saving to _currentRule, we don't validate 
@@ -241,22 +197,29 @@ namespace TracerX.Forms {
                 // won't come from nameBox.
                 errorMsg = GetErrorMessage(rule == _currentRule);
 
-                if (errorMsg == null) {
+                if (errorMsg == null)
+                {
                     // No error, save the settings.
                     rule.Name = nameBox.Text;
                     customListBox.Refresh();
                     rule.BackColor = backPanel.BackColor;
                     rule.TextColor = textPanel.BackColor;
 
-                    if (chkContain.Checked) {
+                    if (chkContain.Checked)
+                    {
                         rule.ContainsText = txtContains.Text;
-                    } else {
+                    }
+                    else
+                    {
                         rule.ContainsText = null;
                     }
 
-                    if (chkDoesNotContain.Checked) {
+                    if (chkDoesNotContain.Checked)
+                    {
                         rule.LacksText = txtDoesNotContain.Text;
-                    } else {
+                    }
+                    else
+                    {
                         rule.LacksText = null;
                     }
 
@@ -266,9 +229,12 @@ namespace TracerX.Forms {
                     else if (chkRegex.Checked) rule.MatchType = MatchType.RegularExpression;
                     else rule.MatchType = MatchType.Simple;
 
-                    if (allChk.Checked) {
+                    if (allChk.Checked)
+                    {
                         rule.Fields = ColoringFields.All;
-                    } else {
+                    }
+                    else
+                    {
                         rule.Fields = ColoringFields.None;
                         if (textChk.Checked) rule.Fields |= ColoringFields.Text;
                         if (threadNameChk.Checked) rule.Fields |= ColoringFields.ThreadName;
@@ -284,25 +250,31 @@ namespace TracerX.Forms {
             return errorMsg == null;
         }
 
-        private string GetErrorMessage(bool validateName) {
-            if (validateName) {
+        private string GetErrorMessage(bool validateName)
+        {
+            if (validateName)
+            {
                 nameBox.Text = nameBox.Text.Trim();
 
-                if (nameBox.Text == string.Empty) {
+                if (nameBox.Text == string.Empty)
+                {
                     return "Please enter a rule name.";
                 }
             }
 
-            if (!chkContain.Checked && !chkDoesNotContain.Checked) {
+            if (!chkContain.Checked && !chkDoesNotContain.Checked)
+            {
                 return "Please specify text to search for.";
             }
 
-            if (chkContain.Checked && txtContains.Text == string.Empty) {
+            if (chkContain.Checked && txtContains.Text == string.Empty)
+            {
                 ActiveControl = txtContains;
                 return "Please specify text to search for.";
             }
 
-            if (chkDoesNotContain.Checked && txtDoesNotContain.Text == string.Empty) {
+            if (chkDoesNotContain.Checked && txtDoesNotContain.Text == string.Empty)
+            {
                 ActiveControl = txtDoesNotContain;
                 return "Please specify text to search for.";
             }
@@ -320,7 +292,8 @@ namespace TracerX.Forms {
             return null;
         }
 
-        private void EnableControls() {
+        private void EnableControls()
+        {
             int count = customListBox.SelectedIndices.Count;
             removeBtn.Enabled = count > 0;
             exportBtn.Enabled = count > 0;
@@ -332,7 +305,8 @@ namespace TracerX.Forms {
         }
 
         // Sets all controls to match current selection.
-        private void ShowRule(ColoringRule rule) {
+        private void ShowRule(ColoringRule rule)
+        {
             nameBox.Text = rule.Name;
 
             textPanel.BackColor = rule.TextColor;
@@ -361,15 +335,19 @@ namespace TracerX.Forms {
 
         // Generate the first rule name like "Rule N" that
         // doesn't already exist.
-        private string GenerateName() {
+        private string GenerateName()
+        {
             int i = 0;
             string result;
 
-            do {
+            do
+            {
                 result = string.Format("Rule {0}", ++i);
 
-                foreach (ColoringRule rule in customListBox.Items) {
-                    if (rule.Name == result) {
+                foreach (ColoringRule rule in customListBox.Items)
+                {
+                    if (rule.Name == result)
+                    {
                         result = null;
                         break;
                     }
@@ -379,16 +357,19 @@ namespace TracerX.Forms {
             return result;
         }
 
-        private void newBtn_Click(object sender, EventArgs e) {
+        private void newBtn_Click(object sender, EventArgs e)
+        {
             string errorMsg;
 
             // First save the current settings to the _currentRule if there is one.
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 // Make a new rule and save the current settings to it.  If that succeeds,
                 // the new rule becomes the _currentRule.
                 ColoringRule newRule = new ColoringRule();
 
-                if (SaveRule(newRule, out errorMsg)) {
+                if (SaveRule(newRule, out errorMsg))
+                {
                     // The fact that we set _currentRule before selecting it prevents
                     // the SelectionChanged handler from doing anything.
                     _currentRule = newRule;
@@ -397,24 +378,32 @@ namespace TracerX.Forms {
                     customListBox.SelectedItem = _currentRule;
                     EnableControls();
                     ShowRule(_currentRule);
-                } else {
+                }
+                else
+                {
                     MessageBox.Show(errorMsg, "TracerX-Viewer");
                 }
-            } else {
+            }
+            else
+            {
                 MessageBox.Show(errorMsg, "TracerX-Viewer");
             }
         }
 
-        private void chkContain_CheckedChanged(object sender, EventArgs e) {
+        private void chkContain_CheckedChanged(object sender, EventArgs e)
+        {
             txtContains.Enabled = chkContain.Checked;
         }
 
-        private void chkDoesNotContain_CheckedChanged(object sender, EventArgs e) {
+        private void chkDoesNotContain_CheckedChanged(object sender, EventArgs e)
+        {
             txtDoesNotContain.Enabled = chkDoesNotContain.Checked;
         }
 
-        private void allChk_CheckedChanged(object sender, EventArgs e) {
-            if (allChk.Checked) {
+        private void allChk_CheckedChanged(object sender, EventArgs e)
+        {
+            if (allChk.Checked)
+            {
                 textChk.Checked = true;
                 threadNameChk.Checked = true;
                 loggerChk.Checked = true;
@@ -429,30 +418,35 @@ namespace TracerX.Forms {
             levelChk.Enabled = !allChk.Checked;
         }
 
-        private void backColorBtn_Click(object sender, EventArgs e) {
+        private void backColorBtn_Click(object sender, EventArgs e)
+        {
             PickColor(backPanel);
             exampleBox.BackColor = backPanel.BackColor;
         }
 
-        private void textColorBtn_Click(object sender, EventArgs e) {
+        private void textColorBtn_Click(object sender, EventArgs e)
+        {
             PickColor(textPanel);
             exampleBox.ForeColor = textPanel.BackColor;
         }
 
-        private void PickColor(Panel panel) {
+        private void PickColor(Panel panel)
+        {
             ColorDialog dlg = new ColorDialog();
             dlg.Color = panel.BackColor;
             dlg.AnyColor = true;
             DialogResult dialogResult = dlg.ShowDialog();
 
-            if (dialogResult == DialogResult.OK) {
+            if (dialogResult == DialogResult.OK)
+            {
                 panel.BackColor = dlg.Color;
                 Debug.Print(dlg.Color.ToString());
             }
         }
 
 
-        private void importBtn_Click(object sender, EventArgs e) {
+        private void importBtn_Click(object sender, EventArgs e)
+        {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.AddExtension = true;
             dlg.CheckFileExists = true;
@@ -462,34 +456,45 @@ namespace TracerX.Forms {
             dlg.Multiselect = false;
             DialogResult result = dlg.ShowDialog();
 
-            if (result == DialogResult.OK) {
-                try {
-                    using (Stream stream = dlg.OpenFile()) {
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    using (Stream stream = dlg.OpenFile())
+                    {
                         XmlSerializer deserializer = new XmlSerializer(typeof(ColoringRule[]));
                         ColoringRule[] arr = (ColoringRule[])deserializer.Deserialize(stream);
 
                         customListBox.Items.Clear();
-                        if (arr != null) {
-                            foreach (ColoringRule rule in arr) {
+                        if (arr != null)
+                        {
+                            foreach (ColoringRule rule in arr)
+                            {
                                 // We make a copy of each rule in case the user cancels his edits.
                                 customListBox.Items.Add(rule, rule.Enabled);
                             }
 
                             customListBox.SelectedIndex = 0;
-                        } else {
+                        }
+                        else
+                        {
                             EnableControls();
                         }
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     MessageBox.Show(ex.ToString(), "TracerX-Viewer");
                 }
             }
         }
 
-        private void exportBtn_Click(object sender, EventArgs e) {
+        private void exportBtn_Click(object sender, EventArgs e)
+        {
             string errorMsg;
 
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.AddExtension = true;
                 dlg.DefaultExt = "xml";
@@ -500,10 +505,12 @@ namespace TracerX.Forms {
                 dlg.ValidateNames = true;
                 DialogResult result = dlg.ShowDialog();
 
-                if (result == DialogResult.OK) {
+                if (result == DialogResult.OK)
+                {
                     string file = dlg.FileName;
                     ColoringRule[] arr = new ColoringRule[customListBox.Items.Count];
-                    for (int i = 0; i < customListBox.Items.Count; ++i) {
+                    for (int i = 0; i < customListBox.Items.Count; ++i)
+                    {
                         // Save copies of the rules in case the Apply button was clicked
                         // instead of the OK button so further edits can be cancelled.
                         ColoringRule rule = (ColoringRule)customListBox.Items[i];
@@ -511,45 +518,60 @@ namespace TracerX.Forms {
                         arr[i] = rule;
                     }
 
-                    try {
+                    try
+                    {
                         XmlSerializer serializer = new XmlSerializer(typeof(ColoringRule[]));
-                        using (Stream stream = dlg.OpenFile()) {
+                        using (Stream stream = dlg.OpenFile())
+                        {
                             serializer.Serialize(stream, arr);
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         MessageBox.Show(ex.ToString(), "TracerX-Viewer");
                     }
                 }
-            } else {
+            }
+            else
+            {
                 MessageBox.Show(errorMsg, "TracerX-Viewer");
             }
 
         }
 
-        private void removeBtn_Click(object sender, EventArgs e) {
+        private void removeBtn_Click(object sender, EventArgs e)
+        {
             int ndx = customListBox.SelectedIndex;
 
             _currentRule = null; // Prevents trying to save to _currentRule
             customListBox.Items.RemoveAt(ndx);
 
-            if (customListBox.Items.Count > 0) {
-                if (ndx < customListBox.Items.Count) {
+            if (customListBox.Items.Count > 0)
+            {
+                if (ndx < customListBox.Items.Count)
+                {
                     customListBox.SelectedIndex = ndx;
-                } else {
+                }
+                else
+                {
                     customListBox.SelectedIndex = ndx - 1;
                 }
 
                 ActiveControl = removeBtn;
-            } else {
+            }
+            else
+            {
                 ActiveControl = newBtn;
             }
 
             EnableControls();
         }
 
-        private void upBtn_Click(object sender, EventArgs e) {
+        private void upBtn_Click(object sender, EventArgs e)
+        {
             string errorMsg;
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 ColoringRule temp = _currentRule;
                 int ndx = customListBox.SelectedIndex;
                 bool enabled = customListBox.GetItemChecked(ndx);
@@ -560,14 +582,18 @@ namespace TracerX.Forms {
                 customListBox.SetItemChecked(ndx - 1, enabled);
                 customListBox.SelectedIndex = ndx - 1;
                 _currentRule = temp;
-            } else {
+            }
+            else
+            {
                 MessageBox.Show(errorMsg, "TracerX-Viewer");
             }
         }
 
-        private void downBtn_Click(object sender, EventArgs e) {
+        private void downBtn_Click(object sender, EventArgs e)
+        {
             string errorMsg;
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 ColoringRule temp = _currentRule;
                 int ndx = customListBox.SelectedIndex;
                 bool enabled = customListBox.GetItemChecked(ndx);
@@ -578,42 +604,56 @@ namespace TracerX.Forms {
                 customListBox.SetItemChecked(ndx + 1, enabled);
                 customListBox.SelectedIndex = ndx + 1;
                 _currentRule = temp;
-            } else {
+            }
+            else
+            {
                 MessageBox.Show(errorMsg, "TracerX-Viewer");
             }
 
         }
 
-        private void chkWild_CheckedChanged(object sender, EventArgs e) {
-            if (chkWild.Checked) {
+        private void chkWild_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkWild.Checked)
+            {
                 chkRegex.Checked = false;
                 chkRegex.Enabled = false;
-            } else {
+            }
+            else
+            {
                 chkRegex.Enabled = true;
             }
         }
 
-        private void chkRegex_CheckedChanged(object sender, EventArgs e) {
-            if (chkRegex.Checked) {
+        private void chkRegex_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkRegex.Checked)
+            {
                 chkWild.Checked = false;
                 chkWild.Enabled = false;
-            } else {
+            }
+            else
+            {
                 chkWild.Enabled = true;
             }
 
         }
 
-        private bool ApplyCustomRules() {
+        private bool ApplyCustomRules()
+        {
             string errorMsg;
             bool result;
 
-            if (SaveRule(_currentRule, out errorMsg)) {
+            if (SaveRule(_currentRule, out errorMsg))
+            {
                 result = true;
 
-                if (customListBox.Items.Count > 0) {
+                if (customListBox.Items.Count > 0)
+                {
                     Settings.Default.ColoringRules = new ColoringRule[customListBox.Items.Count];
 
-                    for (int i = 0; i < customListBox.Items.Count; ++i) {
+                    for (int i = 0; i < customListBox.Items.Count; ++i)
+                    {
                         // Save copies of the rules in case the Apply button was clicked
                         // instead of the OK button so further edits can be cancelled.
                         ColoringRule rule = (ColoringRule)customListBox.Items[i];
@@ -622,10 +662,14 @@ namespace TracerX.Forms {
                         rule.MakeReady();
                         Settings.Default.ColoringRules[i] = rule;
                     }
-                } else {
+                }
+                else
+                {
                     Settings.Default.ColoringRules = null;
                 }
-            } else {
+            }
+            else
+            {
                 result = false;
                 tabControl1.SelectedTab = customPage;
                 MessageBox.Show(errorMsg, "TracerX-Viewer");
@@ -638,29 +682,45 @@ namespace TracerX.Forms {
 
         #region Trace Levels
 
-        private void InitTraceLevels() {
-            traceLevelListView.Items.Clear();
-            foreach (TraceLevel level in Enum.GetValues(typeof(TraceLevel))) {
-                if (level != TraceLevel.Inherited && level != TraceLevel.Off) {
-                    ListViewItem item = new ListViewItem(new string[] { string.Empty, Enum.GetName(typeof(TraceLevel), level) });
-                    if (TraceLevelColors[level].Enabled) {
-                        item.Checked = true; ;
-                        item.ForeColor = TraceLevelColors[level].ForeColor;
-                        item.BackColor = TraceLevelColors[level].BackColor;
+        private void InitTraceLevels()
+        {
+            int coloredLevels = Settings.Default.ColoredLevels;
+            traceLevelListView.BeginUpdate();
+
+            lock (TraceLevelObjects.Lock)
+            {
+                foreach (TraceLevelObject level in TraceLevelObjects.AllTraceLevels.Values)
+                {
+                    ListViewItem item = new ListViewItem(new string[] { string.Empty, level.Name });
+
+                    if (level.RowColors != null)
+                    {
+                        item.Checked = true;
+                        //_traceLevelColors[level] = level.RowColors;
+                        item.BackColor = level.RowColors.BackColor;
+                        item.ForeColor = level.RowColors.ForeColor;
                     }
-                    item.Tag = level;
+
+                    item.Tag = level.TLevel;
                     this.traceLevelListView.Items.Add(item);
                 }
             }
+
+            traceLevelListView.EndUpdate();
         }
 
-        private void traceLevelListView_ItemChecked(object sender, ItemCheckedEventArgs e) {
+        private void traceLevelListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            if (e.Item.Checked) {
-                e.Item.ForeColor = TraceLevelColors[(TraceLevel)e.Item.Tag].ForeColor;
-                e.Item.BackColor = TraceLevelColors[(TraceLevel)e.Item.Tag].BackColor;
-            } else {
+            if (e.Item.Checked)
+            {
+                var colors = ColorUtil.TraceLevelPalette[(TraceLevel)e.Item.Tag];
+                e.Item.ForeColor = colors.ForeColor;
+                e.Item.BackColor = colors.BackColor;
+            }
+            else
+            {
                 e.Item.ForeColor = Color.Empty;
                 e.Item.BackColor = Color.Empty;
             }
@@ -669,53 +729,80 @@ namespace TracerX.Forms {
             okBtn.Enabled = true;
         }
 
-        private void selectAllTraceLevels_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in traceLevelListView.Items) {
+        private void selectAllTraceLevels_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in traceLevelListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void clearAllTraceLevels_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in traceLevelListView.Items) {
+        private void clearAllTraceLevels_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in traceLevelListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertTraceLevels_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in traceLevelListView.Items) {
+        private void invertTraceLevels_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in traceLevelListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void traceLevelListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void traceLevelListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_traceLevelSorter == null) {
+            if (_traceLevelSorter == null)
+            {
                 // Create a delegate for comparing the IDs of the ThreadObjects that
                 // correspond to two ListViewItems.
-                ListViewItemSorter.RowComparer levelComparer = delegate(ListViewItem x, ListViewItem y) {
-                    // The ListViewItem tags are ThreadObjects.
-                    int xint = (int)(TraceLevel)x.Tag;
-                    int yint = (int)(TraceLevel)y.Tag;
+                ListViewSorter.RowComparer levelComparer = delegate(ListViewItem x, ListViewItem y)
+                {
+                    // The ListViewItem tags are TraceLevelObject.
+                    int xint = (int)((TraceLevel)x.Tag);
+                    int yint = (int)((TraceLevel)y.Tag);
 
                     return xint - yint;
                 };
 
-                traceLevelNameCol.Tag = levelComparer;
-                traceLevelCheckCol.Tag = _checkComparer;
-                _traceLevelSorter = new ListViewItemSorter(traceLevelListView);
+                _traceLevelSorter = new ListViewSorter(traceLevelListView);
+                _traceLevelSorter.CustomComparers[traceLevelNameCol] = levelComparer;
+                _traceLevelSorter.CustomComparers[traceLevelCheckCol] = _checkComparer;
+                _traceLevelSorter.Sort(e.Column);
             }
 
-            _traceLevelSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
-        private bool ApplyTraceLevels() {
-            foreach (ListViewItem item in traceLevelListView.Items) {
-                TraceLevel level = (TraceLevel)(item.Tag);
-                TraceLevelColors[level].Enabled = item.Checked;
+        private bool ApplyTraceLevels()
+        {
+            int newBitMask = 0;
+
+            lock (TraceLevelObjects.Lock)
+            {
+                foreach (ListViewItem item in traceLevelListView.Items)
+                {
+                    TraceLevel level = (TraceLevel)item.Tag;
+                    TraceLevelObject levelobj = TraceLevelObjects.AllTraceLevels[level];
+
+                    if (item.Checked)
+                    {
+                        levelobj.RowColors = ColorUtil.TraceLevelPalette[level];
+                        newBitMask |= (int)level;
+                    }
+                    else
+                    {
+                        levelobj.RowColors = null;
+                    }
+                }
             }
 
+            Settings.Default.ColoredLevels = newBitMask;
             return true;
         }
 
@@ -723,55 +810,66 @@ namespace TracerX.Forms {
 
         #region Sessions
 
-        private void InitSessions() {
+        private void InitSessions()
+        {
             sessionListView.BeginUpdate();
 
             // Populate the session listview from SessionObjects.AllSessionObjects.
-            lock (SessionObjects.Lock) {
-                foreach (Reader.Session ses in SessionObjects.AllSessionObjects) {
+            lock (SessionObjects.Lock)
+            {
+                foreach (Reader.Session ses in SessionObjects.AllSessionObjects)
+                {
                     ListViewItem item = new ListViewItem(new string[] { string.Empty, ses.Name });
 
-                    if (ses.Colors != null) {
+                    if (ses.RowColors != null)
+                    {
                         item.Checked = true;
-                        _sessionColors[ses] = ses.Colors;
-                        item.BackColor = ses.Colors.BackColor;
-                        item.ForeColor = ses.Colors.ForeColor;
+                        _sessionColors[ses] = ses.RowColors;
+                        item.BackColor = ses.RowColors.BackColor;
+                        item.ForeColor = ses.RowColors.ForeColor;
                     }
 
                     item.Tag = ses;
                     this.sessionListView.Items.Add(item);
                 }
+
+                checkAllSessions.Visible = SessionObjects.AllSessionObjects.Count <= ColorUtil.Palette.Length;
+                invertSessions.Visible = SessionObjects.AllSessionObjects.Count <= ColorUtil.Palette.Length;
             }
 
             sessionListView.EndUpdate();
-            checkAllSessions.Visible = SessionObjects.AllSessionObjects.Count <= Palette.Length;
-            invertSessions.Visible = SessionObjects.AllSessionObjects.Count <= Palette.Length;
         }
 
-        private void sessionListView_ItemCheck(object sender, ItemCheckEventArgs e) {
+        private void sessionListView_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            lock (SessionObjects.Lock) {
+            lock (SessionObjects.Lock)
+            {
                 var item = sessionListView.Items[e.Index];
                 var ses = (Reader.Session)item.Tag;
 
-                if (e.NewValue == CheckState.Checked) {
-                    if (_sessionColors.Count < Palette.Length) {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (_sessionColors.Count < ColorUtil.Palette.Length)
+                    {
                         // Find the first unused color pair and associated it with the session.
-                        var colorPair = (from cp in Palette
-                                         where !_sessionColors.Values.Contains(cp)
-                                         select cp).First();
+                        var colorPair = ColorUtil.Palette.Except(_sessionColors.Values).First();
                         _sessionColors[ses] = colorPair;
                         item.BackColor = colorPair.BackColor;
                         item.ForeColor = colorPair.ForeColor;
 
                         applyBtn.Enabled = true;
                         okBtn.Enabled = true;
-                    } else {
-                        var msg = string.Format("Only {0} items may be checked concurrently.", Palette.Length);
+                    }
+                    else
+                    {
+                        var msg = string.Format("Only {0} items may be checked concurrently.", ColorUtil.Palette.Length);
                         MessageBox.Show(this, msg, "TracerX-Viewer");
                     }
-                } else {
+                }
+                else
+                {
                     _sessionColors.Remove(ses);
                     item.BackColor = Color.Empty;
                     item.ForeColor = Color.Empty;
@@ -782,42 +880,53 @@ namespace TracerX.Forms {
             }
         }
 
-        private bool ApplySessionSelection() {
-            foreach (ListViewItem item in sessionListView.Items) {
+        private bool ApplySessionSelection()
+        {
+            foreach (ListViewItem item in sessionListView.Items)
+            {
                 Reader.Session ses = (Reader.Session)item.Tag;
                 ColorPair colors = null;
                 _sessionColors.TryGetValue(ses, out colors);
-                ses.Colors = colors;
+                ses.RowColors = colors;
             }
 
             return true;
         }
 
-        private void checkAllSessions_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in sessionListView.Items) {
+        private void checkAllSessions_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in sessionListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void uncheckAllSessions_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in sessionListView.Items) {
+        private void uncheckAllSessions_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in sessionListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertSessions_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in sessionListView.Items) {
+        private void invertSessions_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in sessionListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void sessionListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void sessionListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_sessionSorter == null) {
+            if (_sessionSorter == null)
+            {
                 // Create a delegate for comparing the indexes of the Session objects that
                 // correspond to two ListViewItems.
-                ListViewItemSorter.RowComparer idComparer = delegate(ListViewItem x, ListViewItem y) {
+                ListViewSorter.RowComparer idComparer = delegate(ListViewItem x, ListViewItem y)
+                {
                     // The ListViewItem tags are SessionObjects.
                     int xint = ((Reader.Session)x.Tag).Index;
                     int yint = ((Reader.Session)y.Tag).Index;
@@ -825,12 +934,12 @@ namespace TracerX.Forms {
                     return xint - yint;
                 };
 
-                sessionCol.Tag = idComparer;
-                sessionCheckCol.Tag = _checkComparer;
-                _sessionSorter = new ListViewItemSorter(sessionListView);
+                _sessionSorter = new ListViewSorter(sessionListView);
+                _sessionSorter.CustomComparers[sessionCol] = idComparer;
+                _sessionSorter.CustomComparers[sessionCheckCol] = _checkComparer;
+                _sessionSorter.Sort(e.Column);
             }
 
-            _sessionSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -838,55 +947,66 @@ namespace TracerX.Forms {
 
         #region Thread Ids
 
-        private void InitThreadIds() {
+        private void InitThreadIds()
+        {
             threadIdListView.BeginUpdate();
 
             // Populate the thread ID listview from ThreadObjects.AllThreads.
-            lock (ThreadObjects.Lock) {
-                foreach (ThreadObject thread in ThreadObjects.AllThreadObjects) {
+            lock (ThreadObjects.Lock)
+            {
+                foreach (ThreadObject thread in ThreadObjects.AllThreadObjects)
+                {
                     ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Id.ToString() });
 
-                    if (thread.Colors != null) {
+                    if (thread.RowColors != null)
+                    {
                         item.Checked = true;
-                        _threadIDColors[thread] = thread.Colors;
-                        item.BackColor = thread.Colors.BackColor;
-                        item.ForeColor = thread.Colors.ForeColor;
+                        _threadIDColors[thread] = thread.RowColors;
+                        item.BackColor = thread.RowColors.BackColor;
+                        item.ForeColor = thread.RowColors.ForeColor;
                     }
 
                     item.Tag = thread;
                     this.threadIdListView.Items.Add(item);
                 }
+
+                checkAllThreadIds.Visible = ThreadObjects.AllThreadObjects.Count <= ColorUtil.Palette.Length;
+                invertThreadIds.Visible = ThreadObjects.AllThreadObjects.Count <= ColorUtil.Palette.Length;
             }
 
             threadIdListView.EndUpdate();
-            checkAllThreadIds.Visible = ThreadObjects.AllThreadObjects.Count <= Palette.Length;
-            invertThreadIds.Visible = ThreadObjects.AllThreadObjects.Count <= Palette.Length;
         }
 
-        private void threadIdListView_ItemCheck(object sender, ItemCheckEventArgs e) {
+        private void threadIdListView_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            lock (ThreadObjects.Lock) {
+            lock (ThreadObjects.Lock)
+            {
                 var item = threadIdListView.Items[e.Index];
                 var thread = (ThreadObject)item.Tag;
 
-                if (e.NewValue == CheckState.Checked) {
-                    if (_threadIDColors.Count < Palette.Length) {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (_threadIDColors.Count < ColorUtil.Palette.Length)
+                    {
                         // Find the first unused color pair and associated it with the thread.
-                        var colorPair = (from cp in Palette
-                                         where !_threadIDColors.Values.Contains(cp)
-                                         select cp).First();
+                        var colorPair = ColorUtil.Palette.Except(_threadIDColors.Values).First();
                         _threadIDColors[thread] = colorPair;
                         item.BackColor = colorPair.BackColor;
                         item.ForeColor = colorPair.ForeColor;
 
                         applyBtn.Enabled = true;
                         okBtn.Enabled = true;
-                    } else {
-                        var msg = string.Format("Only {0} items may be checked concurrently.", Palette.Length);
+                    }
+                    else
+                    {
+                        var msg = string.Format("Only {0} items may be checked concurrently.", ColorUtil.Palette.Length);
                         MessageBox.Show(this, msg, "TracerX-Viewer");
                     }
-                } else {
+                }
+                else
+                {
                     _threadIDColors.Remove(thread);
                     item.BackColor = Color.Empty;
                     item.ForeColor = Color.Empty;
@@ -897,42 +1017,53 @@ namespace TracerX.Forms {
             }
         }
 
-        private bool ApplyThreadIdSelection() {
-            foreach (ListViewItem item in threadIdListView.Items) {
+        private bool ApplyThreadIdSelection()
+        {
+            foreach (ListViewItem item in threadIdListView.Items)
+            {
                 ThreadObject thread = (ThreadObject)item.Tag;
                 ColorPair colors = null;
                 _threadIDColors.TryGetValue(thread, out colors);
-                thread.Colors = colors;
+                thread.RowColors = colors;
             }
 
             return true;
         }
 
-        private void checkAllThreadIds_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadIdListView.Items) {
+        private void checkAllThreadIds_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadIdListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void uncheckAllThreadIds_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadIdListView.Items) {
+        private void uncheckAllThreadIds_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadIdListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertThreadIDs_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadIdListView.Items) {
+        private void invertThreadIDs_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadIdListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void threadIdListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void threadIdListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_threadIdSorter == null) {
+            if (_threadIdSorter == null)
+            {
                 // Create a delegate for comparing the IDs of the ThreadObjects that
                 // correspond to two ListViewItems.
-                ListViewItemSorter.RowComparer idComparer = delegate(ListViewItem x, ListViewItem y) {
+                ListViewSorter.RowComparer idComparer = delegate(ListViewItem x, ListViewItem y)
+                {
                     // The ListViewItem tags are ThreadObjects.
                     int xint = ((ThreadObject)x.Tag).Id;
                     int yint = ((ThreadObject)y.Tag).Id;
@@ -940,12 +1071,12 @@ namespace TracerX.Forms {
                     return xint - yint;
                 };
 
-                threadIdCol.Tag = idComparer;
-                threadCheckCol.Tag = _checkComparer;
-                _threadIdSorter = new ListViewItemSorter(threadIdListView);
+                _threadIdSorter = new ListViewSorter(threadIdListView);
+                _threadIdSorter.CustomComparers[threadCheckCol] = _checkComparer;
+                _threadIdSorter.CustomComparers[threadIdCol] = idComparer;
+                _threadIdSorter.Sort(e.Column);
             }
 
-            _threadIdSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -953,55 +1084,66 @@ namespace TracerX.Forms {
 
         #region Thread Names
 
-        private void InitThreadNames() {
+        private void InitThreadNames()
+        {
             threadNameListView.BeginUpdate();
 
             // Populate the thread Name listview from ThreadNames.AllThreadNames.
-            lock (ThreadNames.Lock) {
-                foreach (ThreadName thread in ThreadNames.AllThreadNames) {
+            lock (ThreadNames.Lock)
+            {
+                foreach (ThreadName thread in ThreadNames.AllThreadNames)
+                {
                     ListViewItem item = new ListViewItem(new string[] { string.Empty, thread.Name });
 
-                    if (thread.Colors != null) {
+                    if (thread.RowColors != null)
+                    {
                         item.Checked = true;
-                        _threadNameColors[thread] = thread.Colors;
-                        item.BackColor = thread.Colors.BackColor;
-                        item.ForeColor = thread.Colors.ForeColor;
+                        _threadNameColors[thread] = thread.RowColors;
+                        item.BackColor = thread.RowColors.BackColor;
+                        item.ForeColor = thread.RowColors.ForeColor;
                     }
 
                     item.Tag = thread;
                     this.threadNameListView.Items.Add(item);
                 }
+
+                checkAllThreadNames.Visible = ThreadNames.AllThreadNames.Count <= ColorUtil.Palette.Length;
+                invertThreadNames.Visible = ThreadNames.AllThreadNames.Count <= ColorUtil.Palette.Length;
             }
 
             threadNameListView.EndUpdate();
-            checkAllThreadNames.Visible = ThreadNames.AllThreadNames.Count <= Palette.Length;
-            invertThreadNames.Visible = ThreadNames.AllThreadNames.Count <= Palette.Length;
         }
 
-        private void threadNameListView_ItemCheck(object sender, ItemCheckEventArgs e) {
+        private void threadNameListView_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            lock (ThreadNames.Lock) {
+            lock (ThreadNames.Lock)
+            {
                 var item = threadNameListView.Items[e.Index];
                 var thread = (ThreadName)item.Tag;
 
-                if (e.NewValue == CheckState.Checked) {
-                    if (_threadNameColors.Count < Palette.Length) {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (_threadNameColors.Count < ColorUtil.Palette.Length)
+                    {
                         // Find the first unused color pair and associated it with the thread.
-                        var colorPair = (from cp in Palette
-                                         where !_threadNameColors.Values.Contains(cp)
-                                         select cp).First();
+                        var colorPair = ColorUtil.Palette.Except(_threadNameColors.Values).First();
                         _threadNameColors[thread] = colorPair;
                         item.BackColor = colorPair.BackColor;
                         item.ForeColor = colorPair.ForeColor;
 
                         applyBtn.Enabled = true;
                         okBtn.Enabled = true;
-                    } else {
-                        var msg = string.Format("Only {0} items may be checked concurrently.", Palette.Length);
+                    }
+                    else
+                    {
+                        var msg = string.Format("Only {0} items may be checked concurrently.", ColorUtil.Palette.Length);
                         MessageBox.Show(this, msg, "TracerX-Viewer");
                     }
-                } else {
+                }
+                else
+                {
                     _threadNameColors.Remove(thread);
                     item.BackColor = Color.Empty;
                     item.ForeColor = Color.Empty;
@@ -1012,44 +1154,54 @@ namespace TracerX.Forms {
             }
         }
 
-        private bool ApplyThreadNameSelection() {
-            foreach (ListViewItem item in threadNameListView.Items) {
+        private bool ApplyThreadNameSelection()
+        {
+            foreach (ListViewItem item in threadNameListView.Items)
+            {
                 ThreadName thread = (ThreadName)item.Tag;
                 ColorPair colors = null;
                 _threadNameColors.TryGetValue(thread, out colors);
-                thread.Colors = colors;
+                thread.RowColors = colors;
             }
 
             return true;
         }
 
-        private void checkAllThreadNames_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadNameListView.Items) {
+        private void checkAllThreadNames_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadNameListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void uncheckAllThreadNames_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadNameListView.Items) {
+        private void uncheckAllThreadNames_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadNameListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertThreadNamess_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in threadNameListView.Items) {
+        private void invertThreadNamess_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in threadNameListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void threadNameListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void threadNameListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_threadNameSorter == null) {
-                _threadNameSorter = new ListViewItemSorter(threadNameListView);
-                threadNameCheckCol.Tag = _checkComparer;
+            if (_threadNameSorter == null)
+            {
+                _threadNameSorter = new ListViewSorter(threadNameListView);
+                _threadNameSorter.CustomComparers[threadNameCheckCol] = _checkComparer;
+                _threadNameSorter.Sort(e.Column);
             }
 
-            _threadNameSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -1057,55 +1209,66 @@ namespace TracerX.Forms {
 
         #region Loggers
 
-        private void InitLoggers() {
+        private void InitLoggers()
+        {
             loggerListView.BeginUpdate();
 
             // Populate the thread Name listview from .
-            lock (LoggerObjects.Lock) {
-                foreach (LoggerObject logger in LoggerObjects.AllLoggers) {
+            lock (LoggerObjects.Lock)
+            {
+                foreach (LoggerObject logger in LoggerObjects.AllLoggers)
+                {
                     ListViewItem item = new ListViewItem(new string[] { string.Empty, logger.Name });
 
-                    if (logger.Colors != null) {
+                    if (logger.RowColors != null)
+                    {
                         item.Checked = true;
-                        _loggerColors[logger] = logger.Colors;
-                        item.BackColor = logger.Colors.BackColor;
-                        item.ForeColor = logger.Colors.ForeColor;
+                        _loggerColors[logger] = logger.RowColors;
+                        item.BackColor = logger.RowColors.BackColor;
+                        item.ForeColor = logger.RowColors.ForeColor;
                     }
 
                     item.Tag = logger;
                     this.loggerListView.Items.Add(item);
                 }
+
+                checkAllLoggers.Visible = LoggerObjects.AllLoggers.Count <= ColorUtil.Palette.Length;
+                invertLoggers.Visible = LoggerObjects.AllLoggers.Count <= ColorUtil.Palette.Length;
             }
 
             loggerListView.EndUpdate();
-            checkAllLoggers.Visible = LoggerObjects.AllLoggers.Count <= Palette.Length;
-            invertLoggers.Visible = LoggerObjects.AllLoggers.Count <= Palette.Length;
         }
 
-        private void loggerListView_ItemCheck(object sender, ItemCheckEventArgs e) {
+        private void loggerListView_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            lock (LoggerObjects.Lock) {
+            lock (LoggerObjects.Lock)
+            {
                 var item = loggerListView.Items[e.Index];
                 var logger = (LoggerObject)item.Tag;
 
-                if (e.NewValue == CheckState.Checked) {
-                    if (_loggerColors.Count < Palette.Length) {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (_loggerColors.Count < ColorUtil.Palette.Length)
+                    {
                         // Find the first unused color pair and associate it with the logger.
-                        var colorPair = (from cp in Palette
-                                         where !_loggerColors.Values.Contains(cp)
-                                         select cp).First();
+                        var colorPair = ColorUtil.Palette.Except(_loggerColors.Values).First();
                         _loggerColors[logger] = colorPair;
                         item.BackColor = colorPair.BackColor;
                         item.ForeColor = colorPair.ForeColor;
 
                         applyBtn.Enabled = true;
                         okBtn.Enabled = true;
-                    } else {
-                        var msg = string.Format("Only {0} items may be checked concurrently.", Palette.Length);
+                    }
+                    else
+                    {
+                        var msg = string.Format("Only {0} items may be checked concurrently.", ColorUtil.Palette.Length);
                         MessageBox.Show(this, msg, "TracerX-Viewer");
                     }
-                } else {
+                }
+                else
+                {
                     _loggerColors.Remove(logger);
                     item.BackColor = Color.Empty;
                     item.ForeColor = Color.Empty;
@@ -1116,44 +1279,54 @@ namespace TracerX.Forms {
             }
         }
 
-        private bool ApplyLoggerSelection() {
-            foreach (ListViewItem item in loggerListView.Items) {
+        private bool ApplyLoggerSelection()
+        {
+            foreach (ListViewItem item in loggerListView.Items)
+            {
                 LoggerObject logger = (LoggerObject)item.Tag;
                 ColorPair colors = null;
                 _loggerColors.TryGetValue(logger, out colors);
-                logger.Colors = colors;
+                logger.RowColors = colors;
             }
 
             return true;
         }
 
-        private void checkAllLoggers_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in loggerListView.Items) {
+        private void checkAllLoggers_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in loggerListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void uncheckAllLoggers_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in loggerListView.Items) {
+        private void uncheckAllLoggers_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in loggerListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertLoggers_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in loggerListView.Items) {
+        private void invertLoggers_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in loggerListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void loggerListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void loggerListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_loggerSorter == null) {
-                _loggerSorter = new ListViewItemSorter(loggerListView);
-                loggerCheckCol.Tag = _checkComparer;
+            if (_loggerSorter == null)
+            {
+                _loggerSorter = new ListViewSorter(loggerListView);
+                _loggerSorter.CustomComparers[loggerCheckCol] = _checkComparer;
+                _loggerSorter.Sort(e.Column);
             }
 
-            _loggerSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
@@ -1161,57 +1334,68 @@ namespace TracerX.Forms {
 
         #region Methods
 
-        private void InitMethods() {
-            methodListView.BeginUpdate();
-
+        private void InitMethods()
+        {
             // Populate the thread Name listview from .
-            lock (MethodObjects.Lock) {
-                foreach (MethodObject method in MethodObjects.AllMethods) {
+            lock (MethodObjects.Lock)
+            {
+                methodListView.BeginUpdate();
+
+                foreach (MethodObject method in MethodObjects.AllMethods)
+                {
                     ListViewItem item = new ListViewItem(new string[] { string.Empty, method.Name });
 
-                    if (method.Colors != null) {
+                    if (method.RowColors != null)
+                    {
                         item.Checked = true;
-                        _methodColors[method] = method.Colors;
-                        item.BackColor = method.Colors.BackColor;
-                        item.ForeColor = method.Colors.ForeColor;
+                        _methodColors[method] = method.RowColors;
+                        item.BackColor = method.RowColors.BackColor;
+                        item.ForeColor = method.RowColors.ForeColor;
                     }
 
                     item.Tag = method;
                     this.methodListView.Items.Add(item);
                 }
+
+                methodListView.EndUpdate();
+
+                checkAllMethods.Visible = MethodObjects.AllMethods.Count <= ColorUtil.Palette.Length;
+                invertMethods.Visible = MethodObjects.AllMethods.Count <= ColorUtil.Palette.Length;
             }
 
-            methodListView.EndUpdate();
-
-            checkAllMethods.Visible = MethodObjects.AllMethods.Count <= Palette.Length;
-            invertMethods.Visible = MethodObjects.AllMethods.Count <= Palette.Length;
             calledMethodsChk.Checked = ColorCalledMethods;
         }
 
-        private void methodListView_ItemCheck(object sender, ItemCheckEventArgs e) {
+        private void methodListView_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
             if (_suppressEvents) return;
 
-            lock (MethodObjects.Lock) {
+            lock (MethodObjects.Lock)
+            {
                 var item = methodListView.Items[e.Index];
                 var method = (MethodObject)item.Tag;
 
-                if (e.NewValue == CheckState.Checked) {
-                    if (_methodColors.Count < Palette.Length) {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (_methodColors.Count < ColorUtil.Palette.Length)
+                    {
                         // Find the first unused color pair and associate it with the logger.
-                        var colorPair = (from cp in Palette
-                                         where !_methodColors.Values.Contains(cp)
-                                         select cp).First();
+                        var colorPair = ColorUtil.Palette.Except(_methodColors.Values).First();
                         _methodColors[method] = colorPair;
                         item.BackColor = colorPair.BackColor;
                         item.ForeColor = colorPair.ForeColor;
 
                         applyBtn.Enabled = true;
                         okBtn.Enabled = true;
-                    } else {
-                        var msg = string.Format("Only {0} items may be checked concurrently.", Palette.Length);
+                    }
+                    else
+                    {
+                        var msg = string.Format("Only {0} items may be checked concurrently.", ColorUtil.Palette.Length);
                         MessageBox.Show(this, msg, "TracerX-Viewer");
                     }
-                } else {
+                }
+                else
+                {
                     _methodColors.Remove(method);
                     item.BackColor = Color.Empty;
                     item.ForeColor = Color.Empty;
@@ -1222,12 +1406,14 @@ namespace TracerX.Forms {
             }
         }
 
-        private bool ApplyMethodSelection() {
-            foreach (ListViewItem item in methodListView.Items) {
+        private bool ApplyMethodSelection()
+        {
+            foreach (ListViewItem item in methodListView.Items)
+            {
                 MethodObject method = (MethodObject)item.Tag;
                 ColorPair colors = null;
                 _methodColors.TryGetValue(method, out colors);
-                method.Colors = colors;
+                method.RowColors = colors;
             }
 
             ColorCalledMethods = calledMethodsChk.Checked;
@@ -1235,37 +1421,46 @@ namespace TracerX.Forms {
             return true;
         }
 
-        private void checkAllMethods_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in methodListView.Items) {
+        private void checkAllMethods_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in methodListView.Items)
+            {
                 item.Checked = true;
             }
         }
 
-        private void uncheckAllMethods_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in methodListView.Items) {
+        private void uncheckAllMethods_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in methodListView.Items)
+            {
                 item.Checked = false;
             }
         }
 
-        private void invertMethods_Click(object sender, EventArgs e) {
-            foreach (ListViewItem item in methodListView.Items) {
+        private void invertMethods_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in methodListView.Items)
+            {
                 item.Checked = !item.Checked;
             }
         }
 
-        private void methodListView_ColumnClick(object sender, ColumnClickEventArgs e) {
+        private void methodListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
             _suppressEvents = true;
             // Create the sorting objects the first time they are required.
-            if (_methodSorter == null) {
-                _methodSorter = new ListViewItemSorter(methodListView);
-                methodCheckCol.Tag = _checkComparer;
+            if (_methodSorter == null)
+            {
+                _methodSorter = new ListViewSorter(methodListView);
+                _methodSorter.CustomComparers[methodCheckCol] = _checkComparer;
+                _methodSorter.Sort(e.Column);
             }
 
-            _methodSorter.Sort(e.Column);
             _suppressEvents = false;
         }
 
-        private void calledMethodsChk_CheckedChanged(object sender, EventArgs e) {
+        private void calledMethodsChk_CheckedChanged(object sender, EventArgs e)
+        {
             if (_suppressEvents) return;
 
             okBtn.Enabled = true;
@@ -1274,7 +1469,16 @@ namespace TracerX.Forms {
 
         #endregion Methods
 
-        private bool Apply() {
+        private bool Apply()
+        {
+            if (tabControl1.SelectedTab == customPage) ColorUtil.RowColorDriver = ColorDriver.Custom;
+            else if (tabControl1.SelectedTab == traceLevelPage) ColorUtil.RowColorDriver = ColorDriver.TraceLevels;
+            else if (tabControl1.SelectedTab == loggerPage) ColorUtil.RowColorDriver = ColorDriver.Loggers;
+            else if (tabControl1.SelectedTab == methodPage) ColorUtil.RowColorDriver = ColorDriver.Methods;
+            else if (tabControl1.SelectedTab == threadIDPage) ColorUtil.RowColorDriver = ColorDriver.ThreadIDs;
+            else if (tabControl1.SelectedTab == threadNamePage) ColorUtil.RowColorDriver = ColorDriver.ThreadNames;
+            else if (tabControl1.SelectedTab == sessionPage) ColorUtil.RowColorDriver = ColorDriver.Sessions;
+
             bool result =
                 ApplyCustomRules() &&
                 ApplyTraceLevels() &&
@@ -1284,7 +1488,8 @@ namespace TracerX.Forms {
                 ApplyMethodSelection() &&
                 ApplyThreadIdSelection();
 
-            if (result) {
+            if (result)
+            {
                 // Invalidating the ListView causes the visible rows to be regenerated using
                 // the settings associated with CurrentTab.
                 Settings.Default.ColoringEnabled = enableChk.Checked;
@@ -1292,7 +1497,7 @@ namespace TracerX.Forms {
 
                 // Since the Custom tab has so many controls, we just always leave the
                 // OK and Apply buttons enabled rather than trying to detect every change.
-                if (CurrentTab != ColorTab.Custom)
+                if (tabControl1.SelectedTab != customPage)
                 {
                     okBtn.Enabled = false;
                     applyBtn.Enabled = false;
@@ -1302,30 +1507,36 @@ namespace TracerX.Forms {
             return result;
         }
 
-        private void applyBtn_Click(object sender, EventArgs e) {
+        private void applyBtn_Click(object sender, EventArgs e)
+        {
             Apply();
         }
 
-        private void okBtn_Click(object sender, EventArgs e) {
-            if (!Apply()) {
+        private void okBtn_Click(object sender, EventArgs e)
+        {
+            if (!Apply())
+            {
                 // This prevents the form from closing.
                 DialogResult = DialogResult.None;
-           }
+            }
         }
 
-        private void paletteBtn_Click(object sender, EventArgs e) {
+        private void paletteBtn_Click(object sender, EventArgs e)
+        {
             var dlg = new PaletteViewer();
             dlg.ShowDialog();
         }
 
-        private void enableChk_CheckedChanged(object sender, EventArgs e) {
+        private void enableChk_CheckedChanged(object sender, EventArgs e)
+        {
             if (_suppressEvents) return;
 
             okBtn.Enabled = true;
             applyBtn.Enabled = true;
         }
 
-        private void okBtn_EnabledChanged(object sender, EventArgs e) {
+        private void okBtn_EnabledChanged(object sender, EventArgs e)
+        {
             Debug.Print("Enabled changed");
         }
     }

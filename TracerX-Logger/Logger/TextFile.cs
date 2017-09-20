@@ -10,13 +10,15 @@ using System.Text;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 
-namespace TracerX {
+namespace TracerX
+{
     /// <summary>
     /// Methods and configuration for logging to a text file.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    public sealed class TextFile : FileBase {
+    public sealed class TextFile : FileBase
+    {
         private string _formatString = "{time:HH:mm:ss.fff} {level} {thname} {logger}+{method} {ind}{msg}";
 
         private string _internalFormatString;
@@ -31,7 +33,8 @@ namespace TracerX {
         /// Constructs an unopened TracerX TextFile with default Name and Directory.
         /// </summary>
         public TextFile()
-            : base(".txt") {
+            : base(".txt")
+        {
             _internalFormatString = Logger.ParseFormatString(_formatString);
         }
 
@@ -48,10 +51,13 @@ namespace TracerX {
         /// {ind} = Indentation  
         /// {msg} = Message text 
         /// </summary>
-        public string FormatString {
+        public string FormatString
+        {
             get { return _formatString; }
-            set {
-                lock (_fileLocker) {
+            set
+            {
+                lock (_fileLocker)
+                {
                     _formatString = value;
                     _internalFormatString = Logger.ParseFormatString(value);
                 }
@@ -77,15 +83,18 @@ namespace TracerX {
         /// <summary>
         /// _logfile.BaseStream.
         /// </summary>
-        protected override Stream BaseStream {
+        protected override Stream BaseStream
+        {
             get { return _logfile.BaseStream; }
         }
 
         /// <summary>
         /// Closes the log file.  It should not be reopened.
         /// </summary>
-        public override void Close() {
-            lock (_fileLocker) {
+        public override void Close()
+        {
+            lock (_fileLocker)
+            {
                 if (_logfile != null)
                 {
                     OnClosing();
@@ -106,25 +115,33 @@ namespace TracerX {
 
         // This either opens the originally specified log file, opens an
         // alternate log file, or throws an exception.
-        protected override void InternalOpen() {
+        protected override void InternalOpen()
+        {
             // Use this to generate alternate file names A-Z if file can't be opened.
             char c = 'A';
             string renamedFile = null;
             string simpleName = _logFileName;
 
-            while (_logfile == null) {
-                try {
+            while (_logfile == null)
+            {
+                try
+                {
                     var outFile = new FileInfo(FullPath);
                     bool appending = false;
 
-                    if (outFile.Exists) {
-                        if (outFile.Length < AppendIfSmallerThanMb << _shift) {
+                    if (outFile.Exists)
+                    {
+                        if (outFile.Length < AppendIfSmallerThanMb << _shift)
+                        {
                             // Open in append mode.
                             appending = true;
-                        } else {
-                            if (Archives > 0) {
+                        }
+                        else
+                        {
+                            if (Archives > 0)
+                            {
                                 renamedFile = FullPath + ".tempname";
-                                if (File.Exists(renamedFile)) File.Delete(renamedFile);
+                                File.Delete(renamedFile); // MSDN says no exception if file doesn't exist.
 
                                 // If the file is in use, this throws an exception.
                                 outFile.MoveTo(renamedFile);
@@ -134,13 +151,18 @@ namespace TracerX {
 
                     // If the file is in use, this throws an exception.
                     _logfile = OpenStreamWriter(appending);
-                } catch (System.IO.IOException) {
+                }
+                catch (System.IO.IOException)
+                {
                     // File is probably in use, try next alternate name.
-                    if (c > 'Z') {
+                    if (c >= 'Z')
+                    {
                         // That was the last chance.  Rethrow the exception to
                         // end the loop and cause the exception to be logged.
                         throw;
-                    } else {
+                    }
+                    else
+                    {
                         // Try the next alternative file name, up to Z.
                         // Changing _logFileName also changes Name and FullName.
                         // Note that _logFileName has no extension or _00.
@@ -155,58 +177,70 @@ namespace TracerX {
             ++CurrentFile;
 
             // This guarantees the file won't be emtpy, and may help user understand what's going on with rolling or wrapping.
-            _logfile.WriteLine("TracerX: Log file opened at {0}.  FullFilePolicy = {1}, Use_00 = {2}, MaxGrowth = {3} {4}, AppendIfSmallerThan = {5} {3}, initial size = {6}.", _openTimeUtc.ToLocalTime(), FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB", AppendIfSmallerThanMb, BaseStream.Length);
+            _logfile.WriteLine("TracerX: Log file opened at {0}.  FullFilePolicy = {1}, Use_00 = {2}, MaxSize = {3} {4}, AppendIfSmallerThan = {5} {4}, initial size = {6}.", _openTimeUtc.ToLocalTime(), FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB", AppendIfSmallerThanMb, BaseStream.Length);
 
             ManageArchives(renamedFile);
         }
 
-        // Manages the archive files (*_01, *_02, etc.).
-        // Parameter renamedFile is what the old output file was renamed 
-        // to if it existed (with extension .tempname).
-        // It must become the _01 file.
-        // if renamedFile is null, the old output file wasn't replaced (did't
-        // exist or was opened in append mode), and no renaming is necessary,
-        // but we still delete files with numbers higher than Archives.
-        private void ManageArchives(string renamedFile) {
-            string bareFilePath = Path.Combine(Directory, _logFileName);
-            int highestNumKept = (renamedFile == null) ? (int)Archives : (int)Archives - 1;
+        //// Manages the archive files (*_01, *_02, etc.).
+        //// Parameter renamedFile is what the old output file was renamed 
+        //// to if it existed (with extension .tempname).
+        //// It must become the _01 file.
+        //// if renamedFile is null, the old output file wasn't replaced (did't
+        //// exist or was opened in append mode), and no renaming is necessary,
+        //// but we still delete files with numbers higher than Archives.
+        //private void ManageArchives(string renamedFile)
+        //{
+        //    string bareFilePath = Path.Combine(Directory, _logFileName);
+        //    int highestNumKept = (renamedFile == null) ? (int)Archives : (int)Archives - 1;
 
-            // This gets the archived files in reverse order.
-            string[] files = EnumOldFiles("_??.txt");
+        //    // This gets the archived files in reverse order.
+        //    string[] files = EnumOldFiles("_??.txt");
 
-            if (files != null) {
-                foreach (string oldFile in files) {
-                    // Extract the archive number that comes after "bareFileName_".
-                    // The number must be two numeric chars or it's not one of our files.
-                    string plain = Path.GetFileNameWithoutExtension(oldFile);
-                    string numPart = plain.Substring(_logFileName.Length + 1);
+        //    if (files != null)
+        //    {
+        //        foreach (string oldFile in files)
+        //        {
+        //            // Extract the archive number that comes after "bareFileName_".
+        //            // The number must be two numeric chars or it's not one of our files.
+        //            string plain = Path.GetFileNameWithoutExtension(oldFile);
+        //            string numPart = plain.Substring(_logFileName.Length + 1);
 
-                    if (numPart.Length == 2) {
-                        int num;
+        //            if (numPart.Length == 2)
+        //            {
+        //                int num;
 
-                        if (int.TryParse(numPart, out num) && num > 0) {
-                            if (num > highestNumKept) {
-                                // The archive number is more than the user wants to keep, so delete it.
-                                try {
-                                    File.Delete(oldFile);
-                                } catch (Exception ex) {
-                                    string msg = string.Format("An exception occurred while deleting the old log file\n{0}\n\n{1}", oldFile, ex);
-                                    Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
-                                }
-                            } else if (renamedFile != null) {
-                                // Rename (increment the file's archive number by 1).
-                                TryRename(oldFile, bareFilePath, num + 1);
-                            }
-                        }
-                    }
-                }
+        //                if (int.TryParse(numPart, out num) && num > 0)
+        //                {
+        //                    if (num > highestNumKept)
+        //                    {
+        //                        // The archive number is more than the user wants to keep, so delete it.
+        //                        try
+        //                        {
+        //                            File.Delete(oldFile);
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            string msg = string.Format("An exception occurred while deleting the old log file\n{0}\n\n{1}", oldFile, ex);
+        //                            Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
+        //                        }
+        //                    }
+        //                    else if (renamedFile != null)
+        //                    {
+        //                        // Rename (increment the file's archive number by 1).
+        //                        TryRename(oldFile, bareFilePath, num + 1);
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                // Finally, rename the most recent log file, if it exists.
-                if (renamedFile != null) {
-                    TryRename(renamedFile, bareFilePath, 1);
-                }
-            }
-        }
+        //        // Finally, rename the most recent log file, if it exists.
+        //        if (renamedFile != null)
+        //        {
+        //            TryRename(renamedFile, bareFilePath, 1);
+        //        }
+        //    }
+        //}
 
         // Logs a message to the text file, possibly wrapping or starting a new file.  
         internal void LogMsg(Logger logger, ThreadData threadData, TraceLevel msgLevel, string msg)
@@ -302,7 +336,7 @@ namespace TracerX {
                             }
 
                             WriteLine(logger, threadData, msgLevel, localNow, msg);
-                            
+
                             if (FullFilePolicy == FullFilePolicy.Close && IsOpen && BaseStream.Position >= _maxFilePosition)
                             {
                                 string closeMsg = string.Format("TracerX: Closing file (not rolling or wrapping) because the maximum size was reached and FullFilePolicy = Close, MaxSizeMb = {0}, AppendIfSmallerThanMb = {1}, UseKbForSize = {2}", MaxSizeMb, AppendIfSmallerThanMb, UseKbForSize);
@@ -332,15 +366,15 @@ namespace TracerX {
 
             // Close, roll, and reopen.
             Close();
-            ManageArchives(FullPath);
-            _logfile = OpenStreamWriter(false);
+            Open();
 
             // Write an explanation at the top of the new file.
             msg = string.Format("TracerX: Log file reopened (rolled).  FullFilePolicy = {0}, Use_00 = {1}, MaxSize = {2} {3}.", FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB");
             _logfile.WriteLine(msg);
         }
 
-        private StreamWriter OpenStreamWriter(bool append) {
+        private StreamWriter OpenStreamWriter(bool append)
+        {
             // Use an EncoderReplacementFallback to replace any invalid UTF-16 chars
             // found in logged strings with '?' (System.String uses UTF-16 internally).
             var EncoderFallback = new EncoderReplacementFallback("?");
@@ -351,14 +385,17 @@ namespace TracerX {
 
             _openSize = result.BaseStream.Length;
             _openTimeUtc = DateTime.UtcNow;
-            _maxFilePosition = _openSize + (MaxSizeMb << _shift);
+            _maxFilePosition = MaxSizeMb << _shift;
             _lastPhysicalLinePos = long.MaxValue;
             _positionOfCircularPart = 0;
             _wrapped = false;
 
-            if (CircularStartDelaySeconds == 0) {
+            if (CircularStartDelaySeconds == 0)
+            {
                 _circularStartTime = DateTime.MaxValue;
-            } else {
+            }
+            else
+            {
                 // This isn't the only place where _circularStartTime is set, and the
                 // other place uses UTC, so we must also.
                 _circularStartTime = _openTimeUtc.AddSeconds(CircularStartDelaySeconds);
@@ -370,13 +407,15 @@ namespace TracerX {
             return result;
         }
 
-        private void WriteLine(Logger logger, ThreadData threadData, TraceLevel msgLevel, DateTime now, string msg) {
+        private void WriteLine(Logger logger, ThreadData threadData, TraceLevel msgLevel, DateTime now, string msg)
+        {
             long startPos = BaseStream.Position;
             string indent = "";
 
             threadData.GetTextFileState(logger.TextFile); // Sets threadData.TextFileState.
 
-            if (threadData.TextFileState.StackDepth > 0) {
+            if (threadData.TextFileState.StackDepth > 0)
+            {
                 indent = new string(' ', 3 * threadData.TextFileState.StackDepth);
             }
 
@@ -394,7 +433,8 @@ namespace TracerX {
                 msg ?? "<null>"
                 );
 
-            if (startPos <= _lastPhysicalLinePos && BaseStream.Position > _lastPhysicalLinePos) {
+            if (startPos <= _lastPhysicalLinePos && BaseStream.Position > _lastPhysicalLinePos)
+            {
                 // We just overwrote the start of last physcial line in the file, so
                 // truncate the file in case that line was very long.
                 BaseStream.SetLength(BaseStream.Position);
@@ -403,7 +443,8 @@ namespace TracerX {
                 _lastPhysicalLinePos = long.MaxValue;
             }
 
-            if (startPos < _maxFilePosition && BaseStream.Position >= _maxFilePosition) {
+            if (startPos < _maxFilePosition && BaseStream.Position >= _maxFilePosition)
+            {
                 // The line we just wrote is the one that crossed the threshold.  Remember its location.
                 _lastPhysicalLinePos = startPos;
             }
