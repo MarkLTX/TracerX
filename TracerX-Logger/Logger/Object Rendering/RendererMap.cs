@@ -21,8 +21,10 @@
 
 using System;
 using System.IO;
+using System.Linq.Expressions;
 
-namespace TracerX {
+namespace TracerX
+{
     /// <summary>
     /// This static class maps object types to <see cref="IObjectRenderer"/>s that render objects of each registered
     /// type as strings for logging.
@@ -40,7 +42,8 @@ namespace TracerX {
     /// <c>object</c> using the appropriate renderers defined in this map.
     /// </para>
     /// </remarks>
-    public static class RendererMap {
+    public static class RendererMap
+    {
         #region Member Variables
 
         private static System.Collections.Hashtable m_map;
@@ -52,9 +55,11 @@ namespace TracerX {
 
         #region Constructors
 
-        static RendererMap() {
+        static RendererMap()
+        {
             m_map = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
             Put(typeof(System.Exception), new ExceptionRenderer());
+            Put(typeof(Expression<Func<object>>[]), new LambdaRenderer());
         }
 
         #endregion
@@ -71,10 +76,12 @@ namespace TracerX {
         /// should be used when streaming output to a <see cref="TextWriter"/>.
         /// </para>
         /// </remarks>
-        public static string FindAndRender(object obj) {
+        public static string FindAndRender(object obj)
+        {
             // Optimization for strings
             string strData = obj as String;
-            if (strData != null) {
+            if (strData != null)
+            {
                 return strData;
             }
 
@@ -97,32 +104,47 @@ namespace TracerX {
         /// as a <see cref="string"/>.
         /// </para>
         /// </remarks>
-        public static void FindAndRender(object obj, TextWriter writer) {
-            if (obj == null) {
+        public static void FindAndRender(object obj, TextWriter writer)
+        {
+            if (obj == null)
+            {
                 writer.Write("<null>");
-            } else {
+            }
+            else
+            {
                 // Optimization for strings
                 string str = obj as string;
-                if (str != null) {
+                if (str != null)
+                {
                     writer.Write(str);
-                } else {
+                }
+                else
+                {
                     // Lookup the renderer for the specific type
-                    try {
+                    try
+                    {
                         Get(obj.GetType()).RenderObject(obj, writer);
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         // return default message
                         string objectTypeName = "";
-                        if (obj != null && obj.GetType() != null) {
+                        if (obj != null && obj.GetType() != null)
+                        {
                             objectTypeName = obj.GetType().FullName;
                         }
 
                         writer.Write("<TracerX.Error>Exception rendering object type [" + objectTypeName + "]");
-                        if (ex != null) {
+                        if (ex != null)
+                        {
                             string exceptionText = null;
 
-                            try {
+                            try
+                            {
                                 exceptionText = ex.ToString();
-                            } catch {
+                            }
+                            catch
+                            {
                                 // Ignore exception
                             }
 
@@ -148,10 +170,14 @@ namespace TracerX {
         /// with the type of the object parameter.
         /// </param>
         /// </remarks>
-        public static IObjectRenderer Get(Object obj) {
-            if (obj == null) {
+        public static IObjectRenderer Get(Object obj)
+        {
+            if (obj == null)
+            {
                 return null;
-            } else {
+            }
+            else
+            {
                 return Get(obj.GetType());
             }
         }
@@ -168,8 +194,10 @@ namespace TracerX {
         /// <see cref="DefaultRenderer"/> will be returned.
         /// </para>
         /// </remarks>
-        public static IObjectRenderer Get(Type type) {
-            if (type == null) {
+        public static IObjectRenderer Get(Type type)
+        {
+            if (type == null)
+            {
                 throw new ArgumentNullException("type");
             }
 
@@ -178,17 +206,21 @@ namespace TracerX {
             // Check cache
             result = (IObjectRenderer)m_cache[type];
 
-            if (result == null) {
-                for (Type cur = type; cur != null; cur = cur.BaseType) {
+            if (result == null)
+            {
+                for (Type cur = type; cur != null; cur = cur.BaseType)
+                {
                     // Search the type's interfaces
                     result = SearchTypeAndInterfaces(cur);
-                    if (result != null) {
+                    if (result != null)
+                    {
                         break;
                     }
                 }
 
                 // if not set then use the default renderer
-                if (result == null) {
+                if (result == null)
+                {
                     result = s_defaultRenderer;
                 }
 
@@ -204,14 +236,20 @@ namespace TracerX {
         /// </summary>
         /// <param name="type">the type to lookup the renderer for</param>
         /// <returns>the renderer for the specified type</returns>
-        private static IObjectRenderer SearchTypeAndInterfaces(Type type) {
+        private static IObjectRenderer SearchTypeAndInterfaces(Type type)
+        {
             IObjectRenderer r = (IObjectRenderer)m_map[type];
-            if (r != null) {
+            if (r != null)
+            {
                 return r;
-            } else {
-                foreach (Type t in type.GetInterfaces()) {
+            }
+            else
+            {
+                foreach (Type t in type.GetInterfaces())
+                {
                     r = SearchTypeAndInterfaces(t);
-                    if (r != null) {
+                    if (r != null)
+                    {
                         return r;
                     }
                 }
@@ -228,7 +266,8 @@ namespace TracerX {
         /// Get the default renderer
         /// </para>
         /// </remarks>
-        public static IObjectRenderer DefaultRenderer {
+        public static IObjectRenderer DefaultRenderer
+        {
             get { return s_defaultRenderer; }
         }
 
@@ -242,7 +281,8 @@ namespace TracerX {
         /// cannot be removed.
         /// </para>
         /// </remarks>
-        public static void Clear() {
+        public static void Clear()
+        {
             m_map.Clear();
             m_cache.Clear();
         }
@@ -259,13 +299,16 @@ namespace TracerX {
         /// specifying the same <paramref name="typeToRender"/> as an argument.
         /// </para>
         /// </remarks>
-        public static void Put(Type typeToRender, IObjectRenderer renderer) {
+        public static void Put(Type typeToRender, IObjectRenderer renderer)
+        {
             m_cache.Clear();
 
-            if (typeToRender == null) {
+            if (typeToRender == null)
+            {
                 throw new ArgumentNullException("typeToRender");
             }
-            if (renderer == null) {
+            if (renderer == null)
+            {
                 throw new ArgumentNullException("renderer");
             }
 

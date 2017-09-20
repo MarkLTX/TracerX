@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A070CBB6-7BC2-4459-B525-3C15ECF50F6E}"
 	ProjectSection(SolutionItems) = preProject
 		Actual_License.txt = Actual_License.txt
@@ -19,54 +21,87 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "HelloWorld\HelloWorld.csproj", "{EB2B1796-B619-4786-9325-51591782320A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-ServiceImpl", "TracerX-ServiceImpl\TracerX-ServiceImpl.csproj", "{58B31300-67DF-41C0-934C-F2E102CF53BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Service", "TracerX-Service\TracerX-Service.csproj", "{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Common", "TracerX-Common\TracerX-Common.csproj", "{13F8EE48-FAE6-456B-B6AB-C3A169911894}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 9
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs05
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Sample\\Sample.csproj
+		SccProjectName1 = Sample
+		SccLocalPath1 = Sample
+		SccProjectUniqueName2 = TracerX-Logger\\TracerX-Logger.csproj
+		SccProjectName2 = TracerX-Logger
+		SccLocalPath2 = TracerX-Logger
+		SccProjectUniqueName3 = TracerX-Viewer\\TracerX-Viewer.csproj
+		SccProjectName3 = TracerX-Viewer
+		SccLocalPath3 = TracerX-Viewer
+		SccProjectUniqueName4 = TestApp\\TestApp.csproj
+		SccProjectName4 = TestApp
+		SccLocalPath4 = TestApp
+		SccProjectUniqueName5 = HelloWorld\\HelloWorld.csproj
+		SccProjectName5 = HelloWorld
+		SccLocalPath5 = HelloWorld
+		SccProjectUniqueName6 = TracerX-ServiceImpl\\TracerX-ServiceImpl.csproj
+		SccProjectName6 = TracerX-ServiceImpl
+		SccLocalPath6 = TracerX-ServiceImpl
+		SccProjectUniqueName7 = TracerX-Service\\TracerX-Service.csproj
+		SccProjectName7 = TracerX-Service
+		SccLocalPath7 = TracerX-Service
+		SccProjectUniqueName8 = TracerX-Common\\TracerX-Common.csproj
+		SccProjectName8 = TracerX-Common
+		SccLocalPath8 = TracerX-Common
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Development|Any CPU = Development|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C44E2D7-0403-4624-A940-66ADD11B6E9D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54A86033-AACB-4A87-AD47-355548E42936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54A86033-AACB-4A87-AD47-355548E42936}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54A86033-AACB-4A87-AD47-355548E42936}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{54A86033-AACB-4A87-AD47-355548E42936}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{54A86033-AACB-4A87-AD47-355548E42936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54A86033-AACB-4A87-AD47-355548E42936}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E301635B-84D6-4A08-9856-B7D5C0BCD918}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6ED390F-4902-4E55-B3B7-60001EA31A25}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB2B1796-B619-4786-9325-51591782320A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB2B1796-B619-4786-9325-51591782320A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB2B1796-B619-4786-9325-51591782320A}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB2B1796-B619-4786-9325-51591782320A}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{EB2B1796-B619-4786-9325-51591782320A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB2B1796-B619-4786-9325-51591782320A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58B31300-67DF-41C0-934C-F2E102CF53BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58B31300-67DF-41C0-934C-F2E102CF53BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58B31300-67DF-41C0-934C-F2E102CF53BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58B31300-67DF-41C0-934C-F2E102CF53BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13F8EE48-FAE6-456B-B6AB-C3A169911894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F8EE48-FAE6-456B-B6AB-C3A169911894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F8EE48-FAE6-456B-B6AB-C3A169911894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F8EE48-FAE6-456B-B6AB-C3A169911894}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UpdateAssemblyVersion = False
-		BuildVersion_BuildVersioningStyle = None.None.None.None
 		BuildVersion_UpdateFileVersion = False
+		BuildVersion_BuildVersioningStyle = None.None.None.None
+		BuildVersion_UpdateAssemblyVersion = False
 	EndGlobalSection
 EndGlobal

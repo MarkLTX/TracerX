@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     internal partial class ColumnsDlg : Form
     {

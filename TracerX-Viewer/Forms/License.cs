@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     internal partial class License : Form
     {

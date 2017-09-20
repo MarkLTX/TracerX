@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TracerX.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MRU" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="RecentFiles" Type="TracerX.ViewedPath[]" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ColWidths" Type="System.Int32[]" Scope="User">
@@ -83,7 +83,7 @@
     <Setting Name="AutoUpdate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="RecentFolders" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="RecentFolders" Type="TracerX.ViewedPath[]" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SearchThreadsByName" Type="System.Boolean" Scope="User">
@@ -109,6 +109,54 @@
     </Setting>
     <Setting Name="AutoReload" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RowColorDriver" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Custom</Value>
+    </Setting>
+    <Setting Name="ColoredLevels" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SavedRemoteServers" Type="TracerX.SavedServer[]" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShowServers" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FilesColumns" Type="System.Int32[]" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FoldersColumns" Type="System.Int32[]" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShowViewedArchives" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FileSortCol" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="FolderSortCol" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ShowFileTimesAgo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowFolderTimesAgo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UseFastScrollingKluge" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowLoggerTree" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowMethodTree" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DaysToSaveViewTimes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ShowTracerxFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -1,4 +1,4 @@
-namespace TracerX.Viewer {
+namespace TracerX {
     partial class CallStack {
         /// <summary>
         /// Required designer variable.

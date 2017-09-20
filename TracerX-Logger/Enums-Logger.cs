@@ -2,14 +2,15 @@
 using System;
 using System.ComponentModel;
 
-namespace TracerX {
+namespace TracerX 
+{
     /// <summary>
     /// Each <see cref="Logger"/> has a TracerX.TraceLevel property for each logging destination that specifies
     /// the highest Level of output allowed by that Logger for each destination. If the TraceLevel
     /// is Inherited, the effective TraceLevel is inherited from the Logger's parent Logger.
     /// </summary>
-    [Flags]
-    public enum TraceLevel : byte {
+    public enum TraceLevel : byte 
+    {
         /// <summary> 
         /// A Logger with an Inherited trace level inherits its TraceLevel from its parent. 
         /// </summary>
@@ -84,10 +85,10 @@ namespace TracerX {
 
     /// <summary>
     /// One of these is prepended to every logged message to indicate what data is present. 
-    /// The Viewer app has a similar declaration.
+    /// Used by both Logger and Viewer.
     /// </summary>
     [Flags]
-    internal enum DataFlags : ushort
+    public enum DataFlags : ushort
     {
         None = 0,       // No bits are set.
         Zero1 = 1,      // This bit should always be 0.
@@ -109,5 +110,4 @@ namespace TracerX {
         Zero4 = 1 << 15,// This bit should always be 0.
         InvalidOnes = Zero1 | Zero2 | Zero3 | Zero4, // Invalid value if any are set.
     }
-
 }

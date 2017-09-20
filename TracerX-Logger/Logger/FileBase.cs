@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Collections.Generic;
 
-namespace TracerX {
+namespace TracerX
+{
     /// <summary>
     /// This is the base class for <see cref="BinaryFile"/> and <see cref="TextFile"/>.
     /// It can't be used directly, but there doesn't seem to be a way to exclude it from
@@ -12,7 +16,8 @@ namespace TracerX {
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    public abstract class FileBase {
+    public abstract class FileBase
+    {
         /// <summary>
         /// Directory of the output log file.  Environment variables are expanded
         /// when this is set.  The following strings (not really environment variables)
@@ -23,15 +28,22 @@ namespace TracerX {
         /// Other special variables are %COMMON_APPDATA%, %DESKTOP%, and %MY_DOCUMENTS%.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public string Directory {
+        public string Directory
+        {
             get { return _logDirectory; }
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
-                        try {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
+                        try
+                        {
                             _logDirectory = ExpandDirectoryString(value);
-                        } catch (Exception ex) {
-                            Logger.EventLogging.Log("An error occurred while replacing environment variables in BinaryFile.Directory value " + value + "\r\n" + ex.Message,  Logger.EventLogging.ExceptionInLogger);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.EventLogging.Log("An error occurred while replacing environment variables in BinaryFile.Directory value " + value + "\r\n" + ex.Message, Logger.EventLogging.ExceptionInLogger);
                         }
                     }
                 }
@@ -45,18 +57,42 @@ namespace TracerX {
         /// the binary file and ".txt" for the text file.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public string Name {
-            get {
-                if (Use_00) {
-                    return _logFileName + "_00" + _extension;
-                } else {
+        public string Name
+        {
+            get
+            {
+                if (Use_00)
+                {
+                    if (Archives < 10)
+                    {
+                        return _logFileName + "_0" + _extension;
+                    }
+                    else if (Archives < 100)
+                    {
+                        return _logFileName + "_00" + _extension;
+                    }
+                    else if (Archives < 1000)
+                    {
+                        return _logFileName + "_000" + _extension;
+                    }
+                    else
+                    {
+                        // Use 4 digits since 9999 is the max value of Archives.
+                        return _logFileName + "_0000" + _extension;
+                    }
+                }
+                else
+                {
                     return _logFileName + _extension;
                 }
             }
 
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
                         // The name is stored without extension or number.
                         _logFileName = Path.GetFileNameWithoutExtension(value);
                     }
@@ -72,11 +108,15 @@ namespace TracerX {
         /// Default = false.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public bool Use_00 {
+        public bool Use_00
+        {
             get { return _use_00; }
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
                         _use_00 = value;
                     }
                 }
@@ -87,8 +127,10 @@ namespace TracerX {
         /// <summary>
         /// Gets the full path of the log file based on Directory, Name, and Use_00.
         /// </summary>
-        public string FullPath {
-            get {
+        public string FullPath
+        {
+            get
+            {
                 return Path.Combine(Directory, Name);
             }
         }
@@ -100,7 +142,8 @@ namespace TracerX {
         public bool UseKbForSize
         {
             get { return _shift == 10; }
-            set {
+            set
+            {
                 lock (_fileLocker)
                 {
                     if (!IsOpen)
@@ -117,15 +160,17 @@ namespace TracerX {
         /// Max size of the output log file in megabytes (1 Mb = 2**20 bytes).
         /// If <see cref="UseKbForSize"/> is true, this specifies kilobytes instead of megabytes.
         /// Values over 4095 are coerced to 4095.  The default is 20.
-        /// in Append mode (see <see cref="AppendIfSmallerThanMb"/>), this specifies how much the file can grow rather 
-        /// than the absolute maximum size.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public uint MaxSizeMb {
+        public uint MaxSizeMb
+        {
             get { return _maxSizeMb; }
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
                         if (value > 4095) value = 4095;
                         _maxSizeMb = value;
                     }
@@ -138,7 +183,8 @@ namespace TracerX {
         /// Specifies what to do when the file reaches maximum size.  Default = Wrap.
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public FullFilePolicy FullFilePolicy {
+        public FullFilePolicy FullFilePolicy
+        {
             get { return _fullFilePolicy; }
             set
             {
@@ -159,17 +205,21 @@ namespace TracerX {
         public abstract bool IsOpen { get; }
 
         /// <summary>
-        /// If the log file already exists and is smaller than the specified number
-        /// of Megabytes, it will be opened in Append mode.  Otherwise, a new file
+        /// If the log file already exists and is smaller than both AppendIfSmallerThanMb
+        /// and <see cref="MaxSizeMb"/>, it will be opened in Append mode.  Otherwise, a new file
         /// will be created.  A new file is always created if this is 0 (the default).
-        /// If <see cref="UseKbForSize"/> is true, this specifies kilobytes instead of megabytes.
-        /// Attempts to change this property while the log file is open are ignored.
+        /// If <see cref="UseKbForSize"/> is true, this specifies Kilobytes. Otherwise, it
+        /// specifies Megabytes. Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public uint AppendIfSmallerThanMb {
+        public uint AppendIfSmallerThanMb
+        {
             get { return _appendIfSmallerThanMb; }
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
                         _appendIfSmallerThanMb = value;
                     }
                 }
@@ -178,7 +228,7 @@ namespace TracerX {
         private uint _appendIfSmallerThanMb = 0;
 
         /// <summary>
-        /// How many backups of the output log file to keep (max of 99, default is 3).
+        /// How many backups of the output log file to keep (max of 9999, default is 3).
         /// If the output file already exists and isn't opened in Append mode, 
         /// it will become archive _01 (unless Archives == 0) and any existing 
         /// archive files will be renamed with higher numbers. Existing 
@@ -186,13 +236,17 @@ namespace TracerX {
         /// value are always deleted (even in Append mode).  
         /// Attempts to change this property while the log file is open are ignored.
         /// </summary>
-        public uint Archives {
+        public uint Archives
+        {
             get { return _archives; }
-            set {
-                lock (_fileLocker) {
-                    if (!IsOpen) {
-                        // Do not support more than 99 archives.
-                        if (value > 99) value = 99;
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!IsOpen)
+                    {
+                        // Do not support more than 9999 archives.
+                        if (value > 9999) value = 9999;
                         if (value < 0) value = 0;
                         _archives = value;
                     }
@@ -208,11 +262,15 @@ namespace TracerX {
         /// Set this to 0 to disable this feature.
         /// Attempts to change this value are ignored after circular logging starts.
         /// </summary>
-        public uint CircularStartSizeKb {
+        public uint CircularStartSizeKb
+        {
             get { return _circularStartSizeKb; }
-            set {
-                lock (_fileLocker) {
-                    if (!CircularStarted) {
+            set
+            {
+                lock (_fileLocker)
+                {
+                    if (!CircularStarted)
+                    {
                         if (value > 4193300) value = 4193300;
                         _circularStartSizeKb = value;
                     }
@@ -228,7 +286,8 @@ namespace TracerX {
         /// Set this to 0 to disable this feature.
         /// Attempts to change this value are ignored after circular logging starts.
         /// </summary>
-        public uint CircularStartDelaySeconds {
+        public uint CircularStartDelaySeconds
+        {
             get { return _circularStartDelaySeconds; }
             set { SetCircularDelay(value, ref _circularStartDelaySeconds); } // Logger provides thread-safety.
         }
@@ -255,12 +314,18 @@ namespace TracerX {
         /// <summary>
         /// The current absolute size of the output file.
         /// </summary>
-        public uint CurrentSize {
-            get {
-                lock (_fileLocker) {
-                    if (IsOpen) {
+        public uint CurrentSize
+        {
+            get
+            {
+                lock (_fileLocker)
+                {
+                    if (IsOpen)
+                    {
                         return (uint)BaseStream.Length;
-                    } else {
+                    }
+                    else
+                    {
                         return 0;
                     }
                 }
@@ -270,12 +335,18 @@ namespace TracerX {
         /// <summary>
         /// The current absolute file position (used by test drivers).
         /// </summary>
-        public uint CurrentPosition {
-            get {
-                lock (_fileLocker) {
-                    if (IsOpen) {
+        public uint CurrentPosition
+        {
+            get
+            {
+                lock (_fileLocker)
+                {
+                    if (IsOpen)
+                    {
                         return (uint)BaseStream.Position;
-                    } else {
+                    }
+                    else
+                    {
                         return 0;
                     }
                 }
@@ -316,7 +387,7 @@ namespace TracerX {
         // Object used with the lock keyword to serialize file I/O.
         internal readonly object _fileLocker = new object();
 
-        private string _extension;
+        protected readonly string _extension;
 
         // Count of lines written.
         protected ulong _lineCnt = 0;
@@ -336,11 +407,12 @@ namespace TracerX {
         // File position where the circular part of the log physically starts.
         protected long _positionOfCircularPart;
 
-        protected FileBase(string extension) {
+        protected FileBase(string extension)
+        {
             _extension = extension;
-            _logFileName = Logger.GetAppName();
+            _logFileName = Logger.AppName;
         }
-      
+
 
         /// <summary>
         /// Opens the log file using the configuration specified by various properties.  Raises Opening and Opened events under the internal lock.
@@ -353,7 +425,7 @@ namespace TracerX {
                 {
                     if (IsOpen)
                     {
-                        Logger.EventLogging.Log("OpenLog called after log file was already opened.", Logger.EventLogging.FileAlreadyOpen);
+                        Logger.EventLogging.Log("Open() called after log file was already opened.", Logger.EventLogging.FileAlreadyOpen);
                     }
                     else if (MaxSizeMb == 0)
                     {
@@ -376,7 +448,7 @@ namespace TracerX {
                         }
                         catch (Exception ex)
                         {
-                            string msg = string.Format("The following exception occurred attempting to open the log file\n{0}\n\n{1}", FullPath, ex);
+                            string msg = string.Format("The following exception occurred attempting to open the log file\n\"{0}\"\n{1}", FullPath, ex);
                             Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInOpen);
                             Close();
                         }
@@ -414,14 +486,21 @@ namespace TracerX {
 
         // If circular logging hasn't already started, accept the new number of seconds
         // and update the configVal.
-        private void SetCircularDelay(uint seconds, ref uint configVal) {
-            lock (_fileLocker) {
-                if (!CircularStarted) {
+        private void SetCircularDelay(uint seconds, ref uint configVal)
+        {
+            lock (_fileLocker)
+            {
+                if (!CircularStarted)
+                {
                     configVal = seconds;
-                    if (IsOpen) {
-                        if (seconds == 0) {
+                    if (IsOpen)
+                    {
+                        if (seconds == 0)
+                        {
                             _circularStartTime = DateTime.MaxValue;
-                        } else {
+                        }
+                        else
+                        {
                             _circularStartTime = _openTimeUtc.AddSeconds(seconds);
                         }
                     }
@@ -429,38 +508,135 @@ namespace TracerX {
             }
         }
 
-        protected void TryRename(string from, string template, int num) {
-            string newFile = string.Format("{0}_{1:D2}{2}", template, num, _extension);
+        // Manages the archive files (*_01, *_02, etc.).
+        // Parameter renamedFile is what the old output file was renamed 
+        // to if it existed (has extension ".tempname").
+        // It was the _00 file and must become the _01 file.
+        // if renamedFile is null, the old output file wasn't replaced (didn't
+        // exist or was opened in append mode), and no rolling is necessary,
+        // but we still delete files with numbers larger than Archives.
+        protected void ManageArchives(string renamedFile)
+        {
+            // Get the existing archive files for the current _logFileName.  
+            // Their file names have the format <logFileName>_<numString><_extension>
+            // where <numString> is a number possibly padded with zeros and <_extension> includes a leading '.'. 
 
-            try {
-                File.Move(from, newFile);
-            } catch (Exception ex) {
-                string msg = string.Format("An exception occurred while renaming the old log file\n{0}\nto\n{1}\n\n{2}", from, newFile, ex);
-                 Logger.EventLogging.Log(msg,  Logger.EventLogging.ExceptionInArchive);
+            string filespec = _logFileName + "_*" + _extension;
+            string[] files = System.IO.Directory.GetFiles(Directory, filespec, SearchOption.TopDirectoryOnly);
+            List<KeyValuePair<int, string>> numberedFiles = new List<KeyValuePair<int, string>>();
+            string currentlyOpenedFile = this.FullPath;
+
+            // Consider only the files with valid archive numbers and put them in numberedFiles to be sorted, then
+            // renamed or deleted. Note that we don't assume unique file numbers or a consistent number of digits (e.g.
+            // there might be an _1 and _01 file) because files might get renamed, deleted, copied, etc. outside of our control.
+
+            foreach (string curFile in files)
+            {
+                // Skip the file we just opened because we don't want to rename or delete it (and can't anyway because it's open).
+
+                if (curFile != currentlyOpenedFile)
+                {
+                    // Note that curFile should have the format <logFileName>_<numString><_extension>. Strip off the
+                    // "<_extension>" and "<logFileName>_" to get "<numString>" and confirm "<numString>" is a valid
+                    // archive number (i.e. an integer >= 0).
+
+                    string namePart = Path.GetFileNameWithoutExtension(curFile);
+                    string numPart = namePart.Substring(_logFileName.Length + 1);
+                    int num;
+
+                    if (int.TryParse(numPart, out num) && num >= 0)
+                    {
+                        numberedFiles.Add(new KeyValuePair<int, string>(num, curFile));
+                    }
+                }
+            }
+
+            // We now have numberedFiles.Count files plus the renamedFile, if given, to renumber from 1 to N. Start with
+            // the highest number first so that file can be deleted or renamed to make a spot for the next lower number,
+            // and so on. We should end up with sequentially numbered files.
+
+            int newNum = (renamedFile == null) ? numberedFiles.Count : numberedFiles.Count + 1;
+            string bareFilePath = Path.Combine(Directory, _logFileName);
+
+            // Sort the files to process them in order of highest number to lowest number so each numbered file is
+            // renamed to the next highest number (assuming they were named with sequential numbers to begin with).
+            foreach (string oldFile in numberedFiles.OrderByDescending(f => f.Key).Select(f => f.Value))
+            {
+                if (newNum > Archives)
+                {
+                    // The file's new archive number is more than the user wants to keep, so delete it.
+
+                    try
+                    {
+                        File.Delete(oldFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = string.Format("An exception occurred while deleting the old log file\n{0}\n\n{1}", oldFile, ex);
+                        Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
+                    }
+                }
+                else
+                {
+                    // Possibly rename the file with it's new archive number.  It might actually 
+                    // get the same number again, but padded with a different number of zeros.
+                    TryRename(oldFile, bareFilePath, newNum);
+                }
+
+                --newNum;
+            }
+
+            // Finally, rename the most recent log file, if given, to the *_01 file.
+
+            if (renamedFile != null)
+            {
+                TryRename(renamedFile, bareFilePath, 1);
             }
         }
 
-        // This returns a list of archived versions (e.g. logFileName_01.tx1) in
-        // reverse alphabetical order.
-        protected string[] EnumOldFiles(string suffixPattern) {
-            string[] files = null;
+        private void TryRename(string from, string template, int num)
+        {
+            // Convert num to a string padded to the number of digits required to hold the highest num allowed (Archives).
 
-            try {
-                // Get the archived log files in reverse order.
-                // There must be two characters after the '_'.
-                string wild = _logFileName + suffixPattern;
-                files = System.IO.Directory.GetFiles(Directory, wild, SearchOption.TopDirectoryOnly);
-                Array.Sort(files, StringComparer.OrdinalIgnoreCase);
-                Array.Reverse(files);
-            } catch (Exception ex) {
-                string msg = string.Format("An exception occurred enumerating old log files in\n{0}\n\n{1}", Directory, ex);
-                 Logger.EventLogging.Log(msg,  Logger.EventLogging.ExceptionInArchive);
+            string newFile = null;
+
+            Debug.Assert(num <= Archives);
+
+            if (Archives < 10)
+            {
+                newFile = string.Format("{0}_{1:D1}{2}", template, num, _extension);
+            }
+            else if (Archives < 100)
+            {
+                newFile = string.Format("{0}_{1:D2}{2}", template, num, _extension);
+            }
+            else if (Archives < 1000)
+            {
+                newFile = string.Format("{0}_{1:D3}{2}", template, num, _extension);
+            }
+            else
+            {
+                newFile = string.Format("{0}_{1:D4}{2}", template, num, _extension);
             }
 
-            return files;
+            if (newFile != from)
+            {
+                try
+                {
+                    DateTime originalCreateTime = File.GetCreationTime(from);
+                    File.Move(from, newFile);
+                    File.SetCreationTime(newFile, originalCreateTime);
+                }
+                catch (Exception ex)
+                {
+                    string msg = string.Format("An exception occurred while renaming the old log file\n{0}\nto\n{1}\n\n{2}", from, newFile, ex);
+                    Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
+                }
+            }
         }
 
-        private static string ExpandDirectoryString(string dir) {
+        private static string ExpandDirectoryString(string dir)
+        {
             if (dir.Contains("%LOCAL_APPDATA%")) dir = dir.Replace("%LOCAL_APPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData));
             if (dir.Contains("%LOCALAPPDATA%")) dir = dir.Replace("%LOCALAPPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData));
             if (dir.Contains("%COMMON_APPDATA%")) dir = dir.Replace("%COMMON_APPDATA%", Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData));
@@ -474,23 +650,33 @@ namespace TracerX {
 
         // The default output dir for a winforms app is the local AppData dir.
         // For a web app, it's the dir containing the web site.
-        private static string GetDefaultDir() {
-            try {
+        private static string GetDefaultDir()
+        {
+            try
+            {
                 // This always returns null in web apps, sometimes returns
                 // null in the winforms designer.
-                if (Assembly.GetEntryAssembly() == null) {
+                if (Assembly.GetEntryAssembly() == null)
+                {
                     // We might be in a web app, but this will throw an
                     // exception if we're not.
                     return Logger.GetWebAppDir();
-                } else {
+                }
+                else
+                {
                     // This generally means we're in a winforms app.
                     return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
                 }
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Getting here means we're probably not in a web app.
-                try {
+                try
+                {
                     return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     // Give up. Return something to avoid an exception.
                     return "C:\\";
                 }
@@ -498,25 +684,38 @@ namespace TracerX {
         }
 
         // Get the directory the EXE or website is in.
-        private static string GetAppDir() {
-            try {
+        private static string GetAppDir()
+        {
+            try
+            {
                 // This throws an exception in web apps and sometimes in
                 // the winforms designer.
                 return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            } catch (Exception) {
-                try {
+            }
+            catch (Exception)
+            {
+                try
+                {
                     // This SEEMS to return the correct value for both web apps
                     // and winforms apps.
                     return AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
-                } catch (Exception) {
-                    try {
+                }
+                catch (Exception)
+                {
+                    try
+                    {
                         // Expect an exception if we're not a web app.
                         return Logger.GetWebAppDir();
-                    } catch (Exception) {
-                        try {
+                    }
+                    catch (Exception)
+                    {
+                        try
+                        {
                             // Punt.
                             return Environment.CurrentDirectory;
-                        } catch (Exception) {
+                        }
+                        catch (Exception)
+                        {
                             // Give up.  Return something to avoid an exception.
                             return "C:\\";
                         }

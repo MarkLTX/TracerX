@@ -414,22 +414,57 @@ namespace TestApp
             MessageBox.Show("Generated " + Path.Combine(Logger.DefaultBinaryFile.Directory, Logger.DefaultBinaryFile.Name));
         }
 
-        public void MoreThanUintMaxLines()
+        public void Run50Threads()
         {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "Main";
-            Logger.DefaultBinaryFile.Name = "MoreThanUintMaxLines.tx1";
-            Logger.DefaultBinaryFile.MaxSizeMb = 100;
-            Logger.DefaultBinaryFile.CircularStartSizeKb = 1;
-            Logger.StandardData.BinaryFileTraceLevel = TracerX.TraceLevel.Off;
+            Logger.DefaultBinaryFile.Name = "50Threads";
+            Logger.DefaultBinaryFile.MaxSizeMb = 21;
+            Logger.DefaultBinaryFile.CircularStartSizeKb = 100;
+            Logger.Root.BinaryFileTraceLevel = TracerX.TraceLevel.Verbose;
             Logger.DefaultBinaryFile.Open();
 
-            for (long i = 1; i < (long)uint.MaxValue + 99; ++i)
+            // Make sure there are enough threads in the pool.
+            ThreadPool.SetMaxThreads(100,100);
+
+            // Each thread will release this semaphore when it ends.
+            semaphore = new Semaphore(0, 50);
+
+            for (long i = 0; i < 50; ++i)
             {
-                Log.WarnFormat("File size is {0}, position is {1}.", Logger.DefaultBinaryFile.CurrentSize, Logger.DefaultBinaryFile.CurrentPosition);
+                ThreadPool.QueueUserWorkItem(HundredPerSec, i+1);
             }
+
+            // Wait for each thread to release the semaphore.
+            for (long i = 0; i < 50; ++i) semaphore.WaitOne();
 
             Logger.DefaultBinaryFile.Close();
             MessageBox.Show("Generated " + Path.Combine(Logger.DefaultBinaryFile.Directory, Logger.DefaultBinaryFile.Name));
+        }
+
+        private void HundredPerSec(object threadNum)
+        {
+            for (int i = 0; i < 100000; ++i)
+            {
+                if (Logger.DefaultBinaryFile.CurrentSize > 20000000)
+                {
+                    Log.Info("File size is greater than 20000000 bytes.");
+                }
+
+                Log.VerboseFormat("i = {0}", i);
+                Thread.Sleep(10);
+
+                //using (Log.VerboseCall("Thread-" + threadNum + "_" + i))
+                using (Log.VerboseCall())
+                {
+                    for (int j = 0; j < 5; ++j)
+                    {
+                        Log.VerboseFormat("j = {0}, ticks = {1}", j, DateTime.Now.Ticks);
+                        Thread.Sleep(10);
+                    }
+                }
+            }
+
+            semaphore.Release();
         }
 
         public void ControlledLogging()

@@ -1,4 +1,4 @@
-namespace TracerX.Viewer {
+namespace TracerX {
     partial class FullText {
         /// <summary>
         /// Required designer variable.

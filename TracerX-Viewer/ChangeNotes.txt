@@ -1,11 +1,16 @@
-Added a "start page".
-Added "New Window" item to File menu.
-Added a close button to the toolbar.
-Put Version Checking results on the start page.
-Fixed incorrect icon that appears in column header after filtering is cancelled.
-Fixed inaccurate "percent complete" displayed when loading a large file.
+Shows more info about files and folders on start page (size and timestamp).
+Added section for recently updated folders to start page.
+Added click-to-color feature for methods, loggers, threads, trace levels, and sessions.
+Allow toggling between absolute time and relative time by double-clicking in Time column.
+Added "servers" pane for connecting to remote servers.
 
-TODO:
 
-Add option for number of paths to display on start page?
-Better icon for threads.
+IDEAS:
+
+1)	Add logger option to use ManagedThreadID instead of a counter for thread IDs.  This is
+	complicated because in a multi-session log file the current viewer always adds the max
+	thread ID of the previous session the thread IDs of the next session to keep the IDs
+	unique. This would not be desirable if using the actual ManagedThreadID but the viewer
+	would not be able know if that is the case or not unless the setting were saved in the
+	log file.  Also, each session can independently use or not use that option.
+	

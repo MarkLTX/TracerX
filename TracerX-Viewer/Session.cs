@@ -3,21 +3,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using TracerX.Viewer;
 using System.Diagnostics;
 using System.Security.Cryptography;
-namespace TracerX.Viewer
+namespace TracerX
 {
 
     // This class manages the collection of Sessions for the viewer.
     internal static class SessionObjects
     {
-
         // Lock this when accessing the collection.
         public static object Lock = new object();
 
         // List of all Sessions.
         public static List<Reader.Session> AllSessionObjects = new List<Reader.Session>();
+
+        public static void Clear()
+        {
+            lock (Lock)
+            {
+                AllSessionObjects = new List<Reader.Session>();
+
+                // Since there collection is empty, none are invisible.
+
+                if (_invisibleCount != 0)
+                {
+                    _invisibleCount = 0;
+                    OnAllVisibleChanged();
+                }
+            }
+        }
+
+        public static void RemoveSubitemColors()
+        {
+            lock (Lock)
+            {
+                foreach (Reader.Session session in AllSessionObjects)
+                {
+                    session.SubitemColors = null;
+                }
+            }
+        }
+
+        public static void TrackSubitemColors(HashSet<ColorPair> usedColors)
+        {
+            lock (Lock)
+            {
+                foreach (Reader.Session session in AllSessionObjects)
+                {
+                    usedColors.Add(session.SubitemColors);
+                }
+            }
+        }
+
+        public static void Add(Reader.Session session)
+        {
+            lock (Lock)
+            {
+                AllSessionObjects.Add(session);
+
+                if (!session.Visible)
+                {
+                    IncrementInvisibleCount();
+                }
+            }
+        }
 
         public static void IncrementInvisibleCount()
         {
@@ -43,30 +92,6 @@ namespace TracerX.Viewer
 
         // How many Sessions are invisible (filtered out)?
         private static int _invisibleCount;
-
-        // Count the invisible Sessions in AllSessionObjects, set the internal count (_invisibleCount) accordingly, 
-        // and raise the AllVisibleChanged event if the new count differs from the current count.
-        public static void RecountSessions()
-        {
-            lock (Lock)
-            {
-                int oldCount = _invisibleCount;
-                _invisibleCount = 0;
-
-                foreach (Reader.Session s in AllSessionObjects)
-                {
-                    if (!s.Visible) ++_invisibleCount;
-                }
-
-                if (_invisibleCount != oldCount)
-                {
-                    if (_invisibleCount == 0 || oldCount == 0)
-                    {
-                        OnAllVisibleChanged();
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// Are all threads visible?
@@ -178,14 +203,14 @@ namespace TracerX.Viewer
             // physical record in the circular part of the session.
             private long _possibleNextSessionPos;
 
-            private BinaryReader _fileReader { get { return _reader._fileReader; } }
-            private Reader _reader;
+            private BinaryReader _fileReader { get { return _txReader.InternalReader; } }
+            private Reader _txReader;
             public int MaxThreadID;
             public int Index;
 
             public Session(Reader reader)
             {
-                _reader = reader;
+                _txReader = reader;
             }
 
             #region IFilterable Members
@@ -193,7 +218,8 @@ namespace TracerX.Viewer
             // Session Name is really just a counter.
             public string Name { get; set; }
 
-            public TracerX.Forms.ColorRulesDialog.ColorPair Colors { get; set; }
+            public ColorPair RowColors { get; set; }
+            public ColorPair SubitemColors { get; set; }
 
             public bool Visible
             {
@@ -237,13 +263,25 @@ namespace TracerX.Viewer
                 _fileReader.BaseStream.Position = filePos;
                 SessionStartPos = filePos;
 
-                if (_reader.FormatVersion >= 3)
+                if (_txReader.FormatVersion >= 3)
                 {
                     // Logger version was added to the preamble in version 3.
                     LoggersAssemblyVersion = _fileReader.ReadString();
+
+                    // Ensure the version has all four parts and is a valid version string.
+
+                    if (LoggersAssemblyVersion.Count(x => x == '.') == 3)
+                    {
+                        // Possible exception here.
+                        Version.Parse(LoggersAssemblyVersion);
+                    }
+                    else
+                    {
+                        throw new Exception("Error in session preamble.  Count of '.' chars in logger's version string != 3.");
+                    }
                 }
 
-                if (_reader.FormatVersion >= 7)
+                if (_txReader.FormatVersion >= 7)
                 {
                     MaxKb = _fileReader.ReadInt32();
                 }
@@ -253,10 +291,13 @@ namespace TracerX.Viewer
                     MaxKb = _fileReader.ReadInt32() << 10;
                 }
 
-                if (_reader.FormatVersion >= 6)
+                if (MaxKb < 0) throw new Exception("Preamble contained negative value for MaxKb: " + MaxKb);
+
+                if (_txReader.FormatVersion >= 6)
                 {
                     // These were added in version 6.
                     _maxFilePos = _fileReader.ReadInt64();
+                    if (_maxFilePos < 0) throw new Exception("Preamble contained negative value for _maxFilePos: " + _maxFilePos);
                     FileGuid = new Guid(_fileReader.ReadBytes(16));
                 }
                 else
@@ -272,7 +313,9 @@ namespace TracerX.Viewer
                 CreationTimeLoggersTZ = new DateTime(ticks);
                 IsDST = _fileReader.ReadBoolean();
                 _tzStandard = _fileReader.ReadString();
+                if (_tzStandard.Length < 2 || _tzStandard.Length > 50) throw new Exception("Standard time zone too long or too short: " + _tzStandard.Length);
                 _tzDaylight = _fileReader.ReadString();
+                if (_tzDaylight.Length > 50) throw new Exception("Daylight time zone too long: " + _tzDaylight.Length);
 
                 LastRecordTimeUtc = CreationTimeUtc;
                 _firstRecordPos = _fileReader.BaseStream.Position;
@@ -290,7 +333,7 @@ namespace TracerX.Viewer
                     ulong thisRecordNum;
                     uint thisBlockNum = 0;
 
-                    if (_reader.FormatVersion < 6)
+                    if (_txReader.FormatVersion < 6)
                     {
                         flags = GetFlags(out thisRecordNum);
 
@@ -318,7 +361,8 @@ namespace TracerX.Viewer
                                     DataFlags possibleSession = (DataFlags)_fileReader.ReadInt16();
                                     if (possibleSession == DataFlags.NewSession)
                                     {
-                                        _reader._nextSessionPos = _fileReader.BaseStream.Position;
+                                        _txReader._nextSessionPos = _fileReader.BaseStream.Position;
+                                        Logger.Current.Debug("In ReadRecord(), _nextSessionPos got set to ", _txReader._nextSessionPos);
                                         _possibleNextSessionPos = 0;
                                     }
                                     else
@@ -344,11 +388,13 @@ namespace TracerX.Viewer
                     ++RecordsRead;
                     return record;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // The exception is either from reading past the physical end of the file,
-                    // or reading a corrupted file.
+                    // or reading corrupted data.
                     // Either way, we're done.  Returning null tells the caller to give up.
+                    Logger.Current.Debug("Exception in ReadRecord(): ", ex.Message);
+                    Debug.WriteLine(ex.ToString());
                     return null;
                 }
             }
@@ -426,18 +472,21 @@ namespace TracerX.Viewer
                         threadNameStr = Decrypt();
                     }
 
-                    if (threadNameStr == string.Empty) _curThread.ThreadName = _reader.FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
-                    else _curThread.ThreadName = _reader.FindOrCreateThreadName(threadNameStr);
+                    if (threadNameStr == string.Empty) _curThread.ThreadName = _txReader.FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
+                    else _curThread.ThreadName = _txReader.FindOrCreateThreadName(threadNameStr);
                 }
                 else if (_curThread.ThreadName == null)
                 {
-                    _curThread.ThreadName = _reader.FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
+                    _curThread.ThreadName = _txReader.FindOrCreateThreadName("Thread " + _curThread.Thread.Id);
                 }
 
                 if ((flags & DataFlags.TraceLevel) != DataFlags.None)
                 {
-                    _curThread.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
-                    _reader.LevelsFound |= _curThread.Level;
+                    //_curThread.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
+                    //_reader.LevelsFound |= _curThread.Level;
+
+                    TraceLevel tl = (TracerX.TraceLevel)_fileReader.ReadByte();
+                    _curThread.TLevel = _txReader.GetTraceLevel(tl);
                 }
 
                 if ((flags & DataFlags.StackDepth) != DataFlags.None)
@@ -470,7 +519,7 @@ namespace TracerX.Viewer
                         loggerName = Decrypt();
                     }
 
-                    _curThread.Logger = _reader.GetLogger(loggerName);
+                    _curThread.Logger = _txReader.GetLogger(loggerName);
                 }
 
                 if ((flags & DataFlags.MethodName) != DataFlags.None)
@@ -486,7 +535,7 @@ namespace TracerX.Viewer
                         methodName = Decrypt();
                     }
 
-                    _curThread.MethodName = _reader.GetMethod(methodName);
+                    _curThread.MethodName = _txReader.GetMethod(methodName);
                 }
 
                 if ((flags & DataFlags.Message) != DataFlags.None)
@@ -513,17 +562,17 @@ namespace TracerX.Viewer
 
                         // In format version 5+, we keep track of the call stack
                         // by "pushing" MethodEntry records and "popping" MethodExit records
-                        if (_reader.FormatVersion >= 5)
+                        if (_txReader.FormatVersion >= 5)
                         {
                             _curThread.Push(record);
                         }
                     }
-                    else if (_reader.FormatVersion >= 5 && (flags & DataFlags.MethodExit) != DataFlags.None)
+                    else if (_txReader.FormatVersion >= 5 && (flags & DataFlags.MethodExit) != DataFlags.None)
                     {
                         _curThread.Pop();
                     }
 
-                    _reader.BytesRead += _fileReader.BaseStream.Position - startPos;
+                    _txReader.BytesRead += _fileReader.BaseStream.Position - startPos;
                 }
 
                 if (InCircularPart && _fileReader.BaseStream.Position >= _maxFilePos)
@@ -602,7 +651,7 @@ namespace TracerX.Viewer
                     for (int i = 0; i < _curThread.Depth; ++i)
                     {
                         ExplicitStackEntry entry = new ExplicitStackEntry();
-                        if (_reader.FormatVersion < 6)
+                        if (_txReader.FormatVersion < 6)
                         {
                             entry.EntryLineNum = _fileReader.ReadUInt32(); // Changed from uint to ulong in version 6
                         }
@@ -611,17 +660,18 @@ namespace TracerX.Viewer
                             // _reader.FormatVersion >= 6
                             entry.EntryLineNum = _fileReader.ReadUInt64(); // Changed from uint to ulong in version 6
                         }
-                        entry.Level = (TracerX.TraceLevel)_fileReader.ReadByte();
+                        
+                        entry.TLevel = _txReader.GetTraceLevel((TracerX.TraceLevel)_fileReader.ReadByte());
 
                         if (Reader.Key == null)
                         {
-                            entry.Logger = _reader.GetLogger(_fileReader.ReadString());
-                            entry.Method = _reader.GetMethod(_fileReader.ReadString());
+                            entry.Logger = _txReader.GetLogger(_fileReader.ReadString());
+                            entry.Method = _txReader.GetMethod(_fileReader.ReadString());
                         }
                         else
                         {
-                            entry.Logger = _reader.GetLogger(Decrypt());
-                            entry.Method = _reader.GetMethod(Decrypt());
+                            entry.Logger = _txReader.GetLogger(Decrypt());
+                            entry.Method = _txReader.GetMethod(Decrypt());
                         }
 
                         entry.Depth = (byte)(_curThread.Depth - i - 1);
@@ -634,28 +684,23 @@ namespace TracerX.Viewer
 
             private void ReadThreadID()
             {
-                _threadId = _fileReader.ReadInt32() + _reader._maxThreadIDFromPrevSession;
+                _threadId = _fileReader.ReadInt32() + _txReader._maxThreadIDFromPrevSession;
                 if (_threadId > MaxThreadID) MaxThreadID = _threadId;
 
                 // Look up or add the entry for this ThreadId.
-                if (!_reader._foundThreadIds.TryGetValue(_threadId, out _curThread))
+                if (!_txReader._foundThreadIds.TryGetValue(_threadId, out _curThread))
                 {
                     // First occurrence of this id.
                     _curThread = new ReaderThreadInfo();
 
-                    if (!_reader._oldThreadIds.TryGetValue(_threadId, out _curThread.Thread))
+                    if (!_txReader._oldThreadIds.TryGetValue(_threadId, out _curThread.Thread))
                     {
                         _curThread.Thread = new ThreadObject();
                     }
 
                     _curThread.Thread.Id = _threadId;
-
-                    lock (ThreadObjects.Lock)
-                    {
-                        ThreadObjects.AllThreadObjects.Add(_curThread.Thread);
-                    }
-
-                    _reader._foundThreadIds[_threadId] = _curThread;
+                    ThreadObjects.Add(_curThread.Thread);
+                    _txReader._foundThreadIds[_threadId] = _curThread;
                 }
             }
 
@@ -663,7 +708,7 @@ namespace TracerX.Viewer
             private void Wrap()
             {
                 // Support for multi-session logs was added in version 6.
-                if (_reader.FormatVersion >= 6)
+                if (_txReader.FormatVersion >= 6)
                 {
                     // Before wrapping, check if there is another session appended to this one.
 
@@ -680,7 +725,8 @@ namespace TracerX.Viewer
                         {
                             // Remember the file position of the appended session so we
                             // can return to it after reading the rest of the current session.
-                            _reader._nextSessionPos = _fileReader.BaseStream.Position;
+                            _txReader._nextSessionPos = _fileReader.BaseStream.Position;
+                            Logger.Current.Debug("In Wrap(), just set _nextSessionPos to ", _txReader._nextSessionPos);
                             _possibleNextSessionPos = 0;
                         }
                     }
@@ -696,6 +742,12 @@ namespace TracerX.Viewer
                 // Wrap back to the beginning of the circular part of the file
                 // and continue reading until we run out of properly formatted data.
                 _fileReader.BaseStream.Position = _circularStartPos;
+
+                if (_fileReader.BaseStream is RemoteFileStream)
+                {
+                    // Tell the RemoteFileStream we've wrapped so it can optimize its behavior.
+                    (_fileReader.BaseStream as RemoteFileStream).HasWrapped = true;
+                }
             }
 
             // This is called when reading the circular part of the log to 
@@ -716,7 +768,7 @@ namespace TracerX.Viewer
                     return false;
                 }
 
-                if (_reader.FormatVersion < 6)
+                if (_txReader.FormatVersion < 6)
                 {
                     // Circular flag should never appear in the circular part
                     if (InCircularPart && (flags & DataFlags.CircularStart) != 0)
@@ -766,7 +818,7 @@ namespace TracerX.Viewer
                 {
                     // Not in circular part yet
                     flags = (DataFlags)_fileReader.ReadUInt16();
-                    _reader.BytesRead += sizeof(DataFlags);
+                    _txReader.BytesRead += sizeof(DataFlags);
 
                     if ((flags & DataFlags.CircularStart) != DataFlags.None)
                     {
@@ -780,13 +832,13 @@ namespace TracerX.Viewer
                     // We're in the circular part, where every record starts with its
                     // UInt32 record number, before the data flags.
                     thisRecNum = _fileReader.ReadUInt32();
-                    _reader.BytesRead += sizeof(UInt32);
+                    _txReader.BytesRead += sizeof(UInt32);
                     if (firstCircularRecord)
                     {
                         // This is the first chronological record in the circular part,
                         // so accept the record number as-is.
                         flags = (DataFlags)_fileReader.ReadUInt16();
-                        _reader.BytesRead += sizeof(DataFlags);
+                        _txReader.BytesRead += sizeof(DataFlags);
                     }
                     else
                     {
@@ -795,7 +847,7 @@ namespace TracerX.Viewer
                         if (thisRecNum == LastRecordNum + 1)
                         {
                             flags = (DataFlags)_fileReader.ReadUInt16();
-                            _reader.BytesRead += sizeof(DataFlags);
+                            _txReader.BytesRead += sizeof(DataFlags);
 
                             // There's a slim chance we a read random data that contained the expected
                             // value. Therefore, also check for invalid flags.
@@ -827,7 +879,7 @@ namespace TracerX.Viewer
 
                 if (FlagsAreValid(flags))
                 {
-                    _reader.BytesRead += sizeof(DataFlags);
+                    _txReader.BytesRead += sizeof(DataFlags);
 
                     if ((flags & DataFlags.BlockStart) != 0)
                     {
@@ -835,7 +887,7 @@ namespace TracerX.Viewer
                         thisRecNum = _fileReader.ReadUInt64();
                         long nextBlockPosition = _fileReader.ReadInt64();
 
-                        _reader.BytesRead += sizeof(UInt32) + sizeof(ulong) + sizeof(long);
+                        _txReader.BytesRead += sizeof(UInt32) + sizeof(ulong) + sizeof(long);
 
                         if (InCircularPart)
                         {
@@ -867,16 +919,36 @@ namespace TracerX.Viewer
                     }
                     else if (flags == DataFlags.NewSession)
                     {
-                        // We're done reading the current session.  Remember the location of
-                        // the next session.
-                        _reader._nextSessionPos = _fileReader.BaseStream.Position;
-                        _possibleNextSessionPos = 0;
+                        // It happens fairly often that the two bytes
+                        // following the last valid record happen to equal the NewSession flag.  We need to further validate
+                        // that we've found a new session by attempting to read the session preamble.
+
+                        long tempPos = _fileReader.BaseStream.Position;
+
+                        try
+                        {
+                            var tempSession = new Session(_txReader);
+                            tempSession.ReadPreamble(tempPos);
+                            
+                            // Getting here without an exception means we really did find a new session.  Remember its location.
+                            // We're done reading the current session.
+
+                            _txReader._nextSessionPos = tempPos;
+                            Logger.Current.Debug("In GetFlags6(), _nextSessionPos got set to ", _txReader._nextSessionPos);
+                            _possibleNextSessionPos = 0;
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Current.Warn("Exception reading session preamble at " + tempPos + ": " + ex.Message);
+                        }
+
+                        _fileReader.BaseStream.Position = tempPos;
                         flags = DataFlags.None;
                     }
                     else if (InCircularPart)
                     {
                         thisBlockNum = _fileReader.ReadUInt32();
-                        _reader.BytesRead += sizeof(UInt32);
+                        _txReader.BytesRead += sizeof(UInt32);
 
                         if (thisBlockNum != _lastBlockNum)
                         {
@@ -900,50 +972,64 @@ namespace TracerX.Viewer
             // Used in file format version 6+.
             private long FindFirstBlock(long nextBlockPos, ref DataFlags curFlags, ref ulong curRecNum, ref uint curBlockNum)
             {
-                // curFilePos is the file position of the last good block, after reading 
-                // the flags, block num, and record num.
-                long curFilePos = _fileReader.BaseStream.Position;
-                bool good;
-
-                _fileReader.BaseStream.Position = nextBlockPos;
-
-                try
+                using (Logger.Current.InfoCall())
                 {
-                    do
+                    // curFilePos is the file position of the last good block, after reading 
+                    // the flags, block num, and record num.
+                    long curFilePos = _fileReader.BaseStream.Position;
+                    RemoteFileStream rfs = _fileReader.BaseStream as RemoteFileStream;
+                    bool good;
+
+                    Logger.Current.Debug("Changing file position from ", curFilePos, " to first block in chain at ", nextBlockPos);
+                    _fileReader.BaseStream.Position = nextBlockPos;
+                                        
+                    // In case we're using a RemoteFileStream, this tells it to read a small amount of fresh data on the next Read.
+                    if (rfs != null) rfs.SetNextFill(64);
+
+                    try
                     {
-                        good = false;
-                        var flags = (DataFlags)_fileReader.ReadUInt16();
-
-                        if (FlagsAreValid(flags))
+                        do
                         {
-                            var blockNum = _fileReader.ReadUInt32();
+                            good = false;
+                            var flags = (DataFlags)_fileReader.ReadUInt16();
 
-                            if (blockNum == curBlockNum - 1)
+                            if (FlagsAreValid(flags))
                             {
-                                var recNum = _fileReader.ReadUInt64();
-                                nextBlockPos = _fileReader.ReadInt64();
+                                var blockNum = _fileReader.ReadUInt32();
 
-                                if (nextBlockPos >= _circularStartPos && nextBlockPos < _fileReader.BaseStream.Position)
+                                if (blockNum == curBlockNum - 1)
                                 {
-                                    curFlags = flags;
-                                    curRecNum = recNum;
-                                    curBlockNum = blockNum;
-                                    curFilePos = _fileReader.BaseStream.Position;
-                                    _fileReader.BaseStream.Position = nextBlockPos;
-                                    good = true;
+                                    var recNum = _fileReader.ReadUInt64();
+                                    nextBlockPos = _fileReader.ReadInt64();
+
+                                    if (nextBlockPos >= _circularStartPos && nextBlockPos < _fileReader.BaseStream.Position)
+                                    {
+                                        curFlags = flags;
+                                        curRecNum = recNum;
+                                        curBlockNum = blockNum;
+                                        curFilePos = _fileReader.BaseStream.Position;
+                                        Logger.Current.Debug("Changing file position from ", curFilePos, " to next possible block in chain at ", nextBlockPos);
+                                        _fileReader.BaseStream.Position = nextBlockPos;
+                                        if (rfs != null) rfs.SetNextFill(64);
+                                        good = true;
+                                    }
                                 }
                             }
-                        }
-                    } while (good);
-                }
-                catch (Exception)
-                {
-                }
+                        } while (good);
+                    }
+                    catch (Exception)
+                    {
+                    }
 
-                _fileReader.BaseStream.Position = curFilePos;
+                    Logger.Current.Debug("Last good block found at ", curFilePos);
+                    _fileReader.BaseStream.Position = curFilePos;
 
-                // Return the file position of the DataFlags for the found block.
-                return curFilePos - sizeof(DataFlags) - sizeof(UInt32) - sizeof(ulong) - sizeof(long);
+                    // If using RemoteFileStream, tell it to start reading big chunks going forward.
+                    if (rfs != null) rfs.SetNextFill(100000);
+
+                    // Return the file position of the DataFlags for the found block.
+                    return curFilePos - sizeof(DataFlags) - sizeof(UInt32) - sizeof(ulong) - sizeof(long);
+                }
             }
 
             // Called immediately after finding the CircularStart marker.
@@ -965,7 +1051,7 @@ namespace TracerX.Viewer
 
                 // Remember the file position of the first physical record in the circular part.
                 _circularStartPos = start + oldAreaSize;
-                _reader.BytesRead += _circularStartPos - temp;
+                _txReader.BytesRead += _circularStartPos - temp;
             }
 
             // Starting at the current file position, there is an area of the specified size
@@ -1010,12 +1096,18 @@ namespace TracerX.Viewer
             {
                 List<Record> newRecords = null;
 
-                _reader.InternalOpen(_reader.CurrentFile);
+                Logger.Current.InfoFormat("In ReadMoreRecords(), !_txReader.CanLeaveOpen = {0}, _txReader.IsOpen = {1}", _txReader.CanLeaveOpen, _txReader.IsOpen);
 
-                if (_fileReader != null)
+                if (_txReader.IsOpen || _txReader.InternalOpen())
                 {
-                    // Start by verifying that the last we record we read is still there.
-                    // If not, the logger probably overwrote it and we can't continue.
+                    // Flush() the stream to clear its internal buffer and force it to read fresh data from the file.
+                    // Probably only important if the stream is a RemoteFileStream, which has a special Flush() just for this.
+
+                    _txReader.InternalReader.BaseStream.Flush();
+
+                    // Verify that the last record we read is still there.  If it isn't the logger probably wrapped 
+                    // and overwrote it (or the file was replaced or deleted) and we can't continue.
+
                     if (ReReadLastRecord())
                     {
                         newRecords = new List<Record>();
@@ -1029,7 +1121,8 @@ namespace TracerX.Viewer
                     }
                 }
 
-                _reader.CloseLogFile();
+                if (!_txReader.CanLeaveOpen) _txReader.CloseLogFile();
+
                 return newRecords;
             }
 
@@ -1053,6 +1146,7 @@ namespace TracerX.Viewer
                         // If anything goes wrong or the re-read data doesn't match the old data, 
                         // assume the record got overwritten and we should give up reading.
 
+                        Logger.Current.Debug("Re-reading record ", LastRecordNum, " at file pos ", _lastRecordPos);
                         _fileReader.BaseStream.Position = _lastRecordPos;
                         var flags = (DataFlags)_fileReader.ReadUInt16();
 
@@ -1072,10 +1166,16 @@ namespace TracerX.Viewer
                             Record notQuiteDuplicate = ReadRecordData(flags, thisRecNum, true);
                             result = true;
                         }
+                        else
+                        {
+                            Logger.Current.Info("ReReadLastRecord() failed.  flags = {0}, _lastDataFlags = {1}, thisRecNum = {2}, LastRecordNum = {3}, thisBlockNum = {4}, _lastBlockNum = {5}.", flags, _lastDataFlags, thisRecNum, LastRecordNum, thisBlockNum, _lastBlockNum);
+                        }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Logger.Current.Info("ReReadLastRecord() failed: ", ex);
+                    Debug.WriteLine(ex);
                 }
 
                 return result;

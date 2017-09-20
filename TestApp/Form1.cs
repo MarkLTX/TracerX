@@ -119,7 +119,7 @@ namespace TestApp
         private void button11_Click(object sender, EventArgs e)
         {
             AppDomain otherDomain = AppDomain.CreateDomain("MoreThanUintMaxLines");
-            otherDomain.DoCallBack(new CrossAppDomainDelegate(_domCallbacks.MoreThanUintMaxLines));
+            otherDomain.DoCallBack(new CrossAppDomainDelegate(_domCallbacks.Run50Threads));
             AppDomain.Unload(otherDomain);
         }
 
@@ -805,6 +805,59 @@ namespace TestApp
         {
             var form = new TextTest();
             form.ShowDialog();
+        }
+
+        private void btnTreeOfLoggers_Click(object sender, EventArgs e)
+        {
+            // This tests the viewer's handling of a complex tree of Loggers.
+
+            Debug.Assert(!Logger.DefaultBinaryFile.IsOpen);
+            Logger.DefaultBinaryFile.Name = "TreeOfLoggers";
+            Logger.DefaultBinaryFile.Directory = "%EXEDIR%";
+            Logger.DefaultBinaryFile.UseKbForSize = true;
+            Logger.DefaultBinaryFile.CircularStartSizeKb = 1;
+            Logger.DefaultBinaryFile.MaxSizeMb = 21;
+            Logger.DefaultBinaryFile.Use_00 = true;
+
+            Logger.DefaultBinaryFile.Open();
+
+            string[] loggerNames = new string[]
+            {
+                "x.y.b.c.d",
+                "one",
+                "One",
+                "two.one",
+                "one.two",
+                "A.B.C.D",
+                "A",
+                "x.y.b",
+                "x.x.x",
+                "y.x.x",
+                "x.y",
+                "x.z",
+                "x.y.a",
+                "X.Y",
+            };
+
+            Logger log;
+
+            foreach (string name in loggerNames)
+            {
+                log = Logger.GetLogger(name);
+                log.Info("Howdy from logger ", name);
+            }
+
+            log = Logger.GetLogger("last");
+            log.Info("Logger hierarchy:\n", Logger.GetHierarchy());
+            
+            log.Info("Sorted logger names...");
+            
+            foreach (string name in loggerNames.OrderBy(s => s, StringComparer.Ordinal))
+            {
+                log.Info(name);
+            }
+
+            Logger.DefaultBinaryFile.Close();
         }
 
     }

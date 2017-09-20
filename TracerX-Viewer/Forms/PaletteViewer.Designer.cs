@@ -1,4 +1,4 @@
-﻿namespace TracerX.Forms {
+﻿namespace TracerX {
     partial class PaletteViewer {
         /// <summary>
         /// Required designer variable.

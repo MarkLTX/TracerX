@@ -7,8 +7,9 @@ using System.Text;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
+using System.ServiceModel;
 
-namespace TracerX.Viewer
+namespace TracerX
 {
     // This class reads the log file into Record objects.
     internal partial class Reader
@@ -29,14 +30,17 @@ namespace TracerX.Viewer
         // Which file (OriginalFile or TempFile) to use.
         public string CurrentFile;
 
+        // The FileGuid from the first session.  Basis of named events used by logger and LocalFileWatcher.
+        public Guid FileGuid;
+
+        // The RemoteServer to read the file from.  Null for local file system.
+        public RemoteServer FileServer { get; private set; }
+
         // File size in bytes.
-        public long Size;
+        public long InitialSize;
 
         // Approximate number of bytes read from the file, to report percent loaded.
         public long BytesRead;
-
-        // Bitmap indicating all TraceLevels found in the file.
-        public TraceLevel LevelsFound;
 
         // Keeps track of thread IDs we have found while reading the file.  Each ReaderThreadInfo object
         // stores the "per thread" info that is not usually written to the log when a thread switch occurs.
@@ -58,7 +62,18 @@ namespace TracerX.Viewer
         // Used for checking password.
         private static byte[] _lastHash;
 
-        public BinaryReader _fileReader;
+        // The System.IO.BinaryReader used to read the file.
+        public BinaryReader InternalReader;
+
+        public bool IsOpen { get { return InternalReader != null; } }
+
+        // Is it OK to leave the file open when not actively reading it?
+        // (It's OK if the file was opened with FileShare.Delete.)
+        public bool CanLeaveOpen { get; private set; }
+
+        // If reading a remote file, does the remote TracerX-Service support
+        // the use of a named system event for file-change notifications?
+        public bool CanUseChangeEvent { get; private set; }
 
         // The session currently being read.  
         public Session CurrentSession;
@@ -71,6 +86,8 @@ namespace TracerX.Viewer
         // from the thread IDs of all previous sessions.
         private int _maxThreadIDFromPrevSession;
 
+        private DateTime _openTime;
+
         // If tempFile != originalFile, tempFile is a temporary copy of originalFile.
         // When OpenLogFile is called, tempFile is opened.
         public Reader(string originalFile, string tempFile)
@@ -80,10 +97,20 @@ namespace TracerX.Viewer
             CurrentFile = tempFile;
         }
 
+        public Reader(RemoteServer server, string file)
+        {
+            // Remember the server and the file.  Reference them in Open().
+            FileServer = server;
+            OriginalFile = file;
+            TempFile = file;
+            CurrentFile = file;
+        }
+
         public void ReuseFilters()
         {
             // Save off the old filter objects (thread IDs, thread names, methods, and loggers) and 
             // reuse any that are also found in the new file.  We don't reuse the session filter.
+
             lock (ThreadObjects.Lock)
             {
                 foreach (ThreadObject threadObject in ThreadObjects.AllThreadObjects) _oldThreadIds.Add(threadObject.Id, threadObject);
@@ -103,19 +130,25 @@ namespace TracerX.Viewer
             {
                 foreach (MethodObject method in MethodObjects.AllMethods) _oldMethods.Add(method.Name, method);
             }
+
+            //lock (TraceLevelObjects.Lock)
+            //{
+            //    foreach (TraceLevelObject level in TraceLevelObjects.AllTraceLevels) _oldTraceLevels.Add(level.TLevel, level);
+            //}
         }
 
         // Open the file, read the format version and password hash if there is one.
         // Return false if an error occurs, such as encountering an unsupported file version.
         public bool OpenLogFile()
         {
-            InternalOpen(CurrentFile);
+            _openTime = DateTime.Now;
+            InternalOpen();
 
-            if (_fileReader != null)
+            if (IsOpen)
             {
                 try
                 {
-                    FormatVersion = _fileReader.ReadInt32();
+                    FormatVersion = InternalReader.ReadInt32();
 
                     if (FormatVersion > _maxVersion || FormatVersion < _minVersion)
                     {
@@ -128,21 +161,22 @@ namespace TracerX.Viewer
                     }
                     else
                     {
-                        _nextSessionPos = _fileReader.BaseStream.Position;
+                        _nextSessionPos = InternalReader.BaseStream.Position;
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error reading log file '" + CurrentFile + "':\n\n" + ex.ToString());
-                    _fileReader = null;
+                    InternalReader = null;
                 }
             }
-            return _fileReader != null;
+
+            return IsOpen;
         }
 
         private bool CheckPassword()
         {
-            bool hasPassword = _fileReader.ReadBoolean();
+            bool hasPassword = InternalReader.ReadBoolean();
             bool result = true;
 
             if (hasPassword)
@@ -166,74 +200,101 @@ namespace TracerX.Viewer
             return result;
         }
 
-        //// Open the file, read the format version and preamble.
-        //// Return false if an error occurs, such as encountering an unsupported file version.
-        //public bool OpenLogFile()
-        //{
-        //    InternalOpen(CurrentFile);
-
-        //    if (_fileReader != null)
-        //    {
-        //        try
-        //        {
-        //            FormatVersion = _fileReader.ReadInt32();
-
-        //            if (FormatVersion > _maxVersion || FormatVersion < _minVersion)
-        //            {
-        //                MessageBox.Show("The file has a format version of " + FormatVersion + ".  This program only supports format version " + _maxVersion + ".");
-        //                CloseLogFile();
-        //            }
-        //            else if (FormatVersion == 4 && !PromptUserForPassword())
-        //            {
-        //                CloseLogFile();
-        //            }
-        //            else if (FormatVersion >= 5 && _fileReader.ReadBoolean() && !PromptUserForPassword())
-        //            {
-        //                CloseLogFile();
-        //            }
-        //            else
-        //            {
-        //                _nextSessionPos = _fileReader.BaseStream.Position;
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show("Error reading log file '" + CurrentFile + "':\n\n" + ex.ToString());
-        //            _fileReader = null;
-        //        }
-        //    }
-        //    return _fileReader != null;
-        //}
-
-        private bool InternalOpen(string filename)
+        // This opens the file and sets this.InitialSize.
+        // Does no reads.
+        private bool InternalOpen()
         {
+            string error = "";
+
             try
             {
-                _fileReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-
-                if (_fileReader == null)
+                if (FileServer == null)
                 {
-                    MessageBox.Show("Could not open log file " + filename);
+                    // The file path is relative to the local host (i.e. just another file).
+
+                    error = "The file could not be opened.";
+                    InternalReader = new BinaryReader(new FileStream(CurrentFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete));
+
+                    // FileShare.Delete was added to the above call so we can keep the file open
+                    // without preventing the logger from renaming or replacing it.
+
+                    CanLeaveOpen = true;
+                    CanUseChangeEvent = true;
+                }
+                else
+                {
+                    // The file is on a remote server that should be running the TracerX-Service.
+
+                    error = "An error occurred on server " + FileServer.HostAddress + " when trying to open the file.";
+                    RemoteFileStream rfs = FileServer.GetRemoteFileStream(CurrentFile);
+                    InternalReader = new BinaryReader(rfs);
+
+                    // The TracerX-Service began using FileShare.Delete in version 2.
+
+                    CanLeaveOpen =  rfs.ServiceVersion >= 2;
+                    CanUseChangeEvent = rfs.ServiceVersion >= 3;
+                }
+
+                if (InternalReader == null)
+                {
+                    MessageBox.Show("Could not open log file " + CurrentFile);
                 }
                 else
                 {
                     Debug.Print("Viewer opened log file.");
-                    Size = _fileReader.BaseStream.Length;
+                    InitialSize = InternalReader.BaseStream.Length;
                 }
+            }
+            catch (FaultException<ExceptionDetail> ex)
+            {
+                // This represents an unhandled exception in the remote service method.
+
+                if (ex.Detail.Type == "IOException" && ex.Detail.Message.Contains("impersonation level"))
+                {
+                    // Have seen this message: "Either a required impersonation level was not provided, or the provided impersonation level is invalid."
+
+                    error += "  If the error is related to impersonating the current user, "
+                        + "it might be fixed by disabling client impersonation in the TracerX service, "
+                        + "or changing the Local Security Policy on the server to grant the following rights to the service account, "
+                        + "or using a service account that already has these rights (e.g. Local System)."
+                        + "\n\n"
+                        + "  \"Impersonate a client after authentication\"\n"
+                        + "  \"Create global objects\""
+                        + "\n\n"
+                        + "This is the error that occurred..."
+                        + "\n\n"
+                        + Program.GetNestedDetails(ex.Detail);
+                }
+                else
+                {
+                    error += "\n\n" + Program.GetNestedDetails(ex.Detail);
+                }
+
+                MainForm.ShowMessageBox(error);
+                InternalReader = null;
+            }
+            catch (FaultException fe)
+            {
+                // This is how the service returns explicit error messages.
+                error += "\n\n" + fe.Message;
+                MainForm.ShowMessageBox(error);
+                InternalReader = null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error opening log file '" + filename + "':\n\n" + ex.ToString());
-                _fileReader = null;
+                MessageBox.Show("Error opening log file '" + CurrentFile + "':\n\n" + ex.ToString());
+                InternalReader = null;
             }
 
-            return _fileReader != null;
+            return InternalReader != null;
         }
 
-        // TODO: Store decryption info in the returned session.
-        // May need to make logger require that all sessions use the
-        // same password, or that encrypted files have only one session.
-
+        /// <summary>
+        /// If the file was just opened (i.e. we're about to read the first session) or we've read all records in the current session, then this ...
+        ///     Opens the file (unless it's already open).   
+        ///     Attempts to read the next session's preamble from the file.  
+        ///     Closes the file (unless it was already open).
+        /// </summary>
         public Session NextSession()
         {
             Session session = null;
@@ -244,11 +305,11 @@ namespace TracerX.Viewer
                 // Open the file if necessary, but leave the file
                 // in the same state (open or closed) as now.
 
-                bool alreadyOpen = _fileReader != null;
+                bool alreadyOpen = InternalReader != null;
                 var tempPos = _nextSessionPos;
                 _nextSessionPos = 0;
 
-                if (alreadyOpen || InternalOpen(CurrentFile))
+                if (alreadyOpen || InternalOpen())
                 {
                     try
                     {
@@ -257,11 +318,19 @@ namespace TracerX.Viewer
                             session = new Session(this);
                             session.ReadPreamble(tempPos); // Exception likely here.
 
-                            // The thread IDs in the log file start at 1 for each session, but they're really separate
-                            // threads, so the IDs read from each session are incremented by max ID from the previous session.
-                            // Ignore sessions with no threads/records.
-                            if (CurrentSession != null && CurrentSession.MaxThreadID > 0)
+                            if (CurrentSession == null)
                             {
+                                // We just parsed the preamble of the first session.  Save its FileGuid to pass to the LocalFileWatcher class 
+                                // which uses it to determine the names of the global system events used by the logger to notify it when 
+                                // new messages are logged.
+                                FileGuid = session.FileGuid;
+                            }
+                            else if (CurrentSession.MaxThreadID > 0)
+                            {
+                                // The thread IDs in the log file start at 1 for each session, but they're really separate
+                                // threads, so the IDs read from each session are incremented by max ID from the previous session.
+                                // Ignore sessions with no threads/records.
+
                                 _maxThreadIDFromPrevSession = CurrentSession.MaxThreadID;
                             }
 
@@ -280,8 +349,8 @@ namespace TracerX.Viewer
 
                     if (!alreadyOpen)
                     {
-                        _fileReader.Close();
-                        _fileReader = null;
+                        InternalReader.Close();
+                        InternalReader = null;
                     }
                 }
             }
@@ -295,15 +364,13 @@ namespace TracerX.Viewer
             private set;
         }
 
-        //public MemoryStream DecryptedStream;
-
         // Called if the file has a password.  Reads the password hash from the file
         // and prompts the user to enter a matching password.
         // Returns true if the user enters the correct password.
         private bool PromptUserForPassword()
         {
-            var hash = _fileReader.ReadBytes(20);
-            var hint = _fileReader.ReadString();
+            var hash = InternalReader.ReadBytes(20);
+            var hint = InternalReader.ReadString();
 
             if (_lastHash != null && hash.SequenceEqual(_lastHash))
             {
@@ -334,11 +401,11 @@ namespace TracerX.Viewer
 
         public void CloseLogFile()
         {
-            if (_fileReader != null)
+            if (InternalReader != null)
             {
                 Debug.Print("Viewer is closing log file.");
-                _fileReader.Close();
-                _fileReader = null;
+                InternalReader.Close();
+                InternalReader = null;
             }
         }
 
@@ -355,14 +422,19 @@ namespace TracerX.Viewer
                 }
 
                 _foundThreadNames.Add(name, threadName);
-
-                lock (ThreadNames.Lock)
-                {
-                    ThreadNames.AllThreadNames.Add(threadName);
-                }
+                ThreadNames.Add(threadName);
             }
 
             return threadName;
+        }
+
+        // Gets or makes the LoggerObject with the specified name.
+        private TraceLevelObject GetTraceLevel(TraceLevel tl)
+        {
+            lock (TraceLevelObjects.Lock)
+            {
+                return TraceLevelObjects.AllTraceLevels[tl];
+            }
         }
 
         // Gets or makes the LoggerObject with the specified name.
@@ -379,11 +451,7 @@ namespace TracerX.Viewer
                 }
 
                 _foundLoggers.Add(loggerName, logger);
-
-                lock (LoggerObjects.Lock)
-                {
-                    LoggerObjects.AllLoggers.Add(logger);
-                }
+                LoggerObjects.Add(logger);
             }
 
             return logger;
@@ -403,11 +471,7 @@ namespace TracerX.Viewer
                 }
 
                 _foundMethods.Add(methodName, method);
-
-                lock (MethodObjects.Lock)
-                {
-                    MethodObjects.AllMethods.Add(method);
-                }
+                MethodObjects.Add(method);
             }
 
             return method;

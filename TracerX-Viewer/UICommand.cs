@@ -7,7 +7,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 
-namespace Commander {
+namespace Commander
+{
     /// <summary>
     /// Several UI controls (e.g. a menu item, toolbar button, and a regular
     /// button) can be associated with a single UICommand.  Enabling/disabling the UICommand
@@ -15,12 +16,15 @@ namespace Commander {
     /// UICommand.Execute event.  Another class (UICommandProvider) allows the programmer to
     /// specify a UICommand instance for each UI control.
     /// </summary>
-    public partial class UICommand : Component {
-        public UICommand() {
+    public partial class UICommand : Component
+    {
+        public UICommand()
+        {
             InitializeComponent();
         }
 
-        public UICommand(IContainer container) {
+        public UICommand(IContainer container)
+        {
             container.Add(this);
 
             InitializeComponent();
@@ -31,35 +35,43 @@ namespace Commander {
         public event EventHandler Execute;
 
         // Sets/gets the Enabled property of the attached controls.
-        public bool Enabled {
+        public bool Enabled
+        {
             get { return _enabled; }
-            set {
+            set
+            {
                 _enabled = value;
                 foreach (Component c in _components) SetProperty(c, "Enabled", _enabled);
             }
         }
 
         // Sets/gets the Image property of the attached controls.
-        public Image Image {
+        public Image Image
+        {
             get { return _image; }
-            set {
+            set
+            {
                 _image = value;
                 foreach (Component c in _components) SetProperty(c, "Image", _image);
             }
         }
 
         // Sets/gets the ToolTipText property of the attached controls.
-        public string ToolTipText {
+        public string ToolTipText
+        {
             get { return _toolTipText; }
-            set {
+            set
+            {
                 _toolTipText = value;
                 foreach (Component c in _components) SetProperty(c, "ToolTipText", _toolTipText);
             }
         }
 
-        public bool Checked {
-            get {return _checked;}
-            set {
+        public bool Checked
+        {
+            get { return _checked; }
+            set
+            {
                 _checked = value;
                 foreach (Component c in _components) SetProperty(c, "Checked", _checked);
             }
@@ -76,15 +88,22 @@ namespace Commander {
 
         // If the component has a property named propName whose type is compatible with propVal
         // (or any type if propVal is null), set the property.
-        private bool SetProperty(Component component, string propName, object propVal) {
+        private bool SetProperty(Component component, string propName, object propVal)
+        {
             PropertyInfo pi = component.GetType().GetProperty(propName);
 
-            if (pi != null) {
-                if (propVal == null) {
+            if (pi != null)
+            {
+                if (propVal == null)
+                {
                     pi.SetValue(component, null, null);
-                } else if (pi.PropertyType.IsAssignableFrom(propVal.GetType())) {
+                }
+                else if (pi.PropertyType.IsAssignableFrom(propVal.GetType()))
+                {
                     pi.SetValue(component, propVal, null);
-                } else {
+                }
+                else
+                {
                     throw new ArgumentException("The specified value's type is not assignable to to the property " + propName + ".",
                         "propVal");
                 }
@@ -93,23 +112,30 @@ namespace Commander {
             return pi != null;
         }
 
-        private bool GetProperty<T>(Component component, string propName, out T target) {
+        private bool GetProperty<T>(Component component, string propName, out T target)
+        {
             PropertyInfo pi = component.GetType().GetProperty(propName);
             bool result = true;
 
-            if (pi != null) {
-                if (typeof(T).IsAssignableFrom(pi.PropertyType)) {
+            if (pi != null)
+            {
+                if (typeof(T).IsAssignableFrom(pi.PropertyType))
+                {
                     target = (T)pi.GetValue(component, null);
-                } else {
+                }
+                else
+                {
                     string msg = string.Format(
                         "The target type {0} is not assignable from property '{1}' of type {2}.",
-                        typeof(T), 
-                        propName, 
+                        typeof(T),
+                        propName,
                         pi.PropertyType
                         );
                     throw new ArgumentException(msg, "target");
                 }
-            } else {
+            }
+            else
+            {
                 target = default(T);
                 result = false;
             }
@@ -119,7 +145,8 @@ namespace Commander {
 
         // The attached controls have their Click events mapped to this, which
         // forwards the click event to the Execute event.
-        private void ClickForwarder(object sender, EventArgs args) {
+        private void ClickForwarder(object sender, EventArgs args)
+        {
             if (Execute != null) Execute(sender, args);
         }
 
@@ -130,37 +157,49 @@ namespace Commander {
         // take component's Image or ToolTipText.  Thus, the first component with a 
         // non-null Image or ToolTipText property determines that property for all unless
         // the UICommand's property is set explicitly.
-        internal void Add(Component component) {
+        internal void Add(Component component)
+        {
             // We must be able to handle any object that UICommandProvider.CanExtend returns true for.
 
             SetProperty(component, "Enabled", _enabled);
 
-            if (_image == null) {
+            if (_image == null)
+            {
                 GetProperty(component, "Image", out _image);
                 Image = _image; // Must use the 'set' accessor.
-            } else {
+            }
+            else
+            {
                 SetProperty(component, "Image", _image);
             }
 
-            if (string.IsNullOrEmpty(_toolTipText)) {
+            if (string.IsNullOrEmpty(_toolTipText))
+            {
                 GetProperty(component, "ToolTipText", out _toolTipText);
                 ToolTipText = _toolTipText; // Must use the 'set' accessor;
-            } else {
+            }
+            else
+            {
                 SetProperty(component, "ToolTipText", _toolTipText);
             }
 
             // Connect to the component's Click event.
-            if (component is Control) {
+            if (component is Control)
+            {
                 ((Control)component).Click += ClickForwarderDelegate;
-            } else if (component is ToolStripItem) {
+            }
+            else if (component is ToolStripItem)
+            {
                 ((ToolStripItem)component).Click += ClickForwarderDelegate;
-            } else throw new ApplicationException("Object has unexpected type " + component.GetType());
-            
+            }
+            else throw new ApplicationException("Object has unexpected type " + component.GetType());
+
             _components.Add(component);
         }
 
         // This removes the specified control from this UICommand. 
-        internal void Remove(Component component) {
+        internal void Remove(Component component)
+        {
             // We must be able to handle any object that UICommandProvider.CanExtend returns true for.
             _components.Remove(component);
 
