@@ -179,8 +179,14 @@ namespace TracerX
                     }
                 }
 
+                AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
+
                 if (_viewerEvents != null)
                 {
+                    // Signal the viewers in case any messages have been sent since the last signal.
+
+                    SignalTheViewers();
+
                     foreach (EventWaitHandle evt in _viewerEvents)
                     {
                         evt.Close();
@@ -218,7 +224,7 @@ namespace TracerX
                     _loggersEvent = new EventWaitHandle(false, EventResetMode.AutoReset, eventName, out createdNew, security);
 
                     // If createdNew = false, it probably means something bad but I'm not sure it's always bad. 
-                    // For example, if the file is closed and reopened maybe we'll get the same event object again.
+                    // For example, if the file was closed and reopened maybe we'll get the same event object again.
 
                     step = "registering callback";
                     //MetaLog?.Info("Calling RegisterWaitForSingleObject");
@@ -303,7 +309,33 @@ namespace TracerX
             Debug.Print("CheckForViewers");
             //MetaLog?.Info("CheckForViewers");
 
-            InitViewerEvents();
+            if (_viewerEventNames == null)
+            {
+                // This is the first time the _loggersEvent has been signaled.
+                // Generate the list of event names the viewer(s) can create.
+
+                _viewerEventNames = new string[_maxViewerEvents];
+                _viewerEvents = new List<EventWaitHandle>(_maxViewerEvents);
+
+                for (int i = 0; i < _maxViewerEvents; ++i)
+                {
+                    _viewerEventNames[i] = "Global\\TX" + i + '-' + _fileGuidString;
+                }
+            }
+            else
+            {
+                // Close the viewer event handles we are holding so the OS can dispose of any that are no longer held by a viewer process.
+                // Other code will attempt to reopen all 10 of the named events that viewers might still be using to determine which ones are in use.
+
+                foreach (EventWaitHandle evt in _viewerEvents)
+                {
+                    evt.Close();
+                }
+
+                _viewerEvents.Clear();
+            }
+
+            // At this point _viewerEventNames is populated and _viewerEvents exists but is empty.
 
             foreach (string eventName in _viewerEventNames)
             {
@@ -340,6 +372,9 @@ namespace TracerX
                 {
                     _internalEvent = new AutoResetEvent(false);
                     ThreadPool.QueueUserWorkItem(BackgroundEventSignaler);
+
+                    // Handle the ProcessExit event so we can signal the viewers just before the process ends.
+                    AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
                 }
             }
             else
@@ -351,7 +386,19 @@ namespace TracerX
                     AutoResetEvent temp = _internalEvent;
                     _internalEvent = null;
                     temp.Set();
+
+                    AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
                 }
+            }
+        }
+
+        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            // Signal the viewers in case any messages have been logged since the last signal.
+
+            lock (_eventsLock)
+            {
+                SignalTheViewers();
             }
         }
 
@@ -435,37 +482,6 @@ namespace TracerX
 
             Debug.Print("BackgroundEventSignaler terminating.");
             //MetaLog?.Info("BackgroundEventSignaler terminating.");
-        }
-
-        // This creates _viewerEventNames and _viewerEvents the first time it's called.
-        private void InitViewerEvents()
-        {
-            if (_viewerEventNames == null)
-            {
-                // This is the first time the _loggersEvent has been signaled.
-                // Generate the list of event names the viewer(s) can create.
-
-                _viewerEventNames = new string[_maxViewerEvents];
-
-                for (int i = 0; i < _maxViewerEvents; ++i)
-                {
-                    _viewerEventNames[i] = "Global\\TX" + i + '-' + _fileGuidString;
-                }
-
-                _viewerEvents = new List<EventWaitHandle>(_maxViewerEvents);
-            }
-            else
-            {
-                // Close the viewer event handles we are holding so the OS can dispose of any that are no longer held by a viewer process.
-                // Then attempt to reopen all 10 of the named events that viewers might still be using to determine which ones are in use.
-
-                foreach (EventWaitHandle evt in _viewerEvents)
-                {
-                    evt.Close();
-                }
-
-                _viewerEvents.Clear();
-            }
         }
     }
 }
