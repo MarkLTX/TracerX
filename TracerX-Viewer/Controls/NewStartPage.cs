@@ -659,6 +659,7 @@ namespace TracerX
 
             var editDlg = new ServerConnEditor();
             editDlg.Init(categories, _remoteServers.Select(svr => svr.HostName), null);
+            editDlg.ShowConnectButton = true;
 
             if (editDlg.ShowDialog() == DialogResult.OK)
             {
@@ -668,7 +669,8 @@ namespace TracerX
                 serverTree1.EndUpdate();
 
                 // Ask the user if he wants to connect to the new server.
-                if (MainForm.ShowMessageBoxBtns("Connect to '" + newRemoteServer.HostName + "'?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                //if (MainForm.ShowMessageBoxBtns("Connect to '" + newRemoteServer.HostName + "'?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (editDlg.DoConnect)
                 {
                     serverTree1.SelectedServer = newRemoteServer;
                 }

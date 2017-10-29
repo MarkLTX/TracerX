@@ -97,6 +97,7 @@ namespace TracerX
 
             _localNode = Nodes.Add("LocalHost", "LocalHost");
             _localNode.NodeFont = new System.Drawing.Font(this.Font, FontStyle.Bold);
+            _localNode.ForeColor = Color.Blue;
             _localNode.Tag = localHost;
 
             // Create the special "All Remote Servers" category node. 
@@ -171,6 +172,7 @@ namespace TracerX
 
             TreeNode serverNode = FindOrAddNode(_allNode.Nodes, server.HostName);
             serverNode.Tag = server;
+            serverNode.ForeColor = Color.Blue;
             serverNode.ContextMenuStrip = contextMenuForServers;
 
             if (!string.IsNullOrWhiteSpace(server.Category))
@@ -182,6 +184,7 @@ namespace TracerX
 
                 serverNode = FindOrAddNode(catNode.Nodes, server.HostName);
                 serverNode.Tag = server;
+                serverNode.ForeColor = Color.Blue;
                 serverNode.ContextMenuStrip = contextMenuForServers;
             }
         }
@@ -328,6 +331,7 @@ namespace TracerX
             var otherServers = _masterServerList.Where(svr => svr != server).Select(svr => svr.HostName);
 
             dlg.Init(categories, otherServers, editableServer, allowAddressEdit: !isSelectedServer);
+            dlg.ShowConnectButton = !isSelectedServer;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -349,17 +353,13 @@ namespace TracerX
                 {
                     SelectNodeForServer(server, forceAllServers: isUnderAllServers);
                 }
-                else
-                {
-                    // Ask the user if he wants to connect to the edited server.
 
-                    if (MainForm.ShowMessageBoxBtns("Connect to '" + server.HostName + "'?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        SelectedServer = server;
-                    }
-                }
-                
                 _ignoreSelectionEvents = false;
+
+                if (dlg.DoConnect)
+                {
+                    SelectNodeForServer(server, forceAllServers: false);
+                }
             }
         }
 
@@ -446,7 +446,15 @@ namespace TracerX
                 {
                     // When deselecting the currently selected node, restore it's default colors.
                     SelectedNode.BackColor = Color.Empty;
-                    SelectedNode.ForeColor = Color.Empty;
+
+                    if (SelectedNode.Tag == null)
+                    {
+                        SelectedNode.ForeColor = Color.Empty;
+                    }
+                    else
+                    {
+                        SelectedNode.ForeColor = Color.Blue;
+                    }
                 }
 
                 base.OnBeforeSelect(e);
@@ -472,9 +480,9 @@ namespace TracerX
                 // Since the framework doesn't properly highlight the SelectedNode when
                 // we don't have the focus, set the highlighting colors explicitly.
 
-                this.HideSelection = true;
-                this.SelectedNode.BackColor = SystemColors.Highlight;
-                this.SelectedNode.ForeColor = SystemColors.HighlightText;
+                HideSelection = true;
+                SelectedNode.BackColor = SystemColors.Highlight;
+                SelectedNode.ForeColor = SystemColors.HighlightText;
 
                 base.OnAfterSelect(e);
             }

@@ -46,6 +46,7 @@
             this.txtDispName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btnTest = new System.Windows.Forms.Button();
+            this.btnOkConnect = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,7 +82,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.txtPassword);
             this.groupBox1.Controls.Add(this.txtUserID);
@@ -135,7 +136,7 @@
             // 
             // comboCategories
             // 
-            this.comboCategories.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.comboCategories.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboCategories.FormattingEnabled = true;
             this.comboCategories.Location = new System.Drawing.Point(12, 123);
@@ -145,7 +146,6 @@
             // 
             // label5
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(12, 107);
             this.label5.Name = "label5";
@@ -155,10 +155,9 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(216, 338);
+            this.btnCancel.Location = new System.Drawing.Point(231, 339);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(60, 23);
             this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -166,10 +165,9 @@
             // 
             // btnOK
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(135, 338);
+            this.btnOK.Location = new System.Drawing.Point(111, 339);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.Size = new System.Drawing.Size(50, 23);
             this.btnOK.TabIndex = 8;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -216,20 +214,30 @@
             // 
             // btnTest
             // 
-            this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTest.Location = new System.Drawing.Point(12, 338);
+            this.btnTest.Location = new System.Drawing.Point(171, 339);
             this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(75, 23);
+            this.btnTest.Size = new System.Drawing.Size(50, 23);
             this.btnTest.TabIndex = 7;
             this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // btnOkConnect
+            // 
+            this.btnOkConnect.Location = new System.Drawing.Point(12, 339);
+            this.btnOkConnect.Name = "btnOkConnect";
+            this.btnOkConnect.Size = new System.Drawing.Size(89, 23);
+            this.btnOkConnect.TabIndex = 14;
+            this.btnOkConnect.Text = "OK && Connect";
+            this.btnOkConnect.UseVisualStyleBackColor = true;
+            this.btnOkConnect.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // ServerConnEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(303, 372);
+            this.Controls.Add(this.btnOkConnect);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.txtDispName);
             this.Controls.Add(this.label6);
@@ -243,8 +251,8 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelServer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(1000, 410);
-            this.MinimumSize = new System.Drawing.Size(319, 410);
+            this.MaximumSize = new System.Drawing.Size(1000, 411);
+            this.MinimumSize = new System.Drawing.Size(319, 411);
             this.Name = "ServerConnEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Server Connection";
@@ -274,5 +282,6 @@
         private System.Windows.Forms.TextBox txtDispName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnOkConnect;
     }
 }

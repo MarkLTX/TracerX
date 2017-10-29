@@ -11,7 +11,7 @@ namespace TracerX
     /// <summary>
     /// Implements the IFileReader WCF service.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Single, MaxItemsInObjectGraph = 1000000000)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Single, MaxItemsInObjectGraph = 1000000000, UseSynchronizationContext = false)]
     public class ImplFileReader : IFileReader, IDisposable
     {
         static readonly Logger Log = Logger.GetLogger("TX1.Service.ImplFileReader");

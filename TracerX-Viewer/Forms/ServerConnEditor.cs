@@ -27,6 +27,18 @@ namespace TracerX
             private set;
         }
 
+        public bool ShowConnectButton
+        {
+            get { return btnOkConnect.Visible; }
+            set { btnOkConnect.Visible = value; }
+        }
+
+        public bool DoConnect
+        {
+            get;
+            private set;
+        }
+
         // After calling Init(), _editServer is null if the form is in "add" mode, 
         // non-null if in "edit" mode.
         private SavedServer _editServer;
@@ -141,6 +153,7 @@ namespace TracerX
                     NewServer = _editServer;
                 }
 
+                DoConnect = sender == btnOkConnect;
                 DialogResult = DialogResult.OK;
                 Close();
             }
