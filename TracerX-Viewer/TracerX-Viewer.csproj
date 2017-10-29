@@ -189,6 +189,12 @@
     <Compile Include="Controls\GridPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\StartServiceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StartServiceForm.Designer.cs">
+      <DependentUpon>StartServiceForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ListViewSorter.cs" />
     <Compile Include="Controls\CrumbBar.cs">
       <SubType>UserControl</SubType>
@@ -377,6 +383,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ServerListEditor.resx">
       <DependentUpon>ServerListEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StartServiceForm.resx">
+      <DependentUpon>StartServiceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NotTheLicense.txt" />
     <Content Include="ChangeNotes.txt" />
@@ -567,6 +576,10 @@
       <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
       <Name>TracerX-Logger</Name>
       <Aliases>global</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\TracerX-ServiceImpl\TracerX-ServiceImpl.csproj">
+      <Project>{58B31300-67DF-41C0-934C-F2E102CF53BF}</Project>
+      <Name>TracerX-ServiceImpl</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

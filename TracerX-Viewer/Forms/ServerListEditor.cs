@@ -373,6 +373,7 @@ namespace TracerX
             var editDlg = new ServerConnEditor();
 
             editDlg.Init(GetUniqueCategories(), GetDisplayNames(null), null);
+            editDlg.ShowConnectButton = false;
 
             if (editDlg.ShowDialog() == DialogResult.OK)
             {
@@ -432,6 +433,7 @@ namespace TracerX
             var editDlg = new ServerConnEditor();
 
             editDlg.Init(GetUniqueCategories(), GetDisplayNames(item), item.Server);
+            editDlg.ShowConnectButton = false;
 
             if (editDlg.ShowDialog() == DialogResult.OK)
             {

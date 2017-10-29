@@ -3845,5 +3845,24 @@ namespace TracerX
             var dlg = new RelatedForm();
             dlg.ShowDialog(this);
         }
+
+        private void runTracerXServiceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (runTracerXServiceToolStripMenuItem.Checked)
+            {
+                TracerXServices.Shutdown(10);
+                runTracerXServiceToolStripMenuItem.Checked = false;
+            }
+            else
+            {
+                var dlg = new StartServiceForm();
+                DialogResult dlgResult = dlg.ShowDialog(this);
+
+                if (dlgResult == DialogResult.OK)
+                {
+                    runTracerXServiceToolStripMenuItem.Checked = true;
+                }
+            }
+        }
     }
 }
