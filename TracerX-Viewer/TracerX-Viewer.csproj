@@ -27,7 +27,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Unc</InstallFrom>
+    <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -35,7 +35,6 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>\\localhost\C%24\Users\markl\Documents\Visual Studio 2013\Projects\TracerX\CodePlex\Dev\TX\TracerX-Viewer\publish\</InstallUrl>
     <ProductName>TracerX-Viewer</ProductName>
     <PublisherName>DevTest</PublisherName>
     <WebPage>default.html</WebPage>
@@ -457,7 +456,6 @@
     <Content Include="Icons\BookmarkPlus.ico" />
     <Content Include="Icons\Minus.ico" />
     <Content Include="Icons\Plus.ico" />
-    <None Include="TracerX-Viewer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\CrumbBar.resx">
