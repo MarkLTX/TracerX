@@ -460,7 +460,7 @@ namespace TracerX
         }
 
         /// <summary>
-        /// Deprected.  Use <see cref="BinaryFileTraceLevel"/> instead.
+        /// Deprecated.  Use <see cref="BinaryFileTraceLevel"/> instead.
         /// </summary>
         [Obsolete("Use BinaryFileTraceLevel instead.", true)]
         [EditorBrowsable(EditorBrowsableState.Never)]
