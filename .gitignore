@@ -1,0 +1,19 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/HelloWorld/obj
+/Sample/bin/Debug
+/Sample/obj/Debug
+/TestApp/bin/Debug
+/HelloWorld/bin/Debug
+/Sample/obj/Release
+*/obj/*
+*/Debug/*
+*/Release/*
+/TracerX-Common/bin/Debug
+/TracerX-Viewer/bin/Debug
+/TracerX-ServiceImpl/bin/Debug
+/TracerX-Service/bin/Debug
+/TracerX-Logger/bin/Debug
