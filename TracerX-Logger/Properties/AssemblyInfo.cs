@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Diagnostic logger.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("TracerX")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2013")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("41ac4e30-3b5b-4c9d-bef1-50b62b112049")]
 
-//[assembly: AssemblyVersion("6.1.1304.13122")]
-[assembly: AssemblyVersion("7.0.*")]
+//[assembly: AssemblyVersion("7.0.*")]
+[assembly: AssemblyVersion("7.1.*")] // Not yet merged into github main branch.

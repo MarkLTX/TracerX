@@ -320,12 +320,17 @@ namespace TracerX
         #region Open log
 
         // This either opens the originally specified log file, opens an
-        // alternate log file (e.g. with "(A)" in the name), or throws an exception.
+        // alternate log file (e.g. with "(A)" or "(B)" in the name), or throws an exception.
         protected override void InternalOpen()
         {
-            // Use this to generate alternate file names with (A)-(Z) if file can't be opened.
+            // This char is used to generate alternate file names with (A)-(Z) if the desired output file can't be opened.
             char c = 'A';
-            string renamedFile = null;
+
+            // This will contain the path of the "temp" file that the existing output file gets
+            // temporarily renamed to if it exists and needs to be replaced rather than
+            // appended to.
+            string renamedOutFile = null;
+
             FileStream fileStream = null;
             bool appending = false;
             string simpleName = _logFileName; // no extension, no (A), no _00.
@@ -338,10 +343,12 @@ namespace TracerX
 
                     if (outFile.Exists)
                     {
+                        // The existing file should either be replaced or appended to.
+
                         if (outFile.Length < AppendIfSmallerThanMb << _shift &&
                             outFile.Length < MaxSizeMb << _shift)
                         {
-                            // Open the file  in append mode.
+                            // Open the file in append mode.
 
                             // If the file is in use, this throws an exception.
                             fileStream = new FileStream(FullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
@@ -421,58 +428,35 @@ namespace TracerX
                         } // Opening in append mode.
                         else
                         {
-                            // Create a new file.
+                            // Replace the existing output file with a new file.
 
                             if (Archives > 0)
                             {
-                                // Temporarily rename the existing file so we can create the new
-                                // file before "rolling" the archives.  Basically, we don't want
-                                // to "roll" the archives until we know we can create the new file
-                                // by actually creating it.
+                                // This condition means we keep "archives" (old _1, _2, etc. files)
+                                // that need to be "rolled".  However we don't actually
+                                // roll the archives until we know we can create the new file
+                                // by actually creating it.  Yet we still need to rename the
+                                // existing output file so it isn't lost when we open the new file. This new name
+                                // is temporary until we get around to rolling all the archives.  See RollArchives()
 
-                                DateTime originalCreateTime = outFile.CreationTime;
-                                renamedFile = FullPath + ".tempname";
-
-                                // DO NOT use outFile.Exists or outFile.Move() in here.
-                                for (int attempts = 3; attempts > 0 && File.Exists(FullPath); --attempts)
-                                {
-                                    try
-                                    {
-                                        // The "temp" file shouldn't exist, but delete it if it does.
-                                        // If the file is in use, this throws an exception.
-                                        File.Delete(renamedFile);
-                                        File.Move(FullPath, renamedFile);
-                                        File.SetCreationTime(renamedFile, originalCreateTime);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (attempts <= 1)
-                                        {
-                                            // That was the last try.
-                                            throw;
-                                        }
-                                        else
-                                        {
-                                            // Give whoever has the file open (possibly the viewer) a
-                                            // chance to close it.
-                                            Thread.Sleep(100);
-                                        }
-                                    }
-                                }
+                                renamedOutFile = RenameOutputFile(outFile.CreationTime);
                             }
 
+                            // This will throw an exception if we lack write access or the file is in use.
                             fileStream = new FileStream(FullPath, FileMode.Create, FileAccess.Write, FileShare.Read);
                         } // Creating new file.
                     }
                     else
                     {
-                        // If the file is in use, this throws an exception.
+                        // This will throw an exception if we lack write access or the file is in use.
+                        // Note that File.Exists is false even if the file exists, if we lack read access.
                         fileStream = new FileStream(FullPath, FileMode.Create, FileAccess.Write, FileShare.Read);
                     }
                 }
                 catch (System.IO.IOException ex)
                 {
-                    // File is probably in use, try next alternate name.
+                    // File is probably in use or we lack permission, try the next alternate name up to (Z).
+
                     if (c >= 'Z')
                     {
                         // That was the last chance.  Rethrow the exception to
@@ -483,13 +467,13 @@ namespace TracerX
                     {
                         // Try the next alternative file name, up to Z.
                         // Changing _logFileName also changes Name and FullName.
-                        // Note that _logFileName has no extension or _00.
+                        // Note that _logFileName has no extension or _0.
 
                         Debug.Print("Opening alternate file name due to exception:\n" + ex.ToString());
 
                         _logFileName = string.Format("{0}({1})", simpleName, c);
                         ++c;
-                        renamedFile = null;
+                        renamedOutFile = null;
                         continue;
                     }
                 }
@@ -530,13 +514,86 @@ namespace TracerX
                 _encryptor = new Encryptor(_logfile, _encryptionKey);
             }
 
-            // The _viewerSignaler must be created before the first log message 
+            // The _viewerSignaler is used to notify TracerX-Viewer and/or TracerX-Logger when
+            // the output file is modified.  It must be created before the first log message 
             // is written because BinaryFile.WriteLine() references it.
 
             _viewerSignaler = new NamedEventsManager(FileGuid, FullPath);
 
             if (this == Logger.DefaultBinaryFile) Logger.StandardData.LogEnvironmentInfo();
-            ManageArchives(renamedFile);
+            RollArchives(renamedOutFile);
+        }
+
+        // This attempts to rename the FullPath file to a temp name.  
+        // This either throws an exception or returns the new file path.
+        private string RenameOutputFile(DateTime originalCreateTime)
+        {
+            string newFilePath = null;
+            string curFile;
+            Exception lastException = null;
+
+            // First we need an available temporary file name to rename FullPath to.  There
+            // shouldn't be any temp files but if there are try to delete them.  The loop goes
+            // in descending numerical order so renamedFile will be set to the lowest numbered file
+            // that doesn't exist or is deleted successfully.
+
+            for (int i = 9; i > 0; --i)
+            {
+                curFile = FullPath + ".tempname_" + i;
+
+                try
+                {
+                    // No ".tempname_n" files shouldn't exist, but try to delete any that do.
+                    // File.Delete() doesn't throw an exception if the file doesn't exist.
+                    // If the file is in use, File.Delete() throws an exception.
+                    // Sometimes File.Delete() throws an UnauthorizedAccessException that
+                    // eventually stops happening if you wait long enough or restart the computer,
+                    // but we don't have time to wait which is why we try 9 different files.
+
+                    File.Delete(curFile);
+
+                    // Getting here means the file didn't exist or was successfully deleted so we can use the name.
+                    newFilePath = curFile;
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                }
+            }
+
+            if (newFilePath == null)
+            {
+                throw new Exception("Unable to delete old temp file.  See inner exception.", lastException);
+            }
+            else
+            {
+                // DO NOT use outFile.Exists or outFile.Move() in here.
+                for (int attempts = 3; attempts > 0 && File.Exists(FullPath); --attempts)
+                {
+                    try
+                    {
+                        // If the file is in use, this throws an exception.
+                        File.Move(FullPath, newFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (attempts <= 1)
+                        {
+                            // That was the last try.
+                            throw;
+                        }
+                        else
+                        {
+                            // Give whoever has the file open (possibly the viewer) a
+                            // chance to close it.
+                            Thread.Sleep(100);
+                        }
+                    }
+                }
+            }
+
+            File.SetCreationTime(newFilePath, originalCreateTime);
+            return newFilePath;
         }
 
         private void WritePreamble(bool appending)

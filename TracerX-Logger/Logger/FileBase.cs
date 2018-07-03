@@ -508,14 +508,14 @@ namespace TracerX
             }
         }
 
-        // Manages the archive files (*_01, *_02, etc.).
-        // Parameter renamedFile is what the old output file was renamed 
-        // to if it existed (has extension ".tempname").
-        // It was the _00 file and must become the _01 file.
-        // if renamedFile is null, the old output file wasn't replaced (didn't
+        // This "rolls" the archive files (*_01, *_02, etc.).
+        // Parameter renamedOutFile is what the old output file was renamed 
+        // to if it existed (has extension ".tempname_1" or ".tempname_2", etc.).
+        // It was the x_00.tx1 file and must become the x_01.tx1 file.
+        // if renamedOutFile is null, the old output file wasn't replaced (didn't
         // exist or was opened in append mode), and no rolling is necessary,
         // but we still delete files with numbers larger than Archives.
-        protected void ManageArchives(string renamedFile)
+        protected void RollArchives(string renamedOutFile)
         {
             // Get the existing archive files for the current _logFileName.  
             // Their file names have the format <logFileName>_<numString><_extension>
@@ -551,11 +551,11 @@ namespace TracerX
                 }
             }
 
-            // We now have numberedFiles.Count files plus the renamedFile, if given, to renumber from 1 to N. Start with
+            // We now have numberedFiles.Count files plus the renamedOutFile, if given, to renumber from 1 to N. Start with
             // the highest number first so that file can be deleted or renamed to make a spot for the next lower number,
-            // and so on. We should end up with sequentially numbered files.
+            // and so on. We should end up with sequentially numbered files even if there are gaps in the existing file names.
 
-            int newNum = (renamedFile == null) ? numberedFiles.Count : numberedFiles.Count + 1;
+            int newNum = (renamedOutFile == null) ? numberedFiles.Count : numberedFiles.Count + 1;
             string bareFilePath = Path.Combine(Directory, _logFileName);
 
             // Sort the files to process them in order of highest number to lowest number so each numbered file is
@@ -568,11 +568,11 @@ namespace TracerX
 
                     try
                     {
-                        File.Delete(oldFile);
+                        File.Delete(oldFile); // Sometimes throws inexplicable System.UnauthorizedAccessException
                     }
                     catch (Exception ex)
                     {
-                        string msg = string.Format("An exception occurred while deleting the old log file\n{0}\n\n{1}", oldFile, ex);
+                        string msg = string.Format("An exception occurred while deleting the old log file \n{0} \n\n{1}", oldFile, ex);
                         Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
                     }
                 }
@@ -588,36 +588,15 @@ namespace TracerX
 
             // Finally, rename the most recent log file, if given, to the *_01 file.
 
-            if (renamedFile != null)
+            if (renamedOutFile != null)
             {
-                TryRename(renamedFile, bareFilePath, 1);
+                TryRename(renamedOutFile, bareFilePath, 1);
             }
         }
 
-        private void TryRename(string from, string template, int num)
+        private void TryRename(string from, string basePath, int num)
         {
-            // Convert num to a string padded to the number of digits required to hold the highest num allowed (Archives).
-
-            string newFile = null;
-
-            Debug.Assert(num <= Archives);
-
-            if (Archives < 10)
-            {
-                newFile = string.Format("{0}_{1:D1}{2}", template, num, _extension);
-            }
-            else if (Archives < 100)
-            {
-                newFile = string.Format("{0}_{1:D2}{2}", template, num, _extension);
-            }
-            else if (Archives < 1000)
-            {
-                newFile = string.Format("{0}_{1:D3}{2}", template, num, _extension);
-            }
-            else
-            {
-                newFile = string.Format("{0}_{1:D4}{2}", template, num, _extension);
-            }
+            string newFile = MakeNumberedFileName(basePath, num);
 
             if (newFile != from)
             {
@@ -629,10 +608,81 @@ namespace TracerX
                 }
                 catch (Exception ex)
                 {
-                    string msg = string.Format("An exception occurred while renaming the old log file\n{0}\nto\n{1}\n\n{2}", from, newFile, ex);
+                    string msg = string.Format("An exception occurred while renaming the old log file \n{0} \nto \n{1} \n\n{2}", from, newFile, ex);
                     Logger.EventLogging.Log(msg, Logger.EventLogging.ExceptionInArchive);
+
+                    // Since we couldn't move/rename the file try to simply delete it to free up the name for the next file.
+
+                    try
+                    {
+                        File.Delete(from); // Sometimes throws inexplicable System.UnauthorizedAccessException
+                    }
+                    catch (Exception delex)
+                    {
+                        string msg2 = string.Format("An exception occurred while deleting the old log file \n{0} \n\n{1}", from, delex);
+                        Logger.EventLogging.Log(msg2, Logger.EventLogging.ExceptionInArchive);
+                    }
+
+                    //if (ex is IOException)
+                    //{
+                    //    // If the exception message is "Cannot create a file when that file already exists" then problem is the 
+                    //    uint hresult = 0;
+
+                    //    if (ex.Message == "Cannot create a file when that file already exists.")
+                    //    {
+                    //        hresult = 0x800700B7;
+                    //    }
+                    //    else
+                    //    {
+                    //        // Try to extract ex.HResult, which is protected before .NET Framework 4.5.
+
+                    //        try
+                    //        {
+                    //            var info = new System.Runtime.Serialization.SerializationInfo(typeof(IOException), new System.Runtime.Serialization.FormatterConverter());
+                    //            ex.GetObjectData(info, new System.Runtime.Serialization.StreamingContext());
+                    //            hresult = info.GetUInt32("HResult");
+                    //        }
+                    //        catch (Exception ex2)
+                    //        {
+                    //            Logger.EventLogging.Log("Failed to extract HResult: " + ex2, Logger.EventLogging.ExceptionInArchive);
+                    //        }
+                    //    }
+
+                    //    if (hresult == 0x800700B7)
+                    //    {
+                    //        // TODO: Try to delete the file.
+                    //    }
+                    //}
                 }
             }
+        }
+
+        private string MakeNumberedFileName(string basePath, int num)
+        {
+            // Convert num to a string padded to the number of digits required to hold the highest num allowed (Archives).
+
+            string numberedFileName = null;
+
+            Debug.Assert(num <= Archives);
+
+            if (Archives < 10)
+            {
+                numberedFileName = string.Format("{0}_{1:D1}{2}", basePath, num, _extension);
+            }
+            else if (Archives < 100)
+            {
+                numberedFileName = string.Format("{0}_{1:D2}{2}", basePath, num, _extension);
+            }
+            else if (Archives < 1000)
+            {
+                numberedFileName = string.Format("{0}_{1:D3}{2}", basePath, num, _extension);
+            }
+            else
+            {
+                numberedFileName = string.Format("{0}_{1:D4}{2}", basePath, num, _extension);
+            }
+
+            return numberedFileName;
         }
 
         private static string ExpandDirectoryString(string dir)
@@ -726,7 +776,7 @@ namespace TracerX
 
         protected abstract void InternalOpen();
 
-        // Raises the Opening event and returns true if not cancelled.
+        // Raises the Opening event and returns true if not canceled.
         private bool OnOpening()
         {
             var handlers = Opening;

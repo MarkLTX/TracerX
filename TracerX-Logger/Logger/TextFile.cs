@@ -179,7 +179,7 @@ namespace TracerX
             // This guarantees the file won't be emtpy, and may help user understand what's going on with rolling or wrapping.
             _logfile.WriteLine("TracerX: Log file opened at {0}.  FullFilePolicy = {1}, Use_00 = {2}, MaxSize = {3} {4}, AppendIfSmallerThan = {5} {4}, initial size = {6}.", _openTimeUtc.ToLocalTime(), FullFilePolicy, Use_00, MaxSizeMb, UseKbForSize ? "KB" : "MB", AppendIfSmallerThanMb, BaseStream.Length);
 
-            ManageArchives(renamedFile);
+            RollArchives(renamedFile);
         }
 
         //// Manages the archive files (*_01, *_02, etc.).
