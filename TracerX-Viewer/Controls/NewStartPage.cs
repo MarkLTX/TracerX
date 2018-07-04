@@ -26,8 +26,10 @@ namespace TracerX
             if (!DesignMode)
             {
                 pnlVersion.Hide();
-                VersionChecker.NewVersionFound += (sender, e) => pnlVersion.Show();
-                VersionChecker.CheckForNewVersion();
+
+                // TODO: Figure out how to check for new version on GitHub and uncomment this.
+                //VersionChecker.NewVersionFound += (sender, e) => pnlVersion.Show();
+                //VersionChecker.CheckForNewVersion();
 
                 _remoteServers = RemoteServer.CreateListFromSettings();
 
