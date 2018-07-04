@@ -173,19 +173,15 @@ namespace TracerX
 
         public void ClearItemCache()
         {
-            Debug.Print("Clearing _itemCache completely.");
             _itemCache.Clear();
         }
 
         public void ClearItemCache(int startRowIndex)
         {
-            Debug.Print("Clearing _itemCache starting with " + startRowIndex);
-
             if (_itemCache.Any())
             {
                 if (startRowIndex <= _firstItemIndex)
                 {
-                    Debug.Print("Removing all cached items.");
                     _itemCache.Clear();
 
                 }
@@ -196,7 +192,6 @@ namespace TracerX
 
                     if (startRemove < _itemCache.Count)
                     {
-                        Debug.Print("Removing {0} cached items.", lengthRemove);
                         _itemCache.RemoveRange(startRemove, lengthRemove);
                     }
                 }
@@ -266,8 +261,6 @@ namespace TracerX
             {
                 bool newItem;
                 List<ViewItem> newItems = new List<ViewItem>(e.EndIndex - e.StartIndex + 1);
-
-                Debug.Print("Building item cache " + e.StartIndex + " - " + e.EndIndex);
 
                 // Do not alter _itemCache or _firstItemIndex until we're done
                 // calling GetListItem(), since it references them.

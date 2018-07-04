@@ -701,7 +701,6 @@ namespace TracerX
 
         void _filterTimer_Tick(object sender, EventArgs e)
         {
-            Debug.Print("_filterTimer_Tick");
             _filterTimer.Enabled = false;
 
             // We don't trim or otherwise alter the filter textbox because the user

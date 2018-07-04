@@ -145,7 +145,6 @@ namespace TracerX
                 //    _nextFill = _minFill;
                 //}
                 
-                Debug.Print("Position set to {0} ({1})", value, value - Position);
                 _bufferOffset = (int)(value - _bufferPos);
             }
         }
@@ -321,7 +320,7 @@ namespace TracerX
                 if (filePos + _buffer.Length >= _fileLength)
                 {
                     Logger.Current.Info("Looks like we hit EOF on the server.");
-                    Debug.Print("Hit EOF on server.");
+                    //Debug.Print("Hit EOF on server.");
 
                     // For some reason the server sometimes returns a length that is less than the actual length.
                     // If we successfully read Len bytes from position Pos the length must be at least Pos + Len.

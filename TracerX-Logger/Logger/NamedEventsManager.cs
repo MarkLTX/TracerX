@@ -128,7 +128,7 @@ namespace TracerX
         {
             // Each item in _viewerEvents represents a viewer that wants to know the file has changed.
 
-            Debug.Print("Signaling {0} viewer events.", _viewerEvents.Count);
+            //Debug.Print("Signaling {0} viewer events.", _viewerEvents.Count);
             ////MetaLog?.Info("Signaling ", _viewerEvents.Count, " viewer events.");
 
             foreach (EventWaitHandle evt in _viewerEvents)
@@ -229,7 +229,7 @@ namespace TracerX
                     step = "registering callback";
                     //MetaLog?.Info("Calling RegisterWaitForSingleObject");
                     _loggersRegisteredWaitHandle = ThreadPool.RegisterWaitForSingleObject(_loggersEvent, LoggersEventHandler, null, -1, false);
-                    Debug.Print("Loggers named even is ready: {0}", eventName);
+                    //Debug.Print("Logger's named event is ready: {0}", eventName);
                 }
                 catch (Exception ex)
                 {
@@ -258,7 +258,7 @@ namespace TracerX
         // or released one of the viewer's events.  
         private void LoggersEventHandler(object state, bool timedOut)
         {
-            Debug.Print("The logger's named event was signaled.");
+            //Debug.Print("The logger's named event was signaled.");
             //MetaLog?.Info("The logger's named event was signaled, timedOut = ", timedOut);
 
             // The _eventsLock protects _viewerEventNames, _viewerEvents, 
@@ -306,7 +306,7 @@ namespace TracerX
         // Called under lock to add/remove members of _viewerEvents.
         private void CheckForViewers()
         {
-            Debug.Print("CheckForViewers");
+            //Debug.Print("CheckForViewers");
             //MetaLog?.Info("CheckForViewers");
 
             if (_viewerEventNames == null)
@@ -347,7 +347,7 @@ namespace TracerX
                     // Since the above call didn't throw an exception we found a viewer event that a viewer is waiting on.
                     // Keep it so other code can signal it when new messages are logged.
                     _viewerEvents.Add(eventHandle);
-                    Debug.Print("Found event named  {0}", eventName);
+                    //Debug.Print("Found event named  {0}", eventName);
                     //MetaLog?.Info("Found event named  ", eventName);
                 }
                 catch (Exception ex)
@@ -452,7 +452,7 @@ namespace TracerX
                                 // by the viewers.  Signal _loggersEvent to trigger the handler that will check 
                                 // if we still need to hold/signal the viewer events.
 
-                                Debug.Print("Signaling _loggersEvent to force re-check of viewer's events");
+                                //Debug.Print("Signaling _loggersEvent to force re-check of viewer's events");
                                 _loggersEvent.Set();
 
                                 // Don't recheck again for at least 30 minutes.
@@ -480,7 +480,7 @@ namespace TracerX
                 //MetaLog?.InfoFormat("BackgroundEventSignaler terminating due to {0}: {1}", ex.GetType(), ex.Message);
             }
 
-            Debug.Print("BackgroundEventSignaler terminating.");
+            //Debug.Print("BackgroundEventSignaler terminating.");
             //MetaLog?.Info("BackgroundEventSignaler terminating.");
         }
     }

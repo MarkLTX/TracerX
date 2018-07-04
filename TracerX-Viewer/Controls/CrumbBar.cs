@@ -538,7 +538,6 @@ namespace TracerX
         // Starts a Timer to scroll repeatedly while mouse button is down.
         private void Btn_MouseDown(object sender, MouseEventArgs e)
         {
-            Debug.Print("Down");
             // Set the Tag to the button so the Tick handler knows which direction to scroll.
             _autoRepeatTimer.Tag = sender;
             _autoRepeatTimer.Start();
@@ -547,13 +546,11 @@ namespace TracerX
         // MouseUp handler for BOTH buttons.
         private void Btn_MouseUp(object sender, MouseEventArgs e)
         {
-            Debug.Print("Up");
             _autoRepeatTimer.Stop();
         }
 
         void _autoRepeatTimer_Tick(object sender, EventArgs e)
         {
-            Debug.Print("Tick");
             Button btn = (Button)_autoRepeatTimer.Tag;
 
             // If the mouse button is still down on the scroll button, scroll.

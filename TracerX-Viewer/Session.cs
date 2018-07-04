@@ -1065,7 +1065,7 @@ namespace TracerX
                 long stopPos = _fileReader.BaseStream.Position + areaSize;
                 UInt16 curNum, lastNum = _fileReader.ReadUInt16();
                 UInt32 curVal, lastVal = _fileReader.ReadUInt32();
-                Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
+                //Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
 
                 while (_fileReader.BaseStream.Position != stopPos)
                 {
@@ -1076,11 +1076,11 @@ namespace TracerX
                     {
                         lastNum = curNum;
                         lastVal = curVal;
-                        Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
+                        //Debug.Print("lastNum = " + lastNum + ", lastVal = " + lastVal);
                     }
                     else
                     {
-                        Debug.Print("curNum = " + curNum + ", curVal = " + curVal);
+                        //Debug.Print("curNum = " + curNum + ", curVal = " + curVal);
                         break;
                     }
                 }
