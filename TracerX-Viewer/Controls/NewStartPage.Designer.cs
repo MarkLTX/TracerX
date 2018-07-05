@@ -93,7 +93,7 @@
             this.pathPanel.Location = new System.Drawing.Point(15, 27);
             this.pathPanel.Name = "pathPanel";
             this.pathPanel.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.pathPanel.Size = new System.Drawing.Size(292, 38);
+            this.pathPanel.Size = new System.Drawing.Size(335, 38);
             this.pathPanel.TabIndex = 7;
             this.pathPanel.WrapContents = false;
             // 
@@ -111,10 +111,10 @@
             this.linkWebsite.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
             this.linkWebsite.Name = "linkWebsite";
             this.linkWebsite.Padding = new System.Windows.Forms.Padding(20, 1, 0, 1);
-            this.linkWebsite.Size = new System.Drawing.Size(284, 18);
+            this.linkWebsite.Size = new System.Drawing.Size(327, 18);
             this.linkWebsite.TabIndex = 7;
             this.linkWebsite.TabStop = true;
-            this.linkWebsite.Text = "Visit http://TracerX.CodePlex.com/releases";
+            this.linkWebsite.Text = "Visit https://github.com/MarkLTX/TracerX/releases";
             this.linkWebsite.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.linkWebsite.MouseClick += new System.Windows.Forms.MouseEventHandler(this.linkWebsite_MouseClick);
             // 
@@ -132,7 +132,7 @@
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Padding = new System.Windows.Forms.Padding(20, 1, 0, 1);
-            this.linkLabel1.Size = new System.Drawing.Size(284, 18);
+            this.linkLabel1.Size = new System.Drawing.Size(327, 18);
             this.linkLabel1.TabIndex = 6;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Edit version checking settings";

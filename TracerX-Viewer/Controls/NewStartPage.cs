@@ -27,9 +27,10 @@ namespace TracerX
             {
                 pnlVersion.Hide();
 
-                // TODO: Figure out how to check for new version on GitHub and uncomment this.
-                //VersionChecker.NewVersionFound += (sender, e) => pnlVersion.Show();
-                //VersionChecker.CheckForNewVersion();
+                // Check for new version on GitHub in a background thread.
+                // If a newer version is found make pnlVersion visible
+                VersionChecker.NewVersionFound += (sender, e) => pnlVersion.Show();
+                VersionChecker.CheckForNewVersion();
 
                 _remoteServers = RemoteServer.CreateListFromSettings();
 
@@ -323,7 +324,7 @@ namespace TracerX
         {
             try
             {
-                Process.Start("http://TracerX.CodePlex.com/releases");
+                Process.Start("https://github.com/MarkLTX/TracerX/releases");
             }
             catch (Exception)
             {

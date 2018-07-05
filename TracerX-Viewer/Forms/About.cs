@@ -25,7 +25,7 @@ namespace TracerX
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.codeplex.com/TracerX");
+            Process.Start("https://github.com/MarkLTX/TracerX");
         }
     }
 }

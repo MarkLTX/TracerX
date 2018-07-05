@@ -631,7 +631,7 @@ namespace TracerX {
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(479, 32);
             this.label6.TabIndex = 0;
-            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the CodePlex " +
+            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the GitHub " +
     "website?";
             // 
             // startPagePage
