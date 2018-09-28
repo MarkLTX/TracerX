@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Diagnostic log viewer.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("TracerX")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2013")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -15,7 +15,7 @@ namespace TracerX
     // This class looks for a newer version of the TracerX binaries on GitHub using a
     // worker thread to get the HTML for the TracerX releases page.
     // It would be better to use the GitHub API but that would require
-    // adding a dependency to a NuGet package like Octokit, I think.
+    // adding a dependency on a NuGet package like Octokit, I think.
     internal static class VersionChecker
     {
         /// <summary>

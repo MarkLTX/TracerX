@@ -53,8 +53,8 @@ namespace TracerX
             this.linkLabel1.TabIndex = 11;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "This software (the TracerX logger/viewer) includes software developed by the Apac" +
-                "he Software Foundation (http://www.apache.org/).  Click here to view the Apache " +
-                "license.";
+    "he Software Foundation (http://www.apache.org/).  Click here to view the Apache " +
+    "license.";
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 

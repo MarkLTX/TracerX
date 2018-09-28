@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TracerX-Service")]
-[assembly: AssemblyCopyright("Copyright ©  2014 - 2016")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2014-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

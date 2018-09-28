@@ -34,7 +34,8 @@ namespace TracerX
 
                 sb.AppendLine();
                 sb.AppendLine("Command syntax:");
-                sb.AppendLine("     TracerX-Viewer [<FilePath>] [-server:<ServerName>] [-filefilter:<Filter>]");
+                sb.AppendLine("     TracerX-Viewer [<FilePath>] [-server:<ServerName>] ");
+                sb.AppendLine("     [-filefilter:<Filter>]");
                 sb.AppendLine();
                 sb.AppendLine("  <FilePath>");
                 sb.AppendLine("     Any non-switch argument is considered a FilePath, which specifies");
@@ -44,19 +45,20 @@ namespace TracerX
                 sb.AppendLine("     refers to a file on the specified ServerName.");
                 sb.AppendLine();
                 sb.AppendLine("  -server:<ServerName>");
-                sb.AppendLine("     You may also use \"-s\"");
-                sb.AppendLine("     Specifies the server to connect to.  The server must be running");
-                sb.AppendLine("     TracerX-Service.exe or another process that hosts TracerX-ServiceImpl.dll.");
-                sb.AppendLine("     First, the servers in the saved settings are searched for one with a");
-                sb.AppendLine("     matching display name.  Then they are searched for a matching server");
+                sb.AppendLine("     You may also use \"-s\".");
+                sb.AppendLine("     Specifies the server to connect to.  The server must be ");
+                sb.AppendLine("     running TracerX-Service.exe or another process that hosts");
+                sb.AppendLine("     TracerX-ServiceImpl.dll.  First, the servers in the saved");
+                sb.AppendLine("     settings are searched for one with a matching display name.");
+                sb.AppendLine("     Then they are searched for a matching server");
                 sb.AppendLine("     name/address.  If a saved server isn't found one is created.");
                 sb.AppendLine();
                 sb.AppendLine("  -filefilter:<Filter>");
-                sb.AppendLine("     You may also use \"-ff\"");
+                sb.AppendLine("     You may also use \"-ff\".");
                 sb.AppendLine("     Specifies a filter string to use in the \"Filter:\" field on the Files tab.");
-                sb.AppendLine("     Only files whose names contain the <Filter> string will appear.  Useful");
-                sb.AppendLine("     if you want to help the user find a particular file but you're not sure");
-                sb.AppendLine("     about the full path.  ");
+                sb.AppendLine("     Only files whose names contain the <Filter> string will appear.  ");
+                sb.AppendLine("     This is useful if you want to help the user find a");
+                sb.AppendLine("     particular file but you're not sure about the full path.");
                 sb.AppendLine();
                 sb.AppendLine("  -h | -help | -?");
                 sb.AppendLine("     Any of these switches causes this help message to be displayed and ");
@@ -67,7 +69,8 @@ namespace TracerX
                 sb.AppendLine("  The separator between a switch and its value may be ':' or '='.");
                 sb.AppendLine("  Switch values that include blanks should be quoted.");
                 sb.AppendLine();
-                sb.AppendLine("  Example: TracerX-Viewer \"C:\\Log Folder\\Log File.tx1\" -server:\"The Server\"");
+                sb.AppendLine("  Example: ");
+                sb.AppendLine("     TracerX-Viewer \"C:\\Log Folder\\Log File.tx1\" -server:\"The Server\"");
 
                 // Since this is a GUI app with no console, we display a message box instead of writing to the console.
 

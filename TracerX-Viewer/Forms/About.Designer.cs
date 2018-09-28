@@ -84,7 +84,7 @@ namespace TracerX {
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(86, 31);
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(86, 34);
             this.linkLabel1.LinkColor = System.Drawing.Color.Blue;
             this.linkLabel1.Location = new System.Drawing.Point(12, 9);
             this.linkLabel1.Name = "linkLabel1";
@@ -100,7 +100,7 @@ namespace TracerX {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(465, 154);
+            this.ClientSize = new System.Drawing.Size(465, 153);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.loadDir);
             this.Controls.Add(this.label5);
