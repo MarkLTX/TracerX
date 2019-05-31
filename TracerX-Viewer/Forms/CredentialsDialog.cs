@@ -70,7 +70,7 @@ namespace TracerX
             }
             else if (txtPW.Text == "")
             {
-                MainForm.ShowMessageBox("A password is required when a non-blank User ID is specified.");
+                MainForm.ShowMessageBox("A password is required when a User ID is specified.");
             }
             else
             {

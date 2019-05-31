@@ -400,6 +400,11 @@ namespace TracerX
                             }
                             catch (Exception ex)
                             {
+                                // Display an error message including the exception and inner
+                                // exception messages.  If the exception is about bad credentials
+                                // and failed logon, ask the user if he wants to specify new
+                                // credentials for the server.
+
                                 Log.Warn("Exception getting files from server ", newServer, ": ", ex);
                                 string msg = "Error getting file list from server '" + newServer + "'.";
                                 MessageBoxButtons buttons = MessageBoxButtons.OK;
@@ -437,6 +442,8 @@ namespace TracerX
                                         {
                                             newServer.PW = credDlg.PW;
                                         }
+
+                                        serverTree1.SaveRemoteServers();
                                     }
                                     else
                                     {

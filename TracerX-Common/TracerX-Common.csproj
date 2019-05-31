@@ -35,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,11 +50,11 @@
     <Compile Include="ArgParserTX.cs" />
     <Compile Include="ClientBaseEx.cs" />
     <Compile Include="DeleteRelated.cs" />
-    <Compile Include="IFileEnum.cs" />
     <Compile Include="IFileMonitor.cs" />
+    <Compile Include="LocalFileWatcher.cs" />
+    <Compile Include="IFileEnum.cs" />
     <Compile Include="IFileReader.cs" />
     <Compile Include="IFileWatcher.cs" />
-    <Compile Include="LocalFileWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyFileEnum.cs" />
     <Compile Include="ProxyFileMonitor.cs" />

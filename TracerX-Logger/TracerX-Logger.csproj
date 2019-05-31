@@ -95,6 +95,7 @@
     <Compile Include="Logger\Object Rendering\IObjectRenderer.cs" />
     <Compile Include="Logger\Object Rendering\LambdaRenderer.cs" />
     <Compile Include="Logger\Object Rendering\RendererMap.cs" />
+    <Compile Include="Common\RecentlyCreated.cs" />
     <Compile Include="Logger\TextFile.cs" />
     <Compile Include="Logger\ThreadData.cs" />
     <Compile Include="Logger\Logger.Xml.cs" />
@@ -105,7 +106,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logger\Config\XmlConfigSectionHandler.cs" />
-    <Compile Include="Common\RecentlyCreated.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Logger\Config\SampleConfig.xml" />
