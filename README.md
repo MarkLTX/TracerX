@@ -6,3 +6,5 @@ TracerX is a logging framework for .NET.  It has three major components.
 1. **TracerX-Service.exe** - This is an optional component that enables viewing logs on remote servers without using shares. 
 
 The best documentation currently available is the CodeProject article at https://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET.  
+
+Loving VisualSVN as of 2019-06-01!
