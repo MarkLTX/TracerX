@@ -74,34 +74,4 @@ Global
 		BuildVersion_BuildVersioningStyle = None.None.None.None
 		BuildVersion_UpdateFileVersion = False
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs05
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Sample\\Sample.csproj
-		SccProjectName1 = Sample
-		SccLocalPath1 = Sample
-		SccProjectUniqueName2 = TracerX-Logger\\TracerX-Logger.csproj
-		SccProjectName2 = TracerX-Logger
-		SccLocalPath2 = TracerX-Logger
-		SccProjectUniqueName3 = TracerX-Viewer\\TracerX-Viewer.csproj
-		SccProjectName3 = TracerX-Viewer
-		SccLocalPath3 = TracerX-Viewer
-		SccProjectUniqueName4 = TestApp\\TestApp.csproj
-		SccProjectName4 = TestApp
-		SccLocalPath4 = TestApp
-		SccProjectUniqueName5 = HelloWorld\\HelloWorld.csproj
-		SccProjectName5 = HelloWorld
-		SccLocalPath5 = HelloWorld
-		SccProjectUniqueName6 = TracerX-ServiceImpl\\TracerX-ServiceImpl.csproj
-		SccProjectName6 = TracerX-ServiceImpl
-		SccLocalPath6 = TracerX-ServiceImpl
-		SccProjectUniqueName7 = TracerX-Service\\TracerX-Service.csproj
-		SccProjectName7 = TracerX-Service
-		SccLocalPath7 = TracerX-Service
-		SccProjectUniqueName8 = TracerX-Common\\TracerX-Common.csproj
-		SccProjectName8 = TracerX-Common
-		SccLocalPath8 = TracerX-Common
-	EndGlobalSection
 EndGlobal
