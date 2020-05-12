@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Collections.Specialized;
 using System.IO;
+using System.Text;
 using TracerX.ExtensionMethods;
 
 namespace TracerX
@@ -196,23 +192,45 @@ namespace TracerX
                 {
                     if (FilePath.EndsWith(".application", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Assume this means we were launched via our own TracerX-Viewer.application file, when means don't actually have a file arg.
+                        // Assume this means we were launched via our own TracerX-Viewer.application file, which means we don't actually have a file arg.
                         FilePath = null;
                     }
                     else
                     {
                         // If this app is installed as a ClickOnce app and the user double-clicks a
                         // file, the FilePath argument will be a URI such as
-                        // "file:///c:\logs\may%20have%20blanks.tx1". That is, any blanks will be
-                        // percent-encoded. We can construct a Uri object from the string and get the
-                        // Url.LocalPath property.
+                        // "file:///c:\logs\may%20have%20spaces.tx1"
+                        // or 
+                        // "file://server/share/has%20space%20and%20%25.tx1".
+                        // That is, it will be percent-encoded.  However, we want a regular
+                        // file path that is NOT percent-encoded.
+                        // We can construct a Uri object from the string and get the
+                        // Url.LocalPath property to do that.  If FilePath is not a valid URI
+                        // we may need to percent-decode it ourselves but we must not
+                        // percent-decode it twice because the original file name may contain the % char.
 
                         Uri uri;
-                        string localPath = FilePath;
+                        string localPath = null;
 
-                        if (Uri.TryCreate(FilePath, UriKind.Absolute, out uri))
+                        if (FilePath.StartsWith("file://", StringComparison.InvariantCultureIgnoreCase) && Uri.TryCreate(FilePath, UriKind.Absolute, out uri))
                         {
                             localPath = uri.LocalPath;
+                            Log.Debug("Converted URI '", FilePath, "' to\n", localPath);
+                        }
+                        else if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+                        {
+                            // This is a ClickOnce app.  It was probably invoked via the command line or Process.Start() using the .appref-ms file.
+                            // In that scenario we require the file path to be percent-encoded (also the switch arguments).
+                            localPath = ArgParserTX.PercentDecode(FilePath);
+                            Log.Debug("PercentDecode(\"", FilePath, "\") returned\n", localPath);
+                        }
+                        else
+                        {
+                            // Since this is not a ClickOnce app, regular command line syntax applies.  The FilePath
+                            // need not be percent-encoded, though the user should have enclosed it in quotes, that are
+                            // gone now, if it contains blanks.
+                            localPath = FilePath;
+                            Log.Debug("Using FilePath as is: ", FilePath);
                         }
 
                         // Constructing a FileInfo is the best way I know 
@@ -221,6 +239,8 @@ namespace TracerX
                         try
                         {
                             FileInfo test = new FileInfo(localPath);
+
+                            // If no exception we have a valid path (syntax).
                             FilePath = localPath;
                         }
                         catch (Exception ex)
