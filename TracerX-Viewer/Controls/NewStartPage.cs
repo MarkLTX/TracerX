@@ -708,10 +708,9 @@ namespace TracerX
             }
         }
 
-        // This is called when the user types into the combo box.
-        // This is NOT called when the user selects an item from the list.        
-        // Every call resets the _filterTimer.  When the _filter Timer expires (1 
-        // second after the last change) the filter is applied by _filterTimer_Tick.
+        // This is called when the user types into the combo box. This is NOT called when the user selects an
+        // item from the list, unlike the TextChanged event.  Every call resets the _filterTimer.  When the
+        // _filter Timer expires (1 second after the last change) the filter is applied by _filterTimer_Tick.
         private void serverFilterCombo_TextUpdate(object sender, EventArgs e)
         {
             if (serverFilterCombo.Text == "")
@@ -738,9 +737,12 @@ namespace TracerX
             _filterTimer.Enabled = true;
         }
 
+        // Called 1 second after the last change/keystroke to serverFilterCombo.
         void _filterTimer_Tick(object sender, EventArgs e)
         {
+            // Disable the timer until the user makes another change.
             _filterTimer.Enabled = false;
+
             ApplyServerFilter();
         }
 
@@ -751,7 +753,7 @@ namespace TracerX
 
         private void ApplyServerFilter()
         {
-            // We don't trim or otherwise alter the filter textbox because the user
+            // We don't trim or otherwise alter serverFilterCombo.Text because the user
             // may still be typing and want leading, trailing, or embedded blanks.
 
             serverTree1.BeginUpdate();
@@ -760,7 +762,7 @@ namespace TracerX
 
             if (serverFilterCombo.Text == "")
             {
-                // No filter so use regular background color.
+                // Use regular background color to indicate no filter is active.
                 serverFilterCombo.BackColor = Color.Empty;
             }
             else
@@ -777,6 +779,14 @@ namespace TracerX
 
             Settings.Default.ServerFilters.Remove(serverFilterCombo.Text);
             Settings.Default.ServerFilters.Insert(0, serverFilterCombo.Text);
+            
+            // Keep only the 8 most recent items.
+            
+            while (Settings.Default.ServerFilters.Count > 8)
+            {
+                Settings.Default.ServerFilters.RemoveAt(8);
+            }
+
             InitServerFilterCombo();
         }
     }
