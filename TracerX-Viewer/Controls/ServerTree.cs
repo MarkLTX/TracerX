@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Drawing;
 using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace TracerX
 {
@@ -56,7 +55,7 @@ namespace TracerX
         private TreeNode _allNode;
         private ToolStripMenuItem mnuTestConnection;
         private List<RemoteServer> _masterServerList; // Same object that NewStartPage has.
-        string _filter = "";
+        private string _filter = "";
         private HashSet<RemoteServer> _visibleServers = new HashSet<RemoteServer>();
 
         [Browsable(true)]

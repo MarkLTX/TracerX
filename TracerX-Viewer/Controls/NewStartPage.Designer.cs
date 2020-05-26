@@ -42,10 +42,11 @@
             this.btnLeftManageServers = new TracerX.FlatButton();
             this.btnAddServer = new TracerX.FlatButton();
             this.btnRemoveServer = new TracerX.FlatButton();
+            this.saveServerFilterBtn = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.serverTree1 = new TracerX.ServerTree();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.txtServerFilter = new System.Windows.Forms.TextBox();
+            this.serverFilterCombo = new System.Windows.Forms.ComboBox();
             this.lblServerFilter = new System.Windows.Forms.Label();
             this.leftButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -79,7 +80,7 @@
             this.pnlVersion.Location = new System.Drawing.Point(0, 0);
             this.pnlVersion.Name = "pnlVersion";
             this.pnlVersion.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.pnlVersion.Size = new System.Drawing.Size(670, 68);
+            this.pnlVersion.Size = new System.Drawing.Size(769, 68);
             this.pnlVersion.TabIndex = 12;
             // 
             // pathPanel
@@ -147,7 +148,7 @@
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(10, 0);
             this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(660, 24);
+            this.topPanel.Size = new System.Drawing.Size(759, 24);
             this.topPanel.TabIndex = 2;
             // 
             // lblVersion
@@ -169,7 +170,7 @@
             this.label2.Location = new System.Drawing.Point(0, 14);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(660, 1);
+            this.label2.Size = new System.Drawing.Size(759, 1);
             this.label2.TabIndex = 2;
             this.label2.Text = "label2";
             // 
@@ -224,6 +225,18 @@
             this.btnRemoveServer.UseVisualStyleBackColor = false;
             this.btnRemoveServer.Click += new System.EventHandler(this.btnRemoveServer_Click);
             // 
+            // saveServerFilterBtn
+            // 
+            this.saveServerFilterBtn.Enabled = false;
+            this.saveServerFilterBtn.Image = global::TracerX.Properties.Resources.Green_Plus_16;
+            this.saveServerFilterBtn.Location = new System.Drawing.Point(174, 0);
+            this.saveServerFilterBtn.Name = "saveServerFilterBtn";
+            this.saveServerFilterBtn.Size = new System.Drawing.Size(21, 21);
+            this.saveServerFilterBtn.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.saveServerFilterBtn, "Save");
+            this.saveServerFilterBtn.UseVisualStyleBackColor = true;
+            this.saveServerFilterBtn.Click += new System.EventHandler(this.saveServerFilterBtn_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.BackColor = System.Drawing.Color.DarkGray;
@@ -246,8 +259,8 @@
             this.splitContainer1.Panel2.BackColor = System.Drawing.Color.BlueViolet;
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2MinSize = 50;
-            this.splitContainer1.Size = new System.Drawing.Size(670, 530);
-            this.splitContainer1.SplitterDistance = 152;
+            this.splitContainer1.Size = new System.Drawing.Size(769, 530);
+            this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 17;
             this.splitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.splitContainer1_SplitterMoving);
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
@@ -258,7 +271,7 @@
             this.serverTree1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.serverTree1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.serverTree1.FullRowSelect = true;
-            this.serverTree1.Location = new System.Drawing.Point(0, 85);
+            this.serverTree1.Location = new System.Drawing.Point(0, 92);
             this.serverTree1.Name = "serverTree1";
             treeNode1.Name = "Node0";
             treeNode1.Text = "All Servers";
@@ -266,32 +279,31 @@
             treeNode1});
             this.serverTree1.SelectedServer = null;
             this.serverTree1.ShowLines = false;
-            this.serverTree1.Size = new System.Drawing.Size(150, 445);
+            this.serverTree1.Size = new System.Drawing.Size(198, 438);
             this.serverTree1.TabIndex = 5;
             this.serverTree1.SelectedServerChanged += new System.EventHandler(this.serverTree1_SelectedServerChanged);
             // 
             // panel1
             // 
-            this.panel1.AutoSize = true;
             this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.Controls.Add(this.txtServerFilter);
+            this.panel1.Controls.Add(this.saveServerFilterBtn);
+            this.panel1.Controls.Add(this.serverFilterCombo);
             this.panel1.Controls.Add(this.lblServerFilter);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 62);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(150, 23);
+            this.panel1.Size = new System.Drawing.Size(198, 30);
             this.panel1.TabIndex = 8;
             // 
-            // txtServerFilter
+            // serverFilterCombo
             // 
-            this.txtServerFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtServerFilter.Location = new System.Drawing.Point(37, 0);
-            this.txtServerFilter.MaxLength = 50;
-            this.txtServerFilter.Name = "txtServerFilter";
-            this.txtServerFilter.Size = new System.Drawing.Size(110, 20);
-            this.txtServerFilter.TabIndex = 1;
-            this.txtServerFilter.TextChanged += new System.EventHandler(this.txtServerFilter_TextChanged);
+            this.serverFilterCombo.FormattingEnabled = true;
+            this.serverFilterCombo.Location = new System.Drawing.Point(36, 0);
+            this.serverFilterCombo.Name = "serverFilterCombo";
+            this.serverFilterCombo.Size = new System.Drawing.Size(135, 21);
+            this.serverFilterCombo.TabIndex = 2;
+            this.serverFilterCombo.SelectedIndexChanged += new System.EventHandler(this.serverFilterCombo_SelectedIndexChanged);
+            this.serverFilterCombo.TextUpdate += new System.EventHandler(this.serverFilterCombo_TextUpdate);
             // 
             // lblServerFilter
             // 
@@ -313,7 +325,7 @@
             this.leftButtonPanel.Location = new System.Drawing.Point(0, 29);
             this.leftButtonPanel.Name = "leftButtonPanel";
             this.leftButtonPanel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
-            this.leftButtonPanel.Size = new System.Drawing.Size(150, 33);
+            this.leftButtonPanel.Size = new System.Drawing.Size(198, 33);
             this.leftButtonPanel.TabIndex = 18;
             // 
             // label1
@@ -341,7 +353,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(9, 4);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(514, 530);
+            this.tabControl1.Size = new System.Drawing.Size(565, 530);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -353,7 +365,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.tabPage1.Size = new System.Drawing.Size(506, 500);
+            this.tabPage1.Size = new System.Drawing.Size(557, 500);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Files";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -375,7 +387,7 @@
             this.filesGrid.PathsAreLocal = false;
             this.filesGrid.RemoteServer = null;
             this.filesGrid.ShowTimesAgo = false;
-            this.filesGrid.Size = new System.Drawing.Size(506, 496);
+            this.filesGrid.Size = new System.Drawing.Size(557, 496);
             this.filesGrid.TabIndex = 0;
             this.filesGrid.RefreshClicked += new System.EventHandler(this.filesGrid_RefreshClicked);
             this.filesGrid.LastClickedItemChanged += new System.EventHandler(this.PathGrid_LastClickedItemChanged);
@@ -387,7 +399,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.tabPage2.Size = new System.Drawing.Size(506, 500);
+            this.tabPage2.Size = new System.Drawing.Size(557, 500);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -409,7 +421,7 @@
             this.foldersGrid.PathsAreLocal = false;
             this.foldersGrid.RemoteServer = null;
             this.foldersGrid.ShowTimesAgo = false;
-            this.foldersGrid.Size = new System.Drawing.Size(506, 496);
+            this.foldersGrid.Size = new System.Drawing.Size(557, 496);
             this.foldersGrid.TabIndex = 0;
             this.foldersGrid.RefreshClicked += new System.EventHandler(this.filesGrid_RefreshClicked);
             this.foldersGrid.LastClickedItemChanged += new System.EventHandler(this.PathGrid_LastClickedItemChanged);
@@ -422,7 +434,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.pnlVersion);
             this.Name = "NewStartPage";
-            this.Size = new System.Drawing.Size(670, 598);
+            this.Size = new System.Drawing.Size(769, 598);
             this.pnlVersion.ResumeLayout(false);
             this.pnlVersion.PerformLayout();
             this.pathPanel.ResumeLayout(false);
@@ -435,7 +447,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.leftButtonPanel.ResumeLayout(false);
             this.leftButtonPanel.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -471,7 +482,8 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox txtServerFilter;
         private System.Windows.Forms.Label lblServerFilter;
+        private System.Windows.Forms.ComboBox serverFilterCombo;
+        private System.Windows.Forms.Button saveServerFilterBtn;
     }
 }

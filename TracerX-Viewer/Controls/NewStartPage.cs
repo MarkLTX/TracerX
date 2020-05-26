@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
-using System.Threading;
-using TracerX.Properties;
-using TracerX.ExtensionMethods;
-using System.ServiceModel.Security;
+using System.Drawing;
+using System.Linq;
 using System.Security.Authentication;
+using System.ServiceModel.Security;
+using System.Windows.Forms;
+using TracerX.Properties;
 
 namespace TracerX
 {
@@ -34,6 +29,8 @@ namespace TracerX
 
                 _remoteServers = RemoteServer.CreateListFromSettings();
 
+                InitServerFilterCombo();
+
                 try
                 {
                     // Try to make the SplitContainer double buffered to reduce flicker.
@@ -48,7 +45,7 @@ namespace TracerX
 
                 Settings.Default.PropertyChanged += SettingsPropertyChanged;
 
-                _refreshTimer.Tick +=new EventHandler(_refreshTimer_Tick);
+                _refreshTimer.Tick += new EventHandler(_refreshTimer_Tick);
                 _refreshTimer.Interval = 2000;
             }
         }
@@ -679,7 +676,7 @@ namespace TracerX
                 serverTree1.EndUpdate();
 
                 // Ask the user if he wants to connect to the new server.
-                //if (MainForm.ShowMessageBoxBtns("Connect to '" + newRemoteServer.HostName + "'?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+
                 if (editDlg.DoConnect)
                 {
                     serverTree1.SelectedServer = newRemoteServer;
@@ -692,9 +689,41 @@ namespace TracerX
             serverTree1.ConfirmAndRemoveServer(serverTree1.SelectedServer);
         }
 
-        private void txtServerFilter_TextChanged(object sender, EventArgs e)
+        private void InitServerFilterCombo()
         {
-            Debug.Print("txtServerFilter_TextChanged");
+            // Initialize the severFilterCombo.Items from Settings.Default.ServerFilters,
+            // except ensure the first item is an empty string signifying no filter is selected.
+
+            serverFilterCombo.Items.Clear();
+            serverFilterCombo.Items.Add("");
+
+            if (Settings.Default.ServerFilters == null)
+            {
+                Settings.Default.ServerFilters = new System.Collections.Specialized.StringCollection();
+            }
+
+            foreach (string filter in Settings.Default.ServerFilters)
+            {
+                serverFilterCombo.Items.Add(filter);
+            }
+        }
+
+        // This is called when the user types into the combo box.
+        // This is NOT called when the user selects an item from the list.        
+        // Every call resets the _filterTimer.  When the _filter Timer expires (1 
+        // second after the last change) the filter is applied by _filterTimer_Tick.
+        private void serverFilterCombo_TextUpdate(object sender, EventArgs e)
+        {
+            if (serverFilterCombo.Text == "")
+            {
+                // Don't allow empty string to be saved.
+                saveServerFilterBtn.Enabled = false;
+            }
+            else
+            {
+                // Allow user to save the current text.
+                saveServerFilterBtn.Enabled = true;
+            }
 
             if (_filterTimer == null)
             {
@@ -712,24 +741,43 @@ namespace TracerX
         void _filterTimer_Tick(object sender, EventArgs e)
         {
             _filterTimer.Enabled = false;
+            ApplyServerFilter();
+        }
 
+        private void serverFilterCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyServerFilter();
+        }
+
+        private void ApplyServerFilter()
+        {
             // We don't trim or otherwise alter the filter textbox because the user
             // may still be typing and want leading, trailing, or embedded blanks.
 
             serverTree1.BeginUpdate();
-            serverTree1.ApplyFilter(txtServerFilter.Text);
+            serverTree1.ApplyFilter(serverFilterCombo.Text);
             serverTree1.EndUpdate();
 
-            if (txtServerFilter.Text == "")
+            if (serverFilterCombo.Text == "")
             {
-                // No filter so use regular background color).
-                txtServerFilter.BackColor = Color.Empty;
+                // No filter so use regular background color.
+                serverFilterCombo.BackColor = Color.Empty;
             }
             else
             {
                 // Use yellow backcolor to indicate active filter.
-                txtServerFilter.BackColor = Color.Yellow;
+                serverFilterCombo.BackColor = Color.Yellow;
             }
         }
-    }    
+
+        private void saveServerFilterBtn_Click(object sender, EventArgs e)
+        {
+            // If the current filter text is already in the list remove it.
+            // Then insert it as the first item.
+
+            Settings.Default.ServerFilters.Remove(serverFilterCombo.Text);
+            Settings.Default.ServerFilters.Insert(0, serverFilterCombo.Text);
+            InitServerFilterCombo();
+        }
+    }
 }
