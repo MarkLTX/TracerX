@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace TracerX
 {
-    // This form displays the call stack. 
+    // This form displays the call stack.
     internal partial class CallStack : Form
     {
         public CallStack()

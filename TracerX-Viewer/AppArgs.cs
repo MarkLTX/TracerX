@@ -65,8 +65,17 @@ namespace TracerX
                 sb.AppendLine("  The separator between a switch and its value may be ':' or '='.");
                 sb.AppendLine("  Switch values that include blanks should be quoted.");
                 sb.AppendLine();
+                sb.AppendLine("  If invoking TracerX-Viewer via a ClickOnce shortcut do the following.");
+                sb.AppendLine("  a) Percent-encode the spaces (' '), ampersands('&'), and percents ('%')");
+                sb.AppendLine("      in each argument individually.");
+                sb.AppendLine("  b) Concatenate the percent-encoded arguments with ampersands");
+                sb.AppendLine("      between them instead of spaces.");
+                sb.AppendLine();
                 sb.AppendLine("  Example: ");
                 sb.AppendLine("     TracerX-Viewer \"C:\\Log Folder\\Log File.tx1\" -server:\"The Server\"");
+                sb.AppendLine();
+                sb.AppendLine("  Example (ClickOnce): ");
+                sb.AppendLine("     TracerX-Viewer.appref-ms C:\\Log%20Folder\\Log%20File.tx1&-server:The%20Server");
 
                 // Since this is a GUI app with no console, we display a message box instead of writing to the console.
 

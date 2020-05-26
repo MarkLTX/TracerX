@@ -115,5 +115,158 @@ namespace TracerX.ExtensionMethods
             return System.IO.Path.GetFileName(s);
         }
 
+        /// <summary>
+        /// Returns the Nth (0 based) field of 'this' string, where fieldSeparator specifies
+        /// the char that separates fields.  Does not use string.Split().
+        /// The 'this' string must not be null, but can be empty.
+        /// This overload treats sequential instances of the fieldSeparator char as a single
+        /// instances (i.e. it logically collapses them).
+        /// All input strings, including empty ones, are considered to have at least one field.
+        /// The total number of fields in a string is 1 plus the count of (collapsed) fieldSeparator
+        /// chars in the string.  
+        /// If fieldNum is greater than or equal to the number of
+        /// fields, a null string is returned.  
+        /// See the TestField() method for examples.
+        /// </summary>
+        /// <param name="s">The 'this' string.  Must not be null.</param>
+        /// <param name="fieldNum">The 0-based number of the field (substring) to return.</param>
+        /// <param name="fieldSeparator">The character that separates the input into fields.</param>
+        /// <returns></returns>
+        public static string Field(this string s, int fieldNum, char fieldSeparator)
+        {
+            return s.Field(fieldNum, fieldSeparator, true);
+        }
+
+        /// <summary>
+        /// Returns the Nth (0 based) field of 'this' string, where fieldSeparator specifies
+        /// the char that separates fields.  Does not use string.Split().
+        /// The 'this' string must not be null, but can be empty.
+        /// All input strings, including empty ones, are considered to have at least one field.
+        /// The total number of fields in a string is 1 plus the count of fieldSeparator
+        /// chars in the string (unless collapseSeparators is true).  
+        /// If fieldNum is greater than or equal to the number of
+        /// fields, a null string is returned.  
+        /// See the TestField() method for examples.
+        /// </summary>
+        /// <param name="s">The 'this' string.  Must not be null.</param>
+        /// <param name="fieldNum">The 0-based number of the field (substring) to return.</param>
+        /// <param name="fieldSeparator">The character that separates the input into fields.</param>
+        /// <param name="collapseSeparators">If true, sequences of multiple fieldSeparator chars are treated as a single instance.
+        /// If false, adjacent fieldSeparator chars are considered to have empty fields between them.</param>
+        /// <returns></returns>
+        public static string Field(this string s, int fieldNum, char fieldSeparator, bool collapseSeparators)
+        {
+            if (s == null) throw new ArgumentNullException("Can't extract a field from a null string.");
+            if (fieldNum < 0) throw new ArgumentException("Parameter fieldNum cannot be negative.");
+
+            int start = 0;
+            int length = 0;
+            int count = 0;
+
+            for (int i = 0; i < s.Length; ++i)
+            {
+                if (count == fieldNum)
+                {
+                    // We already found the start of the desired field, now looking for the end.
+                    if (s[i] == fieldSeparator)
+                    {
+                        return s.Substring(start, length);
+                    }
+                    else
+                    {
+                        ++length;
+                    }
+                }
+                else if (s[i] == fieldSeparator)
+                {
+                    ++count;
+                    start = i + 1;
+
+                    if (collapseSeparators)
+                    {
+                        while (start < s.Length && s[start] == fieldSeparator)
+                        {
+                            ++i;
+                            ++start;
+                        }
+                    }
+                }
+            }
+
+            if (count != fieldNum)
+            {
+                return null;
+            }
+            else if (length == 0 || start == s.Length)
+            {
+                return "";
+            }
+            else
+            {
+                return s.Substring(start, length);
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of "fields" in the input string, where fieldSeparator specifies
+        /// the char that delimits fields.  Null strings have 0 fields.  Empty strings have 1
+        /// field.  For other strings, this returns the number of (possibly empty) fields delimited by one more fieldSeparator chars.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="fieldSeparator">The char that separates the input string into fields.</param>
+        /// <returns></returns>
+        public static int FieldCount(this string s, char fieldSeparator)
+        {
+            return s.FieldCount(fieldSeparator, true);
+        }
+
+        /// <summary>
+        /// Returns the number of "fields" in the input string, where fieldSeparator specifies
+        /// the char that separates fields.  Null strings have 0 fields.  Empty strings have 1
+        /// field.  For other strings, this returns the number of fieldSeparator chars found plus 1,
+        /// unless collapseSeparators is true.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="fieldSeparator">The char that separates the input string into fields.</param>
+        /// <param name="collapseSeparators">If true, multiple adjacent instances of the fieldSeparator char are treated as one instance.
+        /// If false, each instance increments the count.</param>
+        /// <returns></returns>
+        public static int FieldCount(this string s, char fieldSeparator, bool collapseSeparators)
+        {
+            if (s == null) return 0;
+
+            // Init prevChar to something other than fieldSeparator;
+            char prevChar = (char)~fieldSeparator;
+            int result = 0;
+
+            foreach (char c in s)
+            {
+                if (c == fieldSeparator && (!collapseSeparators || prevChar != fieldSeparator))
+                {
+                    ++result;
+                }
+
+                prevChar = c;
+            }
+
+            return result + 1;
+        }
+        
+        /// <summary>
+        /// Returns the first numChars chars of the string.
+        /// Same as Remove(), but no exception if Length is less than numChars.
+        /// </summary>
+        public static string First(this string s, int numChars)
+        {
+            if (s.Length > numChars)
+            {
+                return s.Remove(numChars);
+            }
+            else
+            {
+                return s;
+            }
+        }
+
     }
 }

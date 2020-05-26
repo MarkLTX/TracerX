@@ -256,6 +256,30 @@ namespace TracerX
 
         private static string[] GetClickOnceArgs(bool keepQuotes)
         {
+            // Passing arguments to a ClickOnce app is tricky.  Only the first space-delimited part of the
+            // argument string makes it through unless the entire string is quoted.  However if you quote the
+            // entire string you can't quote individual arguments within it that may have embedded spaces.
+            // For example with a normal executable you could do something like this,
+            //      NormalApp.exe -server:ServerName "file with spaces in name.tx1"
+            // and the app will be able to receive "file with spaces in name.tx1" as a single argument.  If
+            // you try that with a ClickOnce app (i.e. a .appref-ms shortcut) like this,
+            //      ClickOnceApp.appref-ms -server:ServerName "file with spaces in name.tx1"
+            // the argument string will be truncated at the first space. You might try putting the whole string 
+            // in quotes like this,
+            //      ClickOnceApp.appref-ms "-server:ServerName file with spaces in name.tx1"
+            // and the whole thing will make it through but the app can't tell that "file with spaces in name.tx1"
+            // is supposed to be a single argument.
+            //
+            // TracerX solves this dilemma by expecting a percent-encoded argument string when invoked as a
+            // ClickOnce app.  This is similar to an http query string in which there are no spaces because
+            // the spaces between args are replaced with '&' and the spaces within the args (e.g. file paths)
+            // are replaced with "%20".  For example this will work.
+            //      TracerX-Viewer.appref-ms -server:ServerName&file%20with%20spaces%20in%20name.tx1
+            // We only need enough percent-encoding to eliminate spaces while allowing the arguments to contain
+            // the space, percent, and ampersand characters.  Therefore we only percent-encode those three chars.
+            // In fact encoding everything, especially slashes and colons, causes problems because of how the file
+            // path is passed when you open a file by double-clicking it in Explorer.
+
             string[] args = null;
             ApplicationDeployment currentDeployment = ApplicationDeployment.CurrentDeployment;
 
