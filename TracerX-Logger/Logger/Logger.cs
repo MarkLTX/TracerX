@@ -1122,7 +1122,12 @@ namespace TracerX
                     Root.Debug("Granting Read access on path ", directoryPath);
                 }
 
+#if NET35
                 DirectorySecurity security = Directory.GetAccessControl(directoryPath);
+#elif NETCOREAPP3_1
+                DirectoryInfo di = new DirectoryInfo(directoryPath);
+                DirectorySecurity security = di.GetAccessControl();
+#endif
                 FileSystemRights rights = fullControl ? FileSystemRights.FullControl : FileSystemRights.ListDirectory | FileSystemRights.Read;
                 bool changed = false;
 
@@ -1179,7 +1184,11 @@ namespace TracerX
                 if (changed)
                 {
                     Root.Debug("Calling SetAccessControl()");
+#if NET35
                     Directory.SetAccessControl(directoryPath, security);
+#elif NETCOREAPP3_1
+                    di.SetAccessControl(security);
+#endif
                 }
             }
 
@@ -1330,7 +1339,7 @@ namespace TracerX
         private volatile bool _isTextFileCommitted;
         private object _loggerLock = new object();
 
-        #region Trace levels
+#region Trace levels
         // Each logging destination has an explicit trace level and an effective trace level that is
         // inherited from the parent logger if the explicit trace level is Inherited.
         private class LevelPair
@@ -1410,9 +1419,9 @@ namespace TracerX
         {
             return this._maxLevel >= msgLevel;
         }
-        #endregion
+#endregion
 
-        #region Message logging
+#region Message logging
 
         // Determines which destinations the message should be logged to and calls
         // the appropriate method for each.
@@ -1453,9 +1462,9 @@ namespace TracerX
             }
         }
 
-        #endregion
+#endregion
 
-        #region Method entry/exit logging
+#region Method entry/exit logging
 
         // Constructs a flags enum indicating which destinations' levels are enabled.
         internal Destinations GetDestinations(TraceLevel level)
@@ -1549,9 +1558,9 @@ namespace TracerX
 
         // The only instance ever needed.
         private static readonly CallEnder MyCallEnder = new CallEnder();
-        #endregion
+#endregion
 
-        #region Logger hierarchy
+#region Logger hierarchy
         // Dictionary of all loggers.
         private static readonly Dictionary<string, Logger> _loggers = new Dictionary<string, Logger>();
         private List<Logger> _children;         // Null if no children.
@@ -1686,9 +1695,9 @@ namespace TracerX
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Unhandled exception logging
+#region Unhandled exception logging
         // Count the number of unhandled exceptions logged by TracerX and don't exceed the max.
         private static int _exceptionsLogged;
         private static uint _maxExceptionsLogged = 3;
@@ -1716,8 +1725,8 @@ namespace TracerX
                     Logger.Root.Fatal("An unhandled exception was passed to TracerX's handler for the AppDomain.CurrentDomain.UnhandledException event, but was not logged to the event log.\n", e.ExceptionObject);
                 }
             };
-        #endregion
+#endregion
 
-        #endregion
+#endregion
     }
 }

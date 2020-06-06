@@ -79,12 +79,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
-      <Name>TracerX-Logger</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -101,6 +95,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
+      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
+      <Name>TracerX-Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -111,7 +111,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

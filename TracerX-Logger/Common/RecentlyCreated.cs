@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
@@ -69,7 +67,7 @@ namespace TracerX
 
             try
             {
-                System.IO.Directory.CreateDirectory(TracerXDir);
+                Directory.CreateDirectory(TracerXDir);
 
                 // Try to prevent multiple processes from updating the files concurrently,
                 // but update the files even if we don't acquire the mutex in 10 seconds.
@@ -174,18 +172,19 @@ namespace TracerX
         // file so any user can update it.
         private static void GrantPermissionsOnFile(string filePath)
         {
-            // First get a FileSecurity object that represents the 
-            // current security settings.
-            FileSecurity fSecurity = File.GetAccessControl(filePath);
-
             var sid = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
 
-            // Add the FileSystemAccessRule to the security settings. 
-            fSecurity.AddAccessRule(new FileSystemAccessRule(sid,
-                FileSystemRights.FullControl, AccessControlType.Allow));
-
-            // Set the new access settings.
+#if NET35
+            FileSecurity fSecurity = File.GetAccessControl(filePath);
+            fSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
             File.SetAccessControl(filePath, fSecurity);
+#elif NETCOREAPP3_1
+            FileInfo fi = new FileInfo(filePath);
+            FileSecurity fSecurity = fi.GetAccessControl();
+            fSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
+            fi.SetAccessControl(fSecurity);
+#endif
+
         }
     }
 }

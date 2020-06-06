@@ -70,14 +70,10 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -148,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
+      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
       <Name>TracerX-Logger</Name>
     </ProjectReference>
     <ProjectReference Include="..\TracerX-Viewer\TracerX-Viewer.csproj">
@@ -186,7 +182,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

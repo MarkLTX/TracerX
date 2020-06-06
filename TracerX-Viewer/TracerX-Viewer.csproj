@@ -577,9 +577,8 @@
       <Name>TracerX-Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54A86033-AACB-4A87-AD47-355548E42936}</Project>
+      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
       <Name>TracerX-Logger</Name>
-      <Aliases>global</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\TracerX-ServiceImpl\TracerX-ServiceImpl.csproj">
       <Project>{58B31300-67DF-41C0-934C-F2E102CF53BF}</Project>

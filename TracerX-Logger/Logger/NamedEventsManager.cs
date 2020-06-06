@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Security.AccessControl;
@@ -197,38 +196,34 @@ namespace TracerX
             }
         }
 
-        // This creates the named system event that "belongs to" the 
-        // logger (the logger has a handler for when the event is signaled).
+        // This creates the named system event that "belongs to" the logger (the logger has a handler for when
+        // the event is signaled). The event will be signaled by TracerX-Service or TracerX-Viewer when the
+        // file is viewed.
         private void CreateLoggersEvent()
         {
             lock (_eventsLock)
             {
-                string step = "creating named event";
+                string step = "creating named event"; 
+                string eventName = "Global\\TX-" + _fileGuidString;
                 bool createdNew;
 
                 try
                 {
-                    // Set the security so any viewer can set/signal the event.
-
-                    EventWaitHandleSecurity security = new EventWaitHandleSecurity();
-                    SecurityIdentifier authenticatedUsers = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
-
-                    //SecurityIdentifier curAccount = System.Security.Principal.WindowsIdentity.GetCurrent().User;
-                    //security.AddAccessRule(new EventWaitHandleAccessRule(curAccount, EventWaitHandleRights.FullControl, AccessControlType.Allow));
-
-                    security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.Modify, AccessControlType.Allow));
-                    security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.ReadPermissions, AccessControlType.Allow));
-
-                    string eventName = "Global\\TX-" + _fileGuidString;
                     //MetaLog?.Info("Creating logger's event ", eventName);
-                    _loggersEvent = new EventWaitHandle(false, EventResetMode.AutoReset, eventName, out createdNew, security);
-
+                    _loggersEvent = new EventWaitHandle(false, EventResetMode.AutoReset, eventName, out createdNew);
+                    
                     // If createdNew = false, it probably means something bad but I'm not sure it's always bad. 
                     // For example, if the file was closed and reopened maybe we'll get the same event object again.
 
                     step = "registering callback";
                     //MetaLog?.Info("Calling RegisterWaitForSingleObject");
                     _loggersRegisteredWaitHandle = ThreadPool.RegisterWaitForSingleObject(_loggersEvent, LoggersEventHandler, null, -1, false);
+
+                    // Set the security so any viewer can set/signal the event.
+
+                    step = "setting named event security";
+                    SetEventSecurity();
+
                     //Debug.Print("Logger's named event is ready: {0}", eventName);
                 }
                 catch (Exception ex)
@@ -248,9 +243,20 @@ namespace TracerX
                     //MetaLog?.Info(msg);
                     Debug.Print(msg);
                     Logger.EventLogging.Log(msg, Logger.EventLogging.NonFatalExceptionInLogger);
-                    Close();
+                    //Close();
                 }
             }
+        }
+
+        private void SetEventSecurity()
+        {
+            EventWaitHandleSecurity security = new EventWaitHandleSecurity();
+            SecurityIdentifier authenticatedUsers = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
+
+            security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.Modify, AccessControlType.Allow));
+            security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.ReadPermissions, AccessControlType.Allow));
+
+            _loggersEvent.SetAccessControl(security);
         }
 
         // Called on an arbitrary thread when another process (presumably a log viewer)
@@ -303,65 +309,22 @@ namespace TracerX
             } // lock
         }
 
-        // Called under lock to add/remove members of _viewerEvents.
+        // Called under lock to check for the existence of named system events created viewers and populate
+        // _viewerEvents with an EventWaitHandle for each named event found.  
         private void CheckForViewers()
         {
             //Debug.Print("CheckForViewers");
             //MetaLog?.Info("CheckForViewers");
 
-            if (_viewerEventNames == null)
-            {
-                // This is the first time the _loggersEvent has been signaled.
-                // Generate the list of event names the viewer(s) can create.
-
-                _viewerEventNames = new string[_maxViewerEvents];
-                _viewerEvents = new List<EventWaitHandle>(_maxViewerEvents);
-
-                for (int i = 0; i < _maxViewerEvents; ++i)
-                {
-                    _viewerEventNames[i] = "Global\\TX" + i + '-' + _fileGuidString;
-                }
-            }
-            else
-            {
-                // Close the viewer event handles we are holding so the OS can dispose of any that are no longer held by a viewer process.
-                // Other code will attempt to reopen all 10 of the named events that viewers might still be using to determine which ones are in use.
-
-                foreach (EventWaitHandle evt in _viewerEvents)
-                {
-                    evt.Close();
-                }
-
-                _viewerEvents.Clear();
-            }
+            ClearViewerEvents();
 
             // At this point _viewerEventNames is populated and _viewerEvents exists but is empty.
+            // Attempt to open any viewer events that might exist and add them to _viewerEvents.
 
             foreach (string eventName in _viewerEventNames)
             {
-                try
-                {
-                    // OpenExisting() throws a WaitHandleCannotBeOpenedException if no event named eventName exists.
-                    var eventHandle = EventWaitHandle.OpenExisting(eventName, EventWaitHandleRights.Modify);
-
-                    // Since the above call didn't throw an exception we found a viewer event that a viewer is waiting on.
-                    // Keep it so other code can signal it when new messages are logged.
-                    _viewerEvents.Add(eventHandle);
-                    //Debug.Print("Found event named  {0}", eventName);
-                    //MetaLog?.Info("Found event named  ", eventName);
-                }
-                catch (Exception ex)
-                {
-                    // We expect to get System.Threading.WaitHandleCannotBeOpenedException with 
-                    // message "No handle of the given name exists." quite often.  Anything else is unexpected.
-
-                    if (!(ex is WaitHandleCannotBeOpenedException) || ex.Message != "No handle of the given name exists.")
-                    {
-                        // This is unexpected.
-                        Debug.Print("Unexpected exception opening named event '{0}', {1}: {2}", eventName, ex.GetType(), ex.Message);
-                        //MetaLog?.Info("Error opening event named  ", eventName, ": ", ex.GetType(), ", ", ex.Message);
-                    }
-                }
+                // Possibly adds to _viewerEvents.
+                TryOpenViewerEvent(eventName);
             }
 
             if (_viewerEvents.Any())
@@ -389,6 +352,68 @@ namespace TracerX
 
                     AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
                 }
+            }
+        }
+
+        private void TryOpenViewerEvent(string eventName)
+        {
+            try
+            {
+                // OpenExisting() throws a WaitHandleCannotBeOpenedException if no event named eventName exists.
+
+#if NET35
+                EventWaitHandle eventHandle = EventWaitHandle.OpenExisting(eventName, EventWaitHandleRights.Modify);
+#elif NETCOREAPP3_1
+                EventWaitHandle eventHandle = EventWaitHandle.OpenExisting(eventName);
+#endif
+
+                // Getting here without an exception means we found a viewer event that a viewer is waiting on.
+                // Keep it so other code can signal it when new messages are logged.
+                _viewerEvents.Add(eventHandle);
+
+                //Debug.Print("Found event named  {0}", eventName);
+                //MetaLog?.Info("Found event named  ", eventName);
+            }
+            catch (WaitHandleCannotBeOpenedException ex) when (ex.Message == "No handle of the given name exists.")
+            {
+                // This is expected to happen a lot because it's extremely rare for 10 viewers to be watching the file.
+            }
+            catch (Exception ex)
+            {
+                // This is unexpected.
+                Debug.Print("Unexpected exception opening named event '{0}', {1}: {2}", eventName, ex.GetType(), ex.Message);
+                //MetaLog?.Info("Error opening event named  ", eventName, ": ", ex.GetType(), ", ", ex.Message);
+            }
+        }
+
+        // Creates _viewerEvents on the first call.  On subsequent calls, closes all items in _viewerEvents so
+        // the OS can clean up any that are no longer needed, and clears _viewEvents.
+        private void ClearViewerEvents()
+        {
+            if (_viewerEventNames == null)
+            {
+                // This is the first time the _loggersEvent has been signaled.
+                // Generate the list of event names the viewer(s) can create.
+
+                _viewerEventNames = new string[_maxViewerEvents];
+                _viewerEvents = new List<EventWaitHandle>(_maxViewerEvents);
+
+                for (int i = 0; i < _maxViewerEvents; ++i)
+                {
+                    _viewerEventNames[i] = "Global\\TX" + i + '-' + _fileGuidString;
+                }
+            }
+            else
+            {
+                // Close the viewer event handles we are holding so the OS can dispose of any that are no longer held by a viewer process.
+                // Other code will attempt to reopen all 10 of the named events that viewers might still be using to determine which ones are in use.
+
+                foreach (EventWaitHandle evt in _viewerEvents)
+                {
+                    evt.Close();
+                }
+
+                _viewerEvents.Clear();
             }
         }
 

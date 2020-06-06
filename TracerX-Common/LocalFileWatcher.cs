@@ -185,11 +185,12 @@ namespace TracerX
                     EventWaitHandleSecurity security = new EventWaitHandleSecurity();
                     SecurityIdentifier authenticatedUsers = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
 
-                    //SecurityIdentifier curAccount = System.Security.Principal.WindowsIdentity.GetCurrent().User;
-                    //security.AddAccessRule(new EventWaitHandleAccessRule(curAccount, EventWaitHandleRights.FullControl, AccessControlType.Allow));
-
                     security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.Modify, AccessControlType.Allow));
                     security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.ReadPermissions, AccessControlType.Allow));
+
+                    // TODO: Granting the Synchronize right is only needed because the logger, when running in .NET Core, can't specify just Modify
+                    // when it calls OpenExisting() to open the event.  Figure out how the logger can open the event without Synchronize access, then delete this statement.
+                    security.AddAccessRule(new EventWaitHandleAccessRule(authenticatedUsers, EventWaitHandleRights.Synchronize, AccessControlType.Allow));
 
                     for (int i = 0; i < 10; ++i)
                     {
@@ -238,18 +239,10 @@ namespace TracerX
                 loggersEvent = EventWaitHandle.OpenExisting("Global\\TX-" + _eventNameBase, EventWaitHandleRights.Modify);
                 Log.Debug("Opened a handle to the file logger's named event.");
             }
-            catch (WaitHandleCannotBeOpenedException ex)
+            catch (WaitHandleCannotBeOpenedException ex) when (ex.Message == "No handle of the given name exists.")
             {
                 // It's not unexpected for the event to not exist.
-
-                if (ex.Message == "No handle of the given name exists.")
-                {
-                    Log.Info("The logger's event doesn't exist.");
-                }
-                else
-                {
-                    Log.Warn("Exception opening the logger's event: ", ex);
-                }
+                Log.Info("The logger's event doesn't exist.");
             }
             catch (Exception ex)
             {

@@ -25,17 +25,18 @@ namespace TracerX
             MutexSecurity mSec = new MutexSecurity();
             mSec.AddAccessRule(rule);
 
-            mutex = new Mutex(false, name, out DidCreate, mSec);
+            _mutex = new Mutex(false, name, out DidCreate);
+            _mutex.SetAccessControl(mSec);
 
             try
             {
                 if (timeoutMs <= 0)
                 {
-                    DidAcquire = mutex.WaitOne(Timeout.Infinite, false);
+                    DidAcquire = _mutex.WaitOne(Timeout.Infinite, false);
                 }
                 else
                 {
-                    DidAcquire = mutex.WaitOne(timeoutMs, false);
+                    DidAcquire = _mutex.WaitOne(timeoutMs, false);
                 }
 
                 if (DidAcquire == false && throwOnTimeout)
@@ -56,21 +57,21 @@ namespace TracerX
 
         public readonly bool DidCreate;
         public readonly bool DidAcquire;
-        private Mutex mutex;
+        private Mutex _mutex;
 
         /// <summary>
         /// Releases and disposes the mutex.
         /// </summary>
         public void Dispose()
         {
-            if (mutex != null)
+            if (_mutex != null)
             {
                 if (DidAcquire)
                 {
-                    mutex.ReleaseMutex();
+                    _mutex.ReleaseMutex();
                 }
 
-                (mutex as IDisposable).Dispose();
+                (_mutex as IDisposable).Dispose();
             }
         }
     }

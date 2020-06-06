@@ -225,33 +225,7 @@ namespace TracerX
 
                 if (_internalLogFile == null)
                 {
-                    // Since this is the first call/msg (for this process), initialize the full path.  
-                    // On Windows 7, this is typically "C:\Users\<userid>\AppData\Local\TracerX\TracerXEvents.txt". 
-                    // That directory is also used for TracerX-Service and TracerX-Viewer logs.
-
-                    _internalLogFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TracerX\\TracerXEvents.txt");
-                    FileInfo fileInfo = new FileInfo(_internalLogFile);
-
-                    // Ensure the directory exists or we can't create the file later.
-                    fileInfo.Directory.Create();
-                    GrantAccess(fileInfo.DirectoryName, fullControl: false, authenticatedUsers: true);
-
-                    if (fileInfo.Exists && fileInfo.Length > 50000)
-                    {
-                        // Start a new file.
-                        fileInfo.Delete();
-                    }
-
-                    try
-                    {
-                        // Delete old file we used to use.
-                        string oldFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TracerXEvents.txt");
-                        File.Delete(oldFile);
-                    }
-                    catch
-                    {
-                        // Not really important and probably no way to fix it.
-                    }
+                    _internalLogFile = GetInternalLogFile();
                 }
 
                 // Include carriage returns because Notepad expects them.
@@ -272,6 +246,37 @@ namespace TracerX
 
                 // This will create the file if it doesn't exist.
                 File.AppendAllText(_internalLogFile, fileMsg.ToString());
+            }
+
+            private static string GetInternalLogFile()
+            {
+                // Since this is the first call/msg (for this process), initialize the full path.  
+                // On Windows 7 and 10, this is typically "C:\Users\<userid>\AppData\Local\TracerX\TracerXEvents.txt". 
+                // That directory is also used for TracerX-Service and TracerX-Viewer logs.
+
+                string logFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TracerX\\TracerXEvents.txt");
+
+                try
+                {
+                    FileInfo fileInfo = new FileInfo(logFile);
+
+                    // Ensure the directory exists or we can't create the file later.
+                    fileInfo.Directory?.Create();
+
+                    if (fileInfo.Exists && fileInfo.Length > 50000)
+                    {
+                        // Start a new file.
+                        fileInfo.Delete();
+                    }
+
+                    GrantAccess(fileInfo.DirectoryName, fullControl: false, authenticatedUsers: true);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.Print(ex.ToString());
+                }
+
+                return logFile;
             }
 
             #endregion
