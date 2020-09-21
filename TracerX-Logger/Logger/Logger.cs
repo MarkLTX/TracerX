@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Runtime.CompilerServices;
 
 namespace TracerX
 {
@@ -528,20 +529,13 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Fatal, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder FatalCall()
-        {
-            return MaybeLogCall(TraceLevel.Fatal, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of a manually specified method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder FatalCall(string methodName)
+        public CallEnder FatalCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName: null);
         }
@@ -556,6 +550,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder FatalCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Fatal, methodName, threadName: null);
+        }
+
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder FatalCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Fatal, methodName, threadName);
+        }
+#endif
         #endregion
 
         #region Error logging
@@ -596,22 +612,15 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Error, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder ErrorCall()
+        public CallEnder ErrorCall(string methodName = null)
         {
-            return MaybeLogCall(TraceLevel.Error, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of a manually specified method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder ErrorCall(string methodName)
-        {
-            return MaybeLogCall(TraceLevel.Error, methodName: methodName, threadName: null);
+            return MaybeLogCall(TraceLevel.Error, methodName, threadName: null);
         }
 
         /// <summary>
@@ -624,7 +633,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Error, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder ErrorCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Error, methodName: methodName, threadName: null);
+        }
 
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder ErrorCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Error, methodName, threadName);
+        }
+#endif
         #endregion
 
         #region Warn logging
@@ -665,22 +695,15 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Warn, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder WarnCall()
+        public CallEnder WarnCall(string methodName = null)
         {
-            return MaybeLogCall(TraceLevel.Warn, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of manually specified a method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder WarnCall(string methodName)
-        {
-            return MaybeLogCall(TraceLevel.Warn, methodName: methodName, threadName: null);
+            return MaybeLogCall(TraceLevel.Warn, methodName, threadName: null);
         }
 
         /// <summary>
@@ -693,7 +716,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Warn, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder WarnCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Warn, methodName: methodName, threadName: null);
+        }
 
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder WarnCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Warn, methodName, threadName);
+        }
+#endif
         #endregion
 
         #region Info logging
@@ -734,20 +778,13 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Info, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder InfoCall()
-        {
-            return MaybeLogCall(TraceLevel.Info, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of a manually specified method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder InfoCall(string methodName)
+        public CallEnder InfoCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName: null);
         }
@@ -762,6 +799,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder InfoCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Info, methodName, threadName: null);
+        }
+
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder InfoCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Info, methodName, threadName);
+        }
+#endif
 
         #endregion
 
@@ -803,20 +862,13 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Debug, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder DebugCall()
-        {
-            return MaybeLogCall(TraceLevel.Debug, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of a manually specified method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder DebugCall(string methodName)
+        public CallEnder DebugCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName: null);
         }
@@ -831,7 +883,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder DebugCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Debug, methodName, threadName: null);
+        }
 
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder DebugCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Debug, methodName, threadName);
+        }
+#endif
         #endregion
 
         #region Verbose logging
@@ -872,20 +945,13 @@ namespace TracerX
             AtLevelFormat(TraceLevel.Verbose, fmt, parms);
         }
 
+#if NET35
         /// <summary>
-        /// Logs the entry of a method call. Use with "using" so the returned object's Dispose
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder VerboseCall()
-        {
-            return MaybeLogCall(TraceLevel.Verbose, methodName: null, threadName: null);
-        }
-
-        /// <summary>
-        /// Logs the entry of a manually specified method call. Use with "using" so the returned object's Dispose
-        /// method, which logs the method's exit, will be called automatically.
-        /// </summary>
-        public CallEnder VerboseCall(string methodName)
+        public CallEnder VerboseCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName: null);
         }
@@ -900,7 +966,28 @@ namespace TracerX
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName);
         }
+#else
+        /// <summary>
+        /// Logs the entry of a method call.  The method name is determined automatically if not specified.
+        /// Use with "using" so the returned object's Dispose
+        /// method, which logs the method's exit, will be called automatically.
+        /// </summary>
+        public CallEnder VerboseCall([CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Verbose, methodName, threadName: null);
+        }
 
+        /// <summary>
+        /// Changes the calling thread's name temporarily and logs the entry of the calling method.
+        /// The method name may be specified manually or, if null, it is determined automatically.
+        /// When the returned object's Dispose() method is called, the calling thread's current name
+        /// and method name are restored to their original values.
+        /// </summary>
+        public CallEnder VerboseCallThread(string threadName, [CallerMemberName] string methodName = null)
+        {
+            return MaybeLogCall(TraceLevel.Verbose, methodName, threadName);
+        }
+#endif
         #endregion
 
         /// <summary>
@@ -1024,7 +1111,7 @@ namespace TracerX
             }
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Grants authenticated users and/or a specific list of users and groups Read access to the specified directory (usually the log file directory) and subdirectories.
@@ -1054,9 +1141,9 @@ namespace TracerX
             }
         }
 
-        #endregion
+#endregion
 
-        #region Private/Internal
+#region Private/Internal
 
         private static string _textForNull = "<null>";
 
@@ -1122,7 +1209,7 @@ namespace TracerX
                     Root.Debug("Granting Read access on path ", directoryPath);
                 }
 
-#if NET35
+#if NET35 || NET45
                 DirectorySecurity security = Directory.GetAccessControl(directoryPath);
 #elif NETCOREAPP3_1
                 DirectoryInfo di = new DirectoryInfo(directoryPath);
@@ -1184,7 +1271,7 @@ namespace TracerX
                 if (changed)
                 {
                     Root.Debug("Calling SetAccessControl()");
-#if NET35
+#if NET35 || NET45
                     Directory.SetAccessControl(directoryPath, security);
 #elif NETCOREAPP3_1
                     di.SetAccessControl(security);

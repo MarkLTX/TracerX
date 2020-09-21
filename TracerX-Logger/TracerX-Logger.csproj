@@ -10,25 +10,42 @@ also have to set UseWindowsForms to true somewhere. -->
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net35</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net35;net45</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>TracerX</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <Version>7.2.0</Version>
     <Copyright>Copyright © Mark A. Lauritsen 2007-2020</Copyright>
-    <Description>Diagnostic trace logger for .NET Framework and .NET Core.  Use with TracerX-Viewer.</Description>
-    <PackageTags></PackageTags>
-    <AssemblyVersion>7.2.2020.06061</AssemblyVersion>
+    <Description>Diagnostic trace logger for .NET Framework and Core.  Easy to get started, advanced features, sophisticated viewer allows filtering by thread, method, category, etc.</Description>
+    <PackageTags>.NET C# logger logging trace viewer filter thread-safe</PackageTags>
+    <AssemblyVersion>7.2.2020.09201</AssemblyVersion>
     <Product>TracerX</Product>
-    <Authors>Mark A. Lauritsen</Authors>
-    <FileVersion>7.2.2020.06061</FileVersion>
+    <Authors>MarkLTX</Authors>
+    <FileVersion>7.2.2020.09201</FileVersion>
     <Company />
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>TracerX-Logger</PackageId>
+    <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
+    <PackageIcon>scroll_view.ico</PackageIcon>
+    <PackageReleaseNotes>Supports .NET Core 3.1, uses [CallerMemberName] attribute instead of stack.</PackageReleaseNotes>
   </PropertyGroup>
 
   <!-- Conditionally obtain references for the .NET Framework 3.5 target -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
     <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+  <!-- Conditionally obtain references for the .NET Framework 4.5 target -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scroll_view.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

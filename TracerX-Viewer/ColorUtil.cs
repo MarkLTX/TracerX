@@ -133,25 +133,18 @@ namespace TracerX
             {
                 case ColorDriver.Loggers:
                     return LoggerObjects.AllLoggers.Cast<IFilterable>();
-                    break;
                 case ColorDriver.Methods:
                     return MethodObjects.AllMethods.Cast<IFilterable>();
-                    break;
                 case ColorDriver.Sessions:
                     return SessionObjects.AllSessionObjects.Cast<IFilterable>();
-                    break;
                 case ColorDriver.ThreadIDs:
                     return ThreadObjects.AllThreadObjects.Cast<IFilterable>();
-                    break;
                 case ColorDriver.ThreadNames:
                     return ThreadNames.AllThreadNames.Cast<IFilterable>();
-                    break;
                 case ColorDriver.TraceLevels:
                     return TraceLevelObjects.AllTraceLevels.Values.Cast<IFilterable>();
-                    break;
                 default:
                     return null;
-                    break;
             }
         }
     }

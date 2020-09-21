@@ -174,7 +174,7 @@ namespace TracerX
         {
             var sid = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
 
-#if NET35
+#if NET35 || NET45
             FileSecurity fSecurity = File.GetAccessControl(filePath);
             fSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
             File.SetAccessControl(filePath, fSecurity);
