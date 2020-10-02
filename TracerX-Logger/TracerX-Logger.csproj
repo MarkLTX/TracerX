@@ -28,7 +28,7 @@ also have to set UseWindowsForms to true somewhere. -->
     <PackageId>TracerX-Logger</PackageId>
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
-    <PackageIcon>scroll_view.ico</PackageIcon>
+    <PackageIcon>scroll_view_32x32_plain.png</PackageIcon>
     <PackageReleaseNotes>Supports .NET Core 3.1, uses [CallerMemberName] attribute instead of stack.</PackageReleaseNotes>
   </PropertyGroup>
 
