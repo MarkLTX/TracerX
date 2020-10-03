@@ -11,3 +11,6 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("41ac4e30-3b5b-4c9d-bef1-50b62b112049")]
 
+// File and assembly version is set manually in the project properties GUI or in the .csproj file using this format...
+// major.minor.yyyy.mmddN
+//...where yyyy is the year, mm is the month, dd is the day/date, and N is Nth build released that day.
