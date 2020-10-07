@@ -135,8 +135,8 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
-# Click-Once directory
-publish/
+# Click-Once directory IS ALLOWED
+!publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml

@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<configuration>
+  <configSections>
+    <sectionGroup name="userSettings" type="System.Configuration.UserSettingsGroup, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <section name="TracerX.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false"/>
+    </sectionGroup>
+  </configSections>
+  <system.serviceModel>
+    <bindings>
+      <netTcpBinding>
+        <binding name="ClientBufferedBinding" transferMode="Buffered" closeTimeout="00:00:12" openTimeout="00:00:30" maxConnections="10" maxBufferSize="33222111" maxReceivedMessageSize="33222111">
+          <readerQuotas maxArrayLength="33222111" maxBytesPerRead="33222111" maxStringContentLength="33222111"/>
+        </binding>
+      </netTcpBinding>
+    </bindings>
+    <client>
+      <endpoint address="net.tcp://localhost:25120/TracerX-Service/FileEnum" binding="netTcpBinding" bindingConfiguration="ClientBufferedBinding" contract="TracerX.IFileEnum">
+        <identity>
+          <servicePrincipalName value=""/>
+        </identity>
+      </endpoint>
+      <endpoint address="net.tcp://localhost:25120/TracerX-Service/FileMonitor" binding="netTcpBinding" bindingConfiguration="ClientBufferedBinding" contract="TracerX.IFileMonitor">
+        <identity>
+          <servicePrincipalName value=""/>
+        </identity>
+      </endpoint>
+      <endpoint address="net.tcp://localhost:25120/TracerX-Service/FileReader" binding="netTcpBinding" bindingConfiguration="ClientBufferedBinding" contract="TracerX.IFileReader">
+        <identity>
+          <servicePrincipalName value=""/>
+        </identity>
+      </endpoint>
+    </client>
+  </system.serviceModel>
+
+  <userSettings>
+    <TracerX.Properties.Settings>
+      <setting name="OpenDir" serializeAs="String">
+        <value />
+      </setting>
+      <setting name="DuplicateTimes" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="RelativeTime" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="LineNumSeparator" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExpandNewlines" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="IndentChar" serializeAs="String">
+        <value />
+      </setting>
+      <setting name="IndentAmount" serializeAs="String">
+        <value>3</value>
+      </setting>
+      <setting name="KeepFilter" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="VersionCheckInterval" serializeAs="String">
+        <value>1</value>
+      </setting>
+      <setting name="VersionLastChecked" serializeAs="String">
+        <value>2007-12-15</value>
+      </setting>
+      <setting name="ColoringEnabled" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExportHeader" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExportIndentation" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExportFile" serializeAs="String">
+        <value />
+      </setting>
+      <setting name="ExportSeparators" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="ExportDupTimes" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExportTimeAsText" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ExportTimeWithBlank" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="VersionCheckingAllowed" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ShowCalledMethods" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="AutoUpdate" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="SearchThreadsByName" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="Bold" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="CustomTimeFormat" serializeAs="String">
+        <value>MM/dd/yy HH:mm:ss.fff</value>
+      </setting>
+      <setting name="UseCustomTimeFormat" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="TimeUnits" serializeAs="String">
+        <value>2</value>
+      </setting>
+      <setting name="MaxNetworkKB" serializeAs="String">
+        <value>5000</value>
+      </setting>
+      <setting name="MaxRecords" serializeAs="String">
+        <value>-1</value>
+      </setting>
+      <setting name="AutoReload" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="RowColorDriver" serializeAs="String">
+        <value>Custom</value>
+      </setting>
+      <setting name="ColoredLevels" serializeAs="String">
+        <value>0</value>
+      </setting>
+      <setting name="ShowServers" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="ShowViewedArchives" serializeAs="String">
+        <value>True</value>
+      </setting>
+      <setting name="FileSortCol" serializeAs="String">
+        <value>0</value>
+      </setting>
+      <setting name="FolderSortCol" serializeAs="String">
+        <value>0</value>
+      </setting>
+      <setting name="ShowFileTimesAgo" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="ShowFolderTimesAgo" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="UseFastScrollingKluge" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="ShowLoggerTree" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="ShowMethodTree" serializeAs="String">
+        <value>False</value>
+      </setting>
+      <setting name="DaysToSaveViewTimes" serializeAs="String">
+        <value>10</value>
+      </setting>
+      <setting name="ShowTracerxFiles" serializeAs="String">
+        <value>False</value>
+      </setting>
+    </TracerX.Properties.Settings>
+  </userSettings>
+  <startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5.1"/></startup></configuration>
