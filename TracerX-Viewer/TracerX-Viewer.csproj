@@ -42,10 +42,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://raw.githubusercontent.com/MarkLTX/TracerX/master/TracerX-Viewer/publish/</InstallUrl>
     <ProductName>TracerX-Viewer</ProductName>
-    <PublisherName>DevTest</PublisherName>
+    <PublisherName>TracerX</PublisherName>
     <WebPage>default.html</WebPage>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>7.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
