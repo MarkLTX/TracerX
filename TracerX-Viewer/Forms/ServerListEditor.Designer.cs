@@ -33,6 +33,7 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.colDispName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colDomain = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colCategory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colUserID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTestResult = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -48,7 +49,6 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
-            this.colDomain = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,6 +89,11 @@
             // 
             this.colAddress.Text = "Server Address";
             this.colAddress.Width = 150;
+            // 
+            // colDomain
+            // 
+            this.colDomain.Text = "Domain";
+            this.colDomain.Width = 100;
             // 
             // colCategory
             // 
@@ -165,7 +170,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(493, 292);
+            this.btnCancel.Location = new System.Drawing.Point(574, 292);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 8;
@@ -177,7 +182,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(574, 292);
+            this.btnOK.Location = new System.Drawing.Point(493, 292);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 7;
@@ -218,11 +223,6 @@
             this.btnTest.Text = "Test Selected";
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-            // 
-            // colDomain
-            // 
-            this.colDomain.Text = "Domain";
-            this.colDomain.Width = 100;
             // 
             // ServerListEditor
             // 

@@ -28,6 +28,13 @@ namespace TracerX {
             this.apply = new System.Windows.Forms.Button();
             this.ok = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.startPagePage = new System.Windows.Forms.TabPage();
+            this.chkServersPane = new System.Windows.Forms.CheckBox();
+            this.chkTracerxLogs = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtTimestampDays = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.miscPage = new System.Windows.Forms.TabPage();
             this.chkFastScrolling = new System.Windows.Forms.CheckBox();
             this.chkReapplyFilter = new System.Windows.Forms.CheckBox();
@@ -72,14 +79,9 @@ namespace TracerX {
             this.txtVersionInterval = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.startPagePage = new System.Windows.Forms.TabPage();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtTimestampDays = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.chkTracerxLogs = new System.Windows.Forms.CheckBox();
-            this.chkServersPane = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
+            this.startPagePage.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.miscPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.timePage.SuspendLayout();
@@ -92,8 +94,6 @@ namespace TracerX {
             this.textPage.SuspendLayout();
             this.autoUpdatePage.SuspendLayout();
             this.versionPage.SuspendLayout();
-            this.startPagePage.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cancel
@@ -104,7 +104,7 @@ namespace TracerX {
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 6;
-            this.cancel.Text = "Cancel";
+            this.cancel.Text = "Close";
             this.cancel.UseVisualStyleBackColor = true;
             // 
             // apply
@@ -150,6 +150,84 @@ namespace TracerX {
             this.tabControl1.Size = new System.Drawing.Size(487, 232);
             this.tabControl1.TabIndex = 7;
             this.tabControl1.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Deselecting);
+            // 
+            // startPagePage
+            // 
+            this.startPagePage.Controls.Add(this.chkServersPane);
+            this.startPagePage.Controls.Add(this.chkTracerxLogs);
+            this.startPagePage.Controls.Add(this.panel1);
+            this.startPagePage.Location = new System.Drawing.Point(4, 22);
+            this.startPagePage.Name = "startPagePage";
+            this.startPagePage.Padding = new System.Windows.Forms.Padding(3);
+            this.startPagePage.Size = new System.Drawing.Size(479, 206);
+            this.startPagePage.TabIndex = 6;
+            this.startPagePage.Text = "Start Page";
+            this.startPagePage.UseVisualStyleBackColor = true;
+            // 
+            // chkServersPane
+            // 
+            this.chkServersPane.AutoSize = true;
+            this.chkServersPane.Checked = true;
+            this.chkServersPane.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkServersPane.Location = new System.Drawing.Point(9, 57);
+            this.chkServersPane.Name = "chkServersPane";
+            this.chkServersPane.Size = new System.Drawing.Size(150, 17);
+            this.chkServersPane.TabIndex = 5;
+            this.chkServersPane.Text = "Show the \"Servers\" pane.";
+            this.chkServersPane.UseVisualStyleBackColor = true;
+            this.chkServersPane.Click += new System.EventHandler(this.SomethingChanged);
+            // 
+            // chkTracerxLogs
+            // 
+            this.chkTracerxLogs.AutoSize = true;
+            this.chkTracerxLogs.Location = new System.Drawing.Point(9, 34);
+            this.chkTracerxLogs.Name = "chkTracerxLogs";
+            this.chkTracerxLogs.Size = new System.Drawing.Size(244, 17);
+            this.chkTracerxLogs.TabIndex = 4;
+            this.chkTracerxLogs.Text = "Show logs for the TracerX viewer and service.";
+            this.chkTracerxLogs.UseVisualStyleBackColor = true;
+            this.chkTracerxLogs.CheckedChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.txtTimestampDays);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Location = new System.Drawing.Point(9, 6);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(479, 22);
+            this.panel1.TabIndex = 3;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label13.Location = new System.Drawing.Point(239, 0);
+            this.label13.Name = "label13";
+            this.label13.Padding = new System.Windows.Forms.Padding(1, 3, 0, 0);
+            this.label13.Size = new System.Drawing.Size(33, 16);
+            this.label13.TabIndex = 2;
+            this.label13.Text = "days.";
+            // 
+            // txtTimestampDays
+            // 
+            this.txtTimestampDays.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtTimestampDays.Location = new System.Drawing.Point(211, 0);
+            this.txtTimestampDays.Name = "txtTimestampDays";
+            this.txtTimestampDays.Size = new System.Drawing.Size(28, 20);
+            this.txtTimestampDays.TabIndex = 1;
+            this.txtTimestampDays.TextChanged += new System.EventHandler(this.SomethingChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Name = "label5";
+            this.label5.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.label5.Size = new System.Drawing.Size(211, 16);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Remember each file\'s \"last viewed\" time for";
             // 
             // miscPage
             // 
@@ -631,86 +709,8 @@ namespace TracerX {
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(479, 32);
             this.label6.TabIndex = 0;
-            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the GitHub " +
-    "website?";
-            // 
-            // startPagePage
-            // 
-            this.startPagePage.Controls.Add(this.chkServersPane);
-            this.startPagePage.Controls.Add(this.chkTracerxLogs);
-            this.startPagePage.Controls.Add(this.panel1);
-            this.startPagePage.Location = new System.Drawing.Point(4, 22);
-            this.startPagePage.Name = "startPagePage";
-            this.startPagePage.Padding = new System.Windows.Forms.Padding(3);
-            this.startPagePage.Size = new System.Drawing.Size(479, 206);
-            this.startPagePage.TabIndex = 6;
-            this.startPagePage.Text = "Start Page";
-            this.startPagePage.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label5.Location = new System.Drawing.Point(0, 0);
-            this.label5.Name = "label5";
-            this.label5.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.label5.Size = new System.Drawing.Size(211, 16);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Remember each file\'s \"last viewed\" time for";
-            // 
-            // txtTimestampDays
-            // 
-            this.txtTimestampDays.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtTimestampDays.Location = new System.Drawing.Point(211, 0);
-            this.txtTimestampDays.Name = "txtTimestampDays";
-            this.txtTimestampDays.Size = new System.Drawing.Size(28, 20);
-            this.txtTimestampDays.TabIndex = 1;
-            this.txtTimestampDays.TextChanged += new System.EventHandler(this.SomethingChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label13.Location = new System.Drawing.Point(239, 0);
-            this.label13.Name = "label13";
-            this.label13.Padding = new System.Windows.Forms.Padding(1, 3, 0, 0);
-            this.label13.Size = new System.Drawing.Size(33, 16);
-            this.label13.TabIndex = 2;
-            this.label13.Text = "days.";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.txtTimestampDays);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Location = new System.Drawing.Point(9, 6);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(479, 22);
-            this.panel1.TabIndex = 3;
-            // 
-            // chkTracerxLogs
-            // 
-            this.chkTracerxLogs.AutoSize = true;
-            this.chkTracerxLogs.Location = new System.Drawing.Point(9, 34);
-            this.chkTracerxLogs.Name = "chkTracerxLogs";
-            this.chkTracerxLogs.Size = new System.Drawing.Size(244, 17);
-            this.chkTracerxLogs.TabIndex = 4;
-            this.chkTracerxLogs.Text = "Show logs for the TracerX viewer and service.";
-            this.chkTracerxLogs.UseVisualStyleBackColor = true;
-            this.chkTracerxLogs.CheckedChanged += new System.EventHandler(this.SomethingChanged);
-            // 
-            // chkServersPane
-            // 
-            this.chkServersPane.AutoSize = true;
-            this.chkServersPane.Checked = true;
-            this.chkServersPane.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkServersPane.Location = new System.Drawing.Point(9, 57);
-            this.chkServersPane.Name = "chkServersPane";
-            this.chkServersPane.Size = new System.Drawing.Size(150, 17);
-            this.chkServersPane.TabIndex = 5;
-            this.chkServersPane.Text = "Show the \"Servers\" pane.";
-            this.chkServersPane.UseVisualStyleBackColor = true;
-            this.chkServersPane.Click += new System.EventHandler(this.SomethingChanged);
+            this.label6.Text = "How often should the viewer check for a newer version of TracerX on the GitHub we" +
+    "bsite?";
             // 
             // OptionsDialog
             // 
@@ -730,6 +730,10 @@ namespace TracerX {
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TracerX Options";
             this.tabControl1.ResumeLayout(false);
+            this.startPagePage.ResumeLayout(false);
+            this.startPagePage.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.miscPage.ResumeLayout(false);
             this.miscPage.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -750,10 +754,6 @@ namespace TracerX {
             this.autoUpdatePage.PerformLayout();
             this.versionPage.ResumeLayout(false);
             this.versionPage.PerformLayout();
-            this.startPagePage.ResumeLayout(false);
-            this.startPagePage.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }

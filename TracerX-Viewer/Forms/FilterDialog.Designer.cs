@@ -219,6 +219,7 @@ namespace TracerX {
             this.sessionCheckCol,
             this.sessionCol});
             this.sessionListView.FullRowSelect = true;
+            this.sessionListView.HideSelection = false;
             this.sessionListView.Location = new System.Drawing.Point(3, 3);
             this.sessionListView.Name = "sessionListView";
             this.sessionListView.Size = new System.Drawing.Size(373, 216);
@@ -347,6 +348,7 @@ namespace TracerX {
             this.threadNameCheckCol,
             this.threadNameNameCol});
             this.threadNameListView.FullRowSelect = true;
+            this.threadNameListView.HideSelection = false;
             this.threadNameListView.Location = new System.Drawing.Point(3, 3);
             this.threadNameListView.Name = "threadNameListView";
             this.threadNameListView.Size = new System.Drawing.Size(373, 219);
@@ -424,6 +426,7 @@ namespace TracerX {
             this.threadCheckCol,
             this.threadIdCol});
             this.threadIdListView.FullRowSelect = true;
+            this.threadIdListView.HideSelection = false;
             this.threadIdListView.Location = new System.Drawing.Point(3, 3);
             this.threadIdListView.Name = "threadIdListView";
             this.threadIdListView.Size = new System.Drawing.Size(373, 216);
@@ -593,7 +596,7 @@ namespace TracerX {
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 3;
-            this.close.Text = "Cancel";
+            this.close.Text = "Close";
             this.close.UseVisualStyleBackColor = true;
             // 
             // FilterDialog
