@@ -25,8 +25,12 @@ namespace TracerX
             MutexSecurity mSec = new MutexSecurity();
             mSec.AddAccessRule(rule);
 
+#if NET35 || NET45
+            _mutex = new Mutex(false, name, out DidCreate, mSec);
+#elif NETCOREAPP3_1
             _mutex = new Mutex(false, name, out DidCreate);
             _mutex.SetAccessControl(mSec);
+#endif
 
             try
             {
