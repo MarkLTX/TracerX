@@ -14,14 +14,14 @@ also have to set UseWindowsForms to true somewhere. -->
     <OutputType>Library</OutputType>
     <RootNamespace>TracerX</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>7.2.0</Version>
-    <Copyright>Copyright © Mark A. Lauritsen 2007-2020</Copyright>
+    <Version>7.3.0</Version>
+    <Copyright>Copyright © Mark A. Lauritsen 2007-2023</Copyright>
     <Description>Diagnostic trace logger for .NET Framework and Core.  Easy to get started but has advanced features. Sophisticated viewer allows filtering and coloring by thread, method, category, etc. Send output to multiple destinations including file, event log, and console.</Description>
     <PackageTags>.NET C# logger logging trace viewer filter thread-safe</PackageTags>
-    <AssemblyVersion>7.2.2020.10031</AssemblyVersion>
+    <AssemblyVersion>7.3.2022.12311</AssemblyVersion>
     <Product>TracerX</Product>
     <Authors>MarkLTX</Authors>
-    <FileVersion>7.2.2020.10031</FileVersion>
+    <FileVersion>7.3.2022.12311</FileVersion>
     <Company />
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,7 +29,7 @@ also have to set UseWindowsForms to true somewhere. -->
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
     <PackageIcon>scroll_view_32x32_plain.png</PackageIcon>
-    <PackageReleaseNotes>Supports .NET Core 3.1, uses [CallerMemberName] attribute instead of stack.</PackageReleaseNotes>
+    <PackageReleaseNotes>This version of TracerX fixes an issue in the TracerX-Logger.dll assembly in which a NullReferenceException was being thrown and caught during startup.  This would cause programs running in the Visual Studio debugger to break at this point.  This new version explicitly checks for null references instead of relying on try/catch.</PackageReleaseNotes>
   </PropertyGroup>
 
   <!-- Conditionally obtain references for the .NET Framework 3.5 target -->

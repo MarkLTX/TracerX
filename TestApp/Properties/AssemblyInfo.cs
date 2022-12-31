@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("mal")]
 [assembly: AssemblyProduct("TestApp")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2009-2018")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2009-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,4 +22,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("484c0212-fd23-4eba-a920-04d61d82de15")]
 
-[assembly: AssemblyVersion("7.1.*")]
+[assembly: AssemblyVersion("7.3.*")]

@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace TracerX
 {
@@ -1304,46 +1305,38 @@ namespace TracerX
 
         private static string _webAppPath = null;
 
-        // If we are not a web app, this will throw an exception the
-        // caller must handle.  
+        // If we are a web app, this returns System.Web.HttpRuntime.AppDomainAppPath.
+        // If we aren't a web app, this returns null.
         internal static string GetWebAppDir()
         {
+            // If this method is called multiple times, _webAppPath will only be null on the first call.
+            // On subsequent calls it will either be "" or something valid.
+
             if (_webAppPath == null)
             {
-                // First call to this method.
-                // If this doesn't work, we'll leave
-                // _webAppPath = "" so we won't
-                // try again on future calls.
-                _webAppPath = "";
+                // This is the first call to this method.  We don't want to depend on System.Web or
+                // load it, but if System.Web has already been loaded then return
+                // System.Web.HttpRuntime.AppDomainAppPath.
 
-                // We don't want to depend on System.Web or load it,
-                // but if System.Web has already been loaded then
-                // use System.Web.HttpRuntime.AppDomainAppPath to check if we're a web app
-                // and return the app's path. 
-
-                foreach (Assembly webAsm in AppDomain.CurrentDomain.GetAssemblies())
+                try
                 {
-                    if (webAsm.FullName.StartsWith("System.Web, "))
-                    {
-                        Type httpruntime = webAsm.GetType("System.Web.HttpRuntime");
-                        PropertyInfo prop = httpruntime.GetProperty("AppDomainAppPath", BindingFlags.Public | BindingFlags.Static);
-
-                        // Exception if not a web app.
-                        string s = (string)prop.GetValue(null, null);
-                        _webAppPath = s.TrimEnd('\\', '/');
-
-                        return _webAppPath;
-                    }
+                    Assembly webAsm = AppDomain.CurrentDomain?.GetAssemblies()?.FirstOrDefault(asm => asm.FullName.StartsWith("System.Web, "));
+                    Type httpruntime = webAsm?.GetType("System.Web.HttpRuntime");
+                    PropertyInfo prop = httpruntime?.GetProperty("AppDomainAppPath", BindingFlags.Public | BindingFlags.Static);
+                    string propVal = prop?.GetValue(null, null) as string;
+                    _webAppPath = propVal?.TrimEnd('\\', '/');
                 }
-
-                throw new Exception("System.Web was not already loaded.");
+                catch (Exception)
+                {
+                    // Set _webAppPath = "" so we won't try again on future calls.
+                    _webAppPath = "";
+                }
             }
-            else if (_webAppPath == "")
+
+            if (_webAppPath == "")
             {
-                // This means we already experienced an exception in 
-                // the above code on the first call, so no need
-                // to try again.
-                throw new Exception("Not a web app.");
+                // This means the above code failed.
+                return null;
             }
             else
             {
@@ -1355,38 +1348,35 @@ namespace TracerX
         // or calling Process.GetProcess(), which requires significant permission.
         internal static string GetAppName()
         {
-            string result;
+            string result = null;
 
             try
             {
-                // Throws an exception if we are hosted by unmanaged code (e.g. IIS).
-                result = Assembly.GetEntryAssembly().GetName().Name;
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    // Expect an exception if we're not a web app.
-                    result = Path.GetFileNameWithoutExtension(GetWebAppDir());
-                }
-                catch (Exception)
+                // Assembly.GetEntryAssembly() returns null if we are hosted by unmanaged code (e.g. IIS).
+                result = Assembly.GetEntryAssembly()?.GetName()?.Name;
+
+                if (result == null)
                 {
                     try
                     {
-                        // This is a good result for winforms, but not very
-                        // pretty for web apps.
-                        result = AppDomain.CurrentDomain.FriendlyName;
+                        // GetWebAppDir() returns null if we're not a web app.
+                        string webAppDir = GetWebAppDir();
+
+                        if(webAppDir != null)
+                            result = Path.GetFileNameWithoutExtension(webAppDir);
                     }
                     catch (Exception)
                     {
-                        // Can't think of anything else to try, but we must
-                        // return something and not allow an exception.
-                        result = "TracerX_App";
                     }
+
+                    result = result ?? AppDomain.CurrentDomain?.FriendlyName;
                 }
             }
+            catch (Exception)
+            {
+            }
 
-            return result;
+            return result ?? "TracerX_App";
         }
 
         // This is called just before writing to the binary file. It ensures

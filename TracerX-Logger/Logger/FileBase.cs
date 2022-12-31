@@ -698,80 +698,65 @@ namespace TracerX
             return dir;
         }
 
-        // The default output dir for a winforms app is the local AppData dir.
+        // The default output dir for most apps is the local AppData dir.
         // For a web app, it's the dir containing the web site.
         private static string GetDefaultDir()
         {
+            string result = null;
+
             try
             {
-                // This always returns null in web apps, sometimes returns
-                // null in the winforms designer.
+                // Assembly.GetEntryAssembly() returns null in web apps and other non .NET processes like Office add-ons.
                 if (Assembly.GetEntryAssembly() == null)
                 {
-                    // We might be in a web app, but this will throw an
-                    // exception if we're not.
-                    return Logger.GetWebAppDir();
+                    // GetWebAppDir() returns null if not a web app.
+                    result = Logger.GetWebAppDir();
                 }
-                else
-                {
-                    // This generally means we're in a winforms app.
-                    return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-                }
+                
+                if (result == null)
+                    result = Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
             }
             catch (Exception)
             {
-                // Getting here means we're probably not in a web app.
-                try
-                {
-                    return Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-                }
-                catch (Exception)
-                {
-                    // Give up. Return something to avoid an exception.
-                    return "C:\\";
-                }
             }
+
+            return result ?? "C:\\";
         }
 
         // Get the directory the EXE or website is in.
         private static string GetAppDir()
         {
+            string result = null;
+
             try
             {
-                // This throws an exception in web apps and sometimes in
-                // the winforms designer.
-                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    // This SEEMS to return the correct value for both web apps
-                    // and winforms apps.
-                    return AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
-                }
-                catch (Exception)
+                string location = Assembly.GetEntryAssembly()?.Location;
+
+                if (location != null)
                 {
                     try
                     {
-                        // Expect an exception if we're not a web app.
-                        return Logger.GetWebAppDir();
+                        result = Path.GetDirectoryName(location);
                     }
                     catch (Exception)
                     {
-                        try
-                        {
-                            // Punt.
-                            return Environment.CurrentDirectory;
-                        }
-                        catch (Exception)
-                        {
-                            // Give up.  Return something to avoid an exception.
-                            return "C:\\";
-                        }
+                        result = null;
                     }
                 }
+
+                result = result
+                    ?? AppDomain.CurrentDomain?.BaseDirectory?.TrimEnd('\\', '/')
+                    ?? Logger.GetWebAppDir() 
+                    ?? Environment.CurrentDirectory
+                    ?? "C:\\";
             }
+            catch (Exception)
+            {
+                // Return something to avoid an exception.
+                result = "C:\\";
+            }
+
+            return result;
         }
 
         protected abstract void InternalOpen();

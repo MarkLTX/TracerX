@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TracerX-Service")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2014-2020")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2014-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -24,4 +24,4 @@ using System.Runtime.InteropServices;
 
 // The self-update code expects the AssemblyFileVersion to be equal to the AssemblyVersion. By not
 // setting it, they will be equal by default.
-[assembly: AssemblyVersion("7.2.*")]
+[assembly: AssemblyVersion("7.3.*")]

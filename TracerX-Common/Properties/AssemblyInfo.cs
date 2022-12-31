@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TracerX-Contracts")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2013-2018")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2013-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,4 +31,4 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("7.1.*")]
+[assembly: AssemblyVersion("7.3.*")]

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("HelloWorld")]
-[assembly: AssemblyCopyright("Copyright © Mark Lauritsen 2010-2018")]
+[assembly: AssemblyCopyright("Copyright © Mark Lauritsen 2010-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,4 +21,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4a214667-2094-468f-96b6-54c48ff68f44")]
 
-[assembly: AssemblyVersion("7.1.*")]
+[assembly: AssemblyVersion("7.3.*")]

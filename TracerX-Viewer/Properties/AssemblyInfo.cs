@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Diagnostic log viewer.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("TracerX")]
-[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2020")]
+[assembly: AssemblyCopyright("Copyright © Mark A. Lauritsen 2007-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,4 +22,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("23ac4e30-3b5b-4c9d-bef1-50b62b114736")]
 
 // The VersionChecker displays a notification if the latest release on GitHub is greater than the executable version specified here.
-[assembly: AssemblyVersion("7.2.*")]
+[assembly: AssemblyVersion("7.3.*")]
