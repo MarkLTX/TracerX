@@ -47,6 +47,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnOkConnect = new System.Windows.Forms.Button();
+            this.chkShow = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,6 +90,7 @@
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.chkShow);
             this.groupBox1.Location = new System.Drawing.Point(12, 161);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(279, 163);
@@ -232,6 +234,17 @@
             this.btnOkConnect.UseVisualStyleBackColor = true;
             this.btnOkConnect.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // chkShow
+            // 
+            this.chkShow.AutoSize = true;
+            this.chkShow.Location = new System.Drawing.Point(174, 114);
+            this.chkShow.Name = "chkShow";
+            this.chkShow.Size = new System.Drawing.Size(101, 17);
+            this.chkShow.TabIndex = 8;
+            this.chkShow.Text = "Show password";
+            this.chkShow.UseVisualStyleBackColor = true;
+            this.chkShow.CheckedChanged += new System.EventHandler(this.chkShow_CheckedChanged);
+            // 
             // ServerConnEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -283,5 +296,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnOkConnect;
+        private System.Windows.Forms.CheckBox chkShow;
     }
 }

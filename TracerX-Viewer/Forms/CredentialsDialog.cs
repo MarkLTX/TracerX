@@ -95,5 +95,10 @@ namespace TracerX
         {
             _pwChanged = true;
         }
+
+        private void chkShow_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPW.UseSystemPasswordChar = !chkShow.Checked;
+        }
     }
 }

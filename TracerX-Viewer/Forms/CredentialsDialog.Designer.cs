@@ -35,6 +35,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.chkShow = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label2
@@ -98,19 +99,31 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // chkShow
+            // 
+            this.chkShow.AutoSize = true;
+            this.chkShow.Location = new System.Drawing.Point(136, 57);
+            this.chkShow.Name = "chkShow";
+            this.chkShow.Size = new System.Drawing.Size(101, 17);
+            this.chkShow.TabIndex = 8;
+            this.chkShow.Text = "Show password";
+            this.chkShow.UseVisualStyleBackColor = true;
+            this.chkShow.CheckedChanged += new System.EventHandler(this.chkShow_CheckedChanged);
+            // 
             // CredentialsDialog
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(244, 139);
+            this.ClientSize = new System.Drawing.Size(244, 138);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.txtPW);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtUser);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.chkShow);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(999, 177);
@@ -131,5 +144,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.CheckBox chkShow;
     }
 }

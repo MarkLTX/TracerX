@@ -254,5 +254,10 @@ namespace TracerX
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
+        private void chkShow_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPassword.UseSystemPasswordChar = !chkShow.Checked;
+        }
     }
 }
