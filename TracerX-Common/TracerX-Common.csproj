@@ -44,10 +44,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="TracerX-Logger, Version=8.0.2023.1121, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.8.0.0\lib\net35\TracerX-Logger.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgParserTX.cs" />
@@ -66,10 +70,7 @@
     <Compile Include="TXFileInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
-      <Name>TracerX-Logger</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

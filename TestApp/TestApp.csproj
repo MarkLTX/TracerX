@@ -63,6 +63,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -73,6 +74,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TracerX-Logger, Version=8.0.2023.1121, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.8.0.0\lib\net45\TracerX-Logger.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControlledLogging.cs">
@@ -122,6 +126,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -139,10 +144,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
-      <Name>TracerX-Logger</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TracerX-Viewer\TracerX-Viewer.csproj">
       <Project>{E301635B-84D6-4A08-9856-B7D5C0BCD918}</Project>
       <Name>TracerX-Viewer</Name>
@@ -178,7 +179,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

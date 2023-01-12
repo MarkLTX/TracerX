@@ -23,7 +23,7 @@ also have to set UseWindowsForms to true somewhere. -->
     <Authors>MarkLTX</Authors>
     <FileVersion>8.0.2023.01121</FileVersion>
     <Company />
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>TracerX-Logger</PackageId>
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>

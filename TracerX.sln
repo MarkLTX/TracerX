@@ -1,31 +1,53 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A070CBB6-7BC2-4459-B525-3C15ECF50F6E}"
 	ProjectSection(SolutionItems) = preProject
 		Actual_License.txt = Actual_License.txt
 		LICENSE.txt = LICENSE.txt
 		NOTICE.txt = NOTICE.txt
+		NuGet.config = NuGet.config
 		TracerX-HelpBuilder.shfbproj = TracerX-HelpBuilder.shfbproj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{4C44E2D7-0403-4624-A940-66ADD11B6E9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Logger", "TracerX-Logger\TracerX-Logger.csproj", "{54A86033-AACB-4A87-AD47-355548E42936}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TracerX-Logger", "TracerX-Logger\TracerX-Logger.csproj", "{54A86033-AACB-4A87-AD47-355548E42936}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Viewer", "TracerX-Viewer\TracerX-Viewer.csproj", "{E301635B-84D6-4A08-9856-B7D5C0BCD918}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{C6ED390F-4902-4E55-B3B7-60001EA31A25}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "HelloWorld\HelloWorld.csproj", "{EB2B1796-B619-4786-9325-51591782320A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-ServiceImpl", "TracerX-ServiceImpl\TracerX-ServiceImpl.csproj", "{58B31300-67DF-41C0-934C-F2E102CF53BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Service", "TracerX-Service\TracerX-Service.csproj", "{C0A4B3D9-F3F0-48F4-BA59-578A3DCE7FC9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracerX-Common", "TracerX-Common\TracerX-Common.csproj", "{13F8EE48-FAE6-456B-B6AB-C3A169911894}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54A86033-AACB-4A87-AD47-355548E42936} = {54A86033-AACB-4A87-AD47-355548E42936}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +92,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {041E1927-BC98-47E3-854D-CCF01B9A3270}
 		BuildVersion_UpdateAssemblyVersion = False
 		BuildVersion_BuildVersioningStyle = None.None.None.None
 		BuildVersion_UpdateFileVersion = False

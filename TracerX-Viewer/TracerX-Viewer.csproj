@@ -102,6 +102,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -112,6 +113,9 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TracerX-Logger, Version=8.0.2023.1121, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.8.0.0\lib\net45\TracerX-Logger.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +403,7 @@
     <Content Include="Icons\ArrowUp.ico" />
     <Content Include="Icons\BookmarkArrowDown.ico" />
     <Content Include="Icons\BookmarkArrowUp.ico" />
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Resources\BookmarkClear.bmp" />
     <Content Include="Icons\BookmarkLastSubline.ico" />
@@ -576,10 +581,6 @@
     <ProjectReference Include="..\TracerX-Common\TracerX-Common.csproj">
       <Project>{13F8EE48-FAE6-456B-B6AB-C3A169911894}</Project>
       <Name>TracerX-Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TracerX-Logger\TracerX-Logger.csproj">
-      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
-      <Name>TracerX-Logger</Name>
     </ProjectReference>
     <ProjectReference Include="..\TracerX-ServiceImpl\TracerX-ServiceImpl.csproj">
       <Project>{58B31300-67DF-41C0-934C-F2E102CF53BF}</Project>
