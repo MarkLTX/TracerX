@@ -691,15 +691,18 @@ namespace TracerX
             stackEntry.EntryLine = WriteLine(DataFlags.MethodEntry, threadData, stackEntry.Logger, stackEntry.Level, DateTime.MinValue, null, false);
         }
 
-        // Log the exit of a method call on the top of the stack for the thread.
+        // Log the exit of the method call at the top of the threadData's stack.
         // stackEntry is still on the stack.        
-        internal bool LogExit(ThreadData threadData)
+        internal bool LogExit(ThreadData threadData, bool isNormal)
         {
             lock (_fileLocker)
             {
                 if (threadData.BinaryFileState.LastFileNumber == CurrentFile)
                 {
-                    WriteLine(DataFlags.MethodExit, threadData, threadData.TopStackEntry.Logger, threadData.TopStackEntry.Level, DateTime.MinValue, null, false);
+                    if (isNormal)
+                        WriteLine(DataFlags.MethodExit, threadData, threadData.TopStackEntry.Logger, threadData.TopStackEntry.Level, DateTime.MinValue, null, false);
+                    else
+                        WriteLine(DataFlags.MethodExit | DataFlags.Message, threadData, threadData.TopStackEntry.Logger, threadData.TopStackEntry.Level, DateTime.MinValue, ", probably by await", false);
                     return true;
                 }
                 else

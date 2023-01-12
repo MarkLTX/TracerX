@@ -80,17 +80,7 @@ namespace TracerX
     }
 
     /// <summary>
-    /// Contains information about a logging thread stored 
-    /// in ThreadStatic (i.e. thread-local) memory.
-    /// An instance is created for each thread that uses TracerX.
-    /// 
-    /// Testing has shown that the instance is released when the thread exits and that
-    /// instances associated with ThreadPool threads DO NOT get released
-    /// when the thread is returned to the pool.  
-    /// Testing has shown that when a ThreadPool thread is recycled, 
-    ///   1) Its ManagedThreadId remains the same.
-    ///   2) Its ThreadStatic storage remains allocated and associated with the thread.
-    ///   3) Its Name is reset to null and a new name can be assigned.
+    /// An instance of this is created for each thread that uses TracerX.
     /// 
     /// TracerX does not use the ManagedThreadId because the CLR
     /// appears to recycle the IDs.  That is, a new thread will often be assigned the
@@ -99,7 +89,6 @@ namespace TracerX
     /// </summary>
     internal class ThreadData
     {
-
         //~ThreadData() {
         //    // This proves that the ThreadData object is finalized after the thread terminates.
         //    Debug.WriteLine("ThreadData finalized.");
@@ -113,18 +102,8 @@ namespace TracerX
         {
             get
             {
-                // I read somewhere that it takes 60 times as long to reference a [ThreadStatic] field
-                // as a regular field, so this is coded to minimize such references.  That same article
-                // said [ThreadStatic] is the fastest way to do this.
-                var result = _threadData;
-
-                if (result == null)
-                {
-                    result = new ThreadData();
-                    _threadData = result;
-                }
-
-                return result;
+                _threadData = _threadData ?? new ThreadData();
+                return _threadData;
             }
         }
 
@@ -138,7 +117,7 @@ namespace TracerX
         // The thread's ID as determined by TracerX (as opposed to the CLR).
         // A uint would be preferrable but Interlocked.Increment doesn't operate
         // on uints.  The number of unique thread IDs is the same either way.
-        internal int TracerXID = Interlocked.Increment(ref _threadCounter);
+        internal readonly int TracerXID = Interlocked.Increment(ref _threadCounter);
 
         // The overridden thread name or Thread.CurrentThread.Name if not overridden.
         internal string Name
@@ -149,7 +128,7 @@ namespace TracerX
 
         // The managed thread ID of the thread.  This is often the same as another thread that
         // terminated earlier (.NET recycles the managed IDs).  
-        internal int ManagedId = Thread.CurrentThread.ManagedThreadId;
+        internal readonly int ManagedId = Thread.CurrentThread.ManagedThreadId;
 
         // The top of the call stack for this thread.
         internal StackEntry TopStackEntry;
@@ -412,14 +391,14 @@ namespace TracerX
         }
 
         // Log the exit of a method call to each destination indicated by TopStackEntry.
-        internal void LogCallExit()
+        internal void LogCallExit(bool isNormal)
         {
             if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
                 // Although this LogMsg() call raises a cancellable event, method-exit messages aren't really cancellable because
                 // we must "balance" the original method-entry messages that may have been logged to the other destinations.
                 --EventHandlerState.StackDepth;
-                EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting", false, true);
+                EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ?  " exiting" : " exiting, probably by await"), false, true);
                 EventHandlerState.CurrentMethod = GetCaller(Destinations.EventHandler);
             }
 
@@ -430,7 +409,7 @@ namespace TracerX
                 // method-entry for TopStackEntry was logged to).
                 BinaryFileState = TopStackEntry.BinaryFileState;
 
-                if (TopStackEntry.Logger.BinaryFile.LogExit(this))
+                if (TopStackEntry.Logger.BinaryFile.LogExit(this, isNormal))
                 {
                     // BinaryFileState.StackDepth depth is decremented after logging so any meta-logging has the right depth.
                     // GetCaller() also depends on the stack depth.
@@ -447,28 +426,28 @@ namespace TracerX
                 TextFileState = TopStackEntry.TextFileState;
 
                 --TextFileState.StackDepth;
-                TopStackEntry.Logger.TextFile.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                TopStackEntry.Logger.TextFile.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
                 TextFileState.CurrentMethod = GetCaller(TextFileState);
             }
 
             if ((TopStackEntry.Destinations & Destinations.Console) != 0)
             {
                 --ConsoleState.StackDepth;
-                ConsoleLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                ConsoleLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
                 ConsoleState.CurrentMethod = GetCaller(Destinations.Console);
             }
 
             if ((TopStackEntry.Destinations & Destinations.Debug) != 0)
             {
                 --DebugState.StackDepth;
-                DebugLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                DebugLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
                 DebugState.CurrentMethod = GetCaller(Destinations.Debug);
             }
 
             if ((TopStackEntry.Destinations & Destinations.EventLog) != 0)
             {
                 --EventLogState.StackDepth;
-                //EventLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
+                //EventLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ?  " exiting" : " exiting, probably by await"));
                 EventLogState.CurrentMethod = GetCaller(Destinations.EventLog);
             }
 

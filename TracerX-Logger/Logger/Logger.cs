@@ -1210,7 +1210,7 @@ namespace TracerX
                     Root.Debug("Granting Read access on path ", directoryPath);
                 }
 
-#if NET35 || NET45
+#if NET35 || NET45 || NET46
                 DirectorySecurity security = Directory.GetAccessControl(directoryPath);
 #elif NETCOREAPP3_1
                 DirectoryInfo di = new DirectoryInfo(directoryPath);
@@ -1272,7 +1272,7 @@ namespace TracerX
                 if (changed)
                 {
                     Root.Debug("Calling SetAccessControl()");
-#if NET35 || NET45
+#if NET35 || NET45 || NET46
                     Directory.SetAccessControl(directoryPath, security);
 #elif NETCOREAPP3_1
                     di.SetAccessControl(security);
@@ -1580,8 +1580,8 @@ namespace TracerX
 
                 if (threadData.LogCallEntry(this, level, methodName, destinations, threadName))
                 {
-                    // MyCallEnder will log the exit when it is disposed.
-                    result = MyCallEnder;
+                    // The CallEnder will log the exit when it is disposed.
+                    result = new CallEnder(threadData); 
                 }
             }
 
@@ -1633,8 +1633,6 @@ namespace TracerX
             return "Unknown Method";
         }
 
-        // The only instance ever needed.
-        private static readonly CallEnder MyCallEnder = new CallEnder();
 #endregion
 
 #region Logger hierarchy

@@ -24,4 +24,4 @@ using System.Runtime.InteropServices;
 
 // The self-update code expects the AssemblyFileVersion to be equal to the AssemblyVersion. By not
 // setting it, they will be equal by default.
-[assembly: AssemblyVersion("7.3.*")]
+[assembly: AssemblyVersion("8.0.*")]
