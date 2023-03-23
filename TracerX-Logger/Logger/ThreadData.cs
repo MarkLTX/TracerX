@@ -391,14 +391,14 @@ namespace TracerX
         }
 
         // Log the exit of a method call to each destination indicated by TopStackEntry.
-        internal void LogCallExit(bool isNormal)
+        internal void LogCallExit()
         {
             if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
                 // Although this LogMsg() call raises a cancellable event, method-exit messages aren't really cancellable because
                 // we must "balance" the original method-entry messages that may have been logged to the other destinations.
                 --EventHandlerState.StackDepth;
-                EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ?  " exiting" : " exiting, probably by await"), false, true);
+                EventHandlerLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting", false, true);
                 EventHandlerState.CurrentMethod = GetCaller(Destinations.EventHandler);
             }
 
@@ -409,7 +409,7 @@ namespace TracerX
                 // method-entry for TopStackEntry was logged to).
                 BinaryFileState = TopStackEntry.BinaryFileState;
 
-                if (TopStackEntry.Logger.BinaryFile.LogExit(this, isNormal))
+                if (TopStackEntry.Logger.BinaryFile.LogExit(this))
                 {
                     // BinaryFileState.StackDepth depth is decremented after logging so any meta-logging has the right depth.
                     // GetCaller() also depends on the stack depth.
@@ -426,28 +426,28 @@ namespace TracerX
                 TextFileState = TopStackEntry.TextFileState;
 
                 --TextFileState.StackDepth;
-                TopStackEntry.Logger.TextFile.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
+                TopStackEntry.Logger.TextFile.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
                 TextFileState.CurrentMethod = GetCaller(TextFileState);
             }
 
             if ((TopStackEntry.Destinations & Destinations.Console) != 0)
             {
                 --ConsoleState.StackDepth;
-                ConsoleLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
+                ConsoleLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
                 ConsoleState.CurrentMethod = GetCaller(Destinations.Console);
             }
 
             if ((TopStackEntry.Destinations & Destinations.Debug) != 0)
             {
                 --DebugState.StackDepth;
-                DebugLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ? " exiting" : " exiting, probably by await"));
+                DebugLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
                 DebugState.CurrentMethod = GetCaller(Destinations.Debug);
             }
 
             if ((TopStackEntry.Destinations & Destinations.EventLog) != 0)
             {
                 --EventLogState.StackDepth;
-                //EventLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + (isNormal ?  " exiting" : " exiting, probably by await"));
+                //EventLogging.LogMsg(TopStackEntry.Logger, this, TopStackEntry.Level, TopStackEntry.MethodName + " exiting");
                 EventLogState.CurrentMethod = GetCaller(Destinations.EventLog);
             }
 

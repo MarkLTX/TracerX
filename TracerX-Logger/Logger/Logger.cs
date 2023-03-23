@@ -1580,8 +1580,8 @@ namespace TracerX
 
                 if (threadData.LogCallEntry(this, level, methodName, destinations, threadName))
                 {
-                    // The CallEnder will log the exit when it is disposed.
-                    result = new CallEnder(threadData); 
+                    // MyCallEnder will log the exit when it is disposed.
+                    result = MyCallEnder;
                 }
             }
 
@@ -1633,6 +1633,8 @@ namespace TracerX
             return "Unknown Method";
         }
 
+        // The only instance ever needed.
+        private static readonly CallEnder MyCallEnder = new CallEnder();
 #endregion
 
 #region Logger hierarchy

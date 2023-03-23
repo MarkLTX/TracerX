@@ -47,11 +47,7 @@ namespace TracerX
             {
                 // Method exit records always contain exactly one line of text.
                 IsExit = true;
-
-                if (dataflags.HasFlag(DataFlags.Message))
-                    Lines = new string[] { string.Format("}}{0}: exiting{1}", MethodName.Name, msg) };
-                else
-                    Lines = new string[] { string.Format("}}{0}: exiting", MethodName.Name) };
+                Lines = new string[] { string.Format("}}{0}: exiting", MethodName.Name) };
             }
             else
             {
