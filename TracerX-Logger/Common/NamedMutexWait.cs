@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
@@ -9,6 +10,7 @@ namespace TracerX
     /// Handy pattern for creating, acquiring, releasing, and disposing a named mutex.
     /// The constructor creates and acquires.  Dispose() releases and disposes.
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)] // Hide this class from Intellisense.
     public class NamedMutexWait : IDisposable
     {
         /// <summary>

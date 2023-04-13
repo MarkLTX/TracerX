@@ -14,14 +14,14 @@ also have to set UseWindowsForms to true somewhere. -->
     <OutputType>Library</OutputType>
     <RootNamespace>TracerX</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>9.0</Version>
+    <Version>9.1</Version>
     <Copyright>Copyright © Mark A. Lauritsen 2007-2023</Copyright>
     <Description>Diagnostic trace logger for .NET Framework and Core.  Easy to get started but has advanced features. Sophisticated viewer allows filtering and coloring by thread, method, category, etc. Send output to multiple destinations including file, event log, and console.</Description>
     <PackageTags>.NET C# logger logging trace viewer filter thread-safe</PackageTags>
-    <AssemblyVersion>9.0.2023.03221</AssemblyVersion>
+    <AssemblyVersion>9.1.2023.04131</AssemblyVersion>
     <Product>TracerX</Product>
     <Authors>MarkLTX</Authors>
-    <FileVersion>9.0.2023.03221</FileVersion>
+    <FileVersion>9.1.2023.04131</FileVersion>
     <Company />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,10 +29,10 @@ also have to set UseWindowsForms to true somewhere. -->
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
     <PackageIcon>scroll_view_32x32_plain.png</PackageIcon>
-    <PackageReleaseNotes>This version of TracerX removes support for Logger.InfoCall(), Logger.DebugCall(), etc. in methods that use async/await.</PackageReleaseNotes>
+    <PackageReleaseNotes>This version of TracerX exposes BinaryFile and TextFile to VS Intellisense and includes the XML documentation file in the NuGet package.</PackageReleaseNotes>
   </PropertyGroup>
 
-  <PropertyGroup >
+  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 

@@ -1,8 +1,7 @@
 // The logger's enums.
 using System;
-using System.ComponentModel;
 
-namespace TracerX 
+namespace TracerX
 {
     /// <summary>
     /// Each <see cref="Logger"/> has a TracerX.TraceLevel property for each logging destination that specifies
@@ -84,7 +83,7 @@ namespace TracerX
     }
 
     /// <summary>
-    /// One of these is prepended to every logged message to indicate what data is present. 
+    /// One of these precedes every logged message to indicate what data is present. 
     /// Used by both Logger and Viewer.
     /// </summary>
     [Flags]

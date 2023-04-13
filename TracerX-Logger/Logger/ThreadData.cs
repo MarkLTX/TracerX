@@ -7,6 +7,7 @@ using ConsoleLogging = TracerX.Logger.ConsoleLogging;
 using DebugLogging = TracerX.Logger.DebugLogging;
 using EventHandlerLogging = TracerX.Logger.EventHandlerLogging;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace TracerX
 {
@@ -87,8 +88,11 @@ namespace TracerX
     /// same ManagedThreadId as another thread that recently terminated.  This means
     /// ManagedThreadId isn't unique for the life of the process (and therefore the log).
     /// </summary>
-    internal class ThreadData
+    [EditorBrowsable(EditorBrowsableState.Never)] // Hide this class from Intellisense.
+    internal class ThreadData : CallEnder
     {
+        private ThreadData() { }
+
         //~ThreadData() {
         //    // This proves that the ThreadData object is finalized after the thread terminates.
         //    Debug.WriteLine("ThreadData finalized.");
@@ -264,7 +268,7 @@ namespace TracerX
             return str;
         }
 
-        const string _doNotRestore = "do not restore the thread name";
+        private const string _doNotRestore = "do not restore the thread name";
 
         // Possibly logs the entry of a method call and/or changes the current thread's name. 
         // Returns true if the message is logged or the thread name is changed, meaning the 

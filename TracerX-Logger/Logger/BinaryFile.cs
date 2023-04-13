@@ -1,18 +1,12 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Security.Principal;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
-using System.Security.Cryptography;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace TracerX
 {
@@ -23,8 +17,7 @@ namespace TracerX
     /// Many of the properties cannot be changed while the file is open.  The Opening event is the last
     /// chance to set such properties.
     /// </remarks>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
+    //[EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class BinaryFile : FileBase
     {
 

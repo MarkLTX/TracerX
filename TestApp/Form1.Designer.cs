@@ -71,7 +71,6 @@
             this.button18 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.changingThreadNameBtn = new System.Windows.Forms.Button();
-            this.btnCrossAppDomains = new System.Windows.Forms.Button();
             this.btnReopenNoncircular = new System.Windows.Forms.Button();
             this.btnReopenCircular = new System.Windows.Forms.Button();
             this.btnAutoReopen = new System.Windows.Forms.Button();
@@ -525,16 +524,6 @@
             this.changingThreadNameBtn.UseVisualStyleBackColor = true;
             this.changingThreadNameBtn.Click += new System.EventHandler(this.changingThreadNameBtn_Click);
             // 
-            // btnCrossAppDomains
-            // 
-            this.btnCrossAppDomains.Location = new System.Drawing.Point(164, 683);
-            this.btnCrossAppDomains.Name = "btnCrossAppDomains";
-            this.btnCrossAppDomains.Size = new System.Drawing.Size(145, 23);
-            this.btnCrossAppDomains.TabIndex = 36;
-            this.btnCrossAppDomains.Text = "Cross App Domains";
-            this.btnCrossAppDomains.UseVisualStyleBackColor = true;
-            this.btnCrossAppDomains.Click += new System.EventHandler(this.btnCrossAppDomains_Click);
-            // 
             // btnReopenNoncircular
             // 
             this.btnReopenNoncircular.Location = new System.Drawing.Point(13, 683);
@@ -627,7 +616,7 @@
             this.viewerWrapper1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.viewerWrapper1.Location = new System.Drawing.Point(339, 0);
             this.viewerWrapper1.Name = "viewerWrapper1";
-            this.viewerWrapper1.Size = new System.Drawing.Size(676, 834);
+            this.viewerWrapper1.Size = new System.Drawing.Size(942, 834);
             this.viewerWrapper1.TabIndex = 29;
             // 
             // btnTreeOfLoggers
@@ -644,7 +633,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1015, 834);
+            this.ClientSize = new System.Drawing.Size(1281, 834);
             this.Controls.Add(this.btnTreeOfLoggers);
             this.Controls.Add(this.chkUsePassword);
             this.Controls.Add(this.btnTextTest);
@@ -654,7 +643,6 @@
             this.Controls.Add(this.btnAutoReopen);
             this.Controls.Add(this.btnReopenCircular);
             this.Controls.Add(this.btnReopenNoncircular);
-            this.Controls.Add(this.btnCrossAppDomains);
             this.Controls.Add(this.changingThreadNameBtn);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button16);
@@ -734,7 +722,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox use00Chk;
         private System.Windows.Forms.Button changingThreadNameBtn;
-        private System.Windows.Forms.Button btnCrossAppDomains;
         private System.Windows.Forms.Button btnReopenNoncircular;
         private System.Windows.Forms.Button btnReopenCircular;
         private System.Windows.Forms.Button btnAutoReopen;

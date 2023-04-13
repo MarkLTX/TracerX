@@ -94,7 +94,7 @@ namespace TracerX
     /// Loggers like Logger.Root.
     /// </para>
     /// </remarks>    
-    public partial class Logger : MarshalByRefObject
+    public partial class Logger //: MarshalByRefObject
     {
         #region Public
         #region Logger hierarchy (GetLogger)
@@ -127,23 +127,23 @@ namespace TracerX
             return GetLogger(type.ToString());
         }
 
-        /// <summary>
-        /// Gets the Logger with the specified name from the specified AppDomain, creating it
-        /// in that AppDomain if it doesn't already exist.  Any logging done through the returned
-        /// Logger will be sent to the file, event log, or other destinations as configured by
-        /// the specified AppDomain.  This allows multiple AppDomains to log to a single file.
-        /// </summary>
-        /// <param name="name">The name of the Logger to get from the specified AppDomain.</param>
-        /// <param name="appDomain">The AppDomain in which to create the Logger.</param>
-        public static Logger GetLogger(string name, AppDomain appDomain)
-        {
-            AppDomainHelper helper = (AppDomainHelper)appDomain.CreateInstanceAndUnwrap(
-                typeof(AppDomainHelper).Assembly.FullName,
-                typeof(AppDomainHelper).FullName
-                );
+        ///// <summary>
+        ///// Gets the Logger with the specified name from the specified AppDomain, creating it
+        ///// in that AppDomain if it doesn't already exist.  Any logging done through the returned
+        ///// Logger will be sent to the file, event log, or other destinations as configured by
+        ///// the specified AppDomain.  This allows multiple AppDomains to log to a single file.
+        ///// </summary>
+        ///// <param name="name">The name of the Logger to get from the specified AppDomain.</param>
+        ///// <param name="appDomain">The AppDomain in which to create the Logger.</param>
+        //public static Logger GetLogger(string name, AppDomain appDomain)
+        //{
+        //    AppDomainHelper helper = (AppDomainHelper)appDomain.CreateInstanceAndUnwrap(
+        //        typeof(AppDomainHelper).Assembly.FullName,
+        //        typeof(AppDomainHelper).FullName
+        //        );
 
-            return helper.GetLogger(name);
-        }
+        //    return helper.GetLogger(name);
+        //}
 
         /// <summary>
         /// Returns info about all loggers in a string that contains the names, explicit trace levels, and
@@ -1100,6 +1100,24 @@ namespace TracerX
                 {
                 }
 
+                Info("TracerX-Logger.dll FullName = ", typeof(Logger).Assembly?.FullName);
+
+#if NET35 
+                Info("TracerX-Logger.dll build target = NET35");
+#elif NET45
+                Info("TracerX-Logger.dll build target = NET45");
+                Info("Environment.Is64BitProcess = ", Environment.Is64BitProcess);
+#elif NET46
+                Info("TracerX-Logger.dll build target = NET46");
+                Info("Environment.Is64BitProcess = ", Environment.Is64BitProcess);
+#elif NETCOREAPP3_1
+                Info("TracerX-Logger.dll build target = NETCOREAPP3_1");
+                Info("Environment.Is64BitProcess = ", Environment.Is64BitProcess);
+#else
+                Info("TracerX-Logger.dll build target = unknown");
+                Info("Environment.Is64BitProcess = ", Environment.Is64BitProcess);
+#endif
+
                 Info("Environment.OSVersion = ", Environment.OSVersion);
                 Info("Environment.CurrentDirectory = ", Environment.CurrentDirectory);
                 Info("Environment.UserInteractive = ", Environment.UserInteractive);
@@ -1181,13 +1199,13 @@ namespace TracerX
         }
 
         // Helper class that allows other AppDomains to call static Logger methods.
-        private class AppDomainHelper : MarshalByRefObject
-        {
-            public Logger GetLogger(string name)
-            {
-                return Logger.GetLogger(name);
-            }
-        }
+        //private class AppDomainHelper : MarshalByRefObject
+        //{
+        //    public Logger GetLogger(string name)
+        //    {
+        //        return Logger.GetLogger(name);
+        //    }
+        //}
 
         /// <summary>
         /// Grants either Read or FullControl access to the specified directory (usually the log file directory) and subdirectories.
@@ -1562,26 +1580,25 @@ namespace TracerX
         // The method name is only changed if at least one destination is enabled at
         // the specified TraceLevel.  The thread name is only changed if the threadName
         // parameter isn't null.  If either change occurs, the change must be reversed
-        // by eventually calling the Dispose() method of the returned CallEnder object.
+        // by eventually calling the Dispose() method of the returned object.
         // This returns null if neither change occurs because there will be nothing to undo.
-        private CallEnder MaybeLogCall(TraceLevel level, string methodName, string threadName)
+        private ThreadData MaybeLogCall(TraceLevel level, string methodName, string threadName)
         {
-            CallEnder result = null;
+            ThreadData result = null;
             Destinations destinations = level == TraceLevel.Off ? Destinations.None : GetDestinations(level);
 
             if (destinations != Destinations.None || threadName != null)
             {
-                ThreadData threadData = ThreadData.CurrentThreadData;
+                result = ThreadData.CurrentThreadData;
 
                 if (methodName == null && destinations != Destinations.None)
                 {
                     methodName = GetCaller();
                 }
 
-                if (threadData.LogCallEntry(this, level, methodName, destinations, threadName))
+                if (!result.LogCallEntry(this, level, methodName, destinations, threadName))
                 {
-                    // MyCallEnder will log the exit when it is disposed.
-                    result = MyCallEnder;
+                    result = null;
                 }
             }
 
@@ -1634,7 +1651,7 @@ namespace TracerX
         }
 
         // The only instance ever needed.
-        private static readonly CallEnder MyCallEnder = new CallEnder();
+        //private static readonly CallEnder MyCallEnder = new CallEnder();
 #endregion
 
 #region Logger hierarchy

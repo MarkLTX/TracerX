@@ -15,8 +15,6 @@ namespace TracerX
     /// <summary>
     /// Methods and configuration for logging to a text file.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
     public sealed class TextFile : FileBase
     {
         private string _formatString = "{time:HH:mm:ss.fff} {level} {thname} {logger}+{method} {ind}{msg}";

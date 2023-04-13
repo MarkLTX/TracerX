@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -12,6 +13,7 @@ namespace TracerX
     /// that are updated whenever a binary log file is opened.  The viewer app reads these
     /// files to populate the "Startup Screen".
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class RecentlyCreated
     {
         // Directory used by TracerX for its data (e.g. the file containing the list of recently created files).

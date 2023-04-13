@@ -320,41 +320,6 @@ namespace TestApp
             AppDomain.Unload(otherDomain);
         }
 
-        private void btnCrossAppDomains_Click(object sender, EventArgs e)
-        {
-            AppDomain otherDomain = AppDomain.CreateDomain("CrossAppDomains");
-            otherDomain.DoCallBack(_domCallbacks.CrossAppDomains);
-
-            // These two loggers should have already been created by the other domain in the callback.
-            Logger log1 = Logger.GetLogger("TestApp", otherDomain);
-            Logger log2 = Logger.GetLogger("Local Log", otherDomain);
-
-            // This should createa new logger in the other domain, and our calls to it should
-            // write to the other domain's log file.
-            Logger log3 = Logger.GetLogger("Remote Log", otherDomain);
-
-            log1.Info("From remote domain.");
-            log2.Info("Also from remote domain.");
-            log3.Info("Again from remote domain.");
-
-            using (
-                log3.InfoCall())
-            {
-                log2.Info("This should be inside a method call.");
-
-                try
-                {
-                    throw new Exception("Testing if exception can be passed to other domain for logging.");
-                }
-                catch (Exception ex)
-                {
-                    log3.Error("Logging an exception: ", ex);
-                }
-            }
-
-            AppDomain.Unload(otherDomain);
-        }
-
         private void btnReopenNoncircular_Click(object sender, EventArgs e)
         {
             Logger.DefaultBinaryFile.Close();

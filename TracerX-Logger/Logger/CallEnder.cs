@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 
 namespace TracerX
@@ -14,7 +11,7 @@ namespace TracerX
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    public class CallEnder : MarshalByRefObject, IDisposable
+    public class CallEnder : IDisposable
     {
         /// <summary>
         /// Internal ctor keeps logging clients from creating instances.
@@ -26,7 +23,7 @@ namespace TracerX
         /// </summary>
         public void Dispose()
         {
-            ThreadData.CurrentThreadData.LogCallExit();
+            ((ThreadData)this).LogCallExit();
         }
     } // CallEnder
 }
