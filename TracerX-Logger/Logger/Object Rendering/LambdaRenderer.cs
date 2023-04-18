@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace TracerX
 {
     /// <summary>
-    /// Renders an array of Expression<Func<object>> expressions created
-    /// from lambdas like "() => LambdaBody" where LambdaBody is anything
+    /// Renders an array of Expression&lt;Func&lt;object&gt;&gt; expressions created
+    /// from lambdas like "() =&gt; LambdaBody" where LambdaBody is anything
     /// that yields a value (e.g. a local variable, object property or
     /// function call).  Each lambda expression is rendered as
     /// "LambdaBody = value_of_LambdaBody".  If there is more than one

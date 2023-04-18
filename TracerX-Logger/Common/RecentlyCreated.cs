@@ -16,17 +16,27 @@ namespace TracerX
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class RecentlyCreated
     {
-        // Directory used by TracerX for its data (e.g. the file containing the list of recently created files).
+        /// <summary>Directory used by TracerX for its data (e.g. the file containing the list of recently created files).</summary>
         public static readonly string TracerXDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TracerX");
 
-        // Name of history file containing a list of folders where log files have been created.
-        // The file is updated by TracerX-Logger.dll whenever it opens a log file.
+        /// <summary>
+        /// Name of history file containing a list of folders where log files have been created.
+        /// The file is updated by TracerX-Logger.dll whenever it opens a log file.
+        /// </summary>
         public static readonly string RecentFoldersFile = Path.Combine(TracerXDir, "RecentFolders.txt");
 
-        // Name of history file containing a list of the most recently created log files.
-        // The file is updated by TracerX-Logger.dll whenever it opens a log file.
+        /// <summary>
+        /// Name of history file containing a list of the most recently created log files.
+        /// The file is updated by TracerX-Logger.dll whenever it opens a log file.
+        /// </summary>
         public static readonly string RecentFilesFile = Path.Combine(TracerXDir, "RecentlyCreated.txt");
 
+        /// <summary>
+        /// Gets the file and folder names of recent log files.
+        /// </summary>
+        /// <param name="Log">Logger to use for logging.</param>
+        /// <param name="recentFileNames">Output array of file paths.</param>
+        /// <param name="recentFolderNames">Output array of folder paths.</param>
         public static void GetFilesAndFolders(Logger Log, out string[] recentFileNames, out string[] recentFolderNames)
         {
             // Read both files under the mutex.
@@ -55,9 +65,12 @@ namespace TracerX
             }
         }
 
-        // Adds the log file's full path to the list of files persisted for the viewer to read.
-        // Adds the log file's folder to the list of folders persisted for the viewer to read.
-        // Typically called in a worker thread.
+        /// <summary>
+        /// </summary>
+        /// Adds the log file's full path to the list of files persisted for the viewer to read.
+        /// Adds the log file's folder to the list of folders persisted for the viewer to read.
+        /// Typically called in a worker thread.
+        /// <param name="logFilePath">The full path of the log file to add to the files.</param>
         public static void AddToRecentlyCreated(string logFilePath)
         {
             // Note the reason for having a list of folders in addition to a list of files...
@@ -159,7 +172,7 @@ namespace TracerX
 
                         break; // Break out of retry loop.
                     }
-                    catch (IOException ex)
+                    catch (IOException)
                     {
                         // Common to get "The requested operation cannot be performed on a file with a user-mapped section open" despite
                         // holding the named mutex.  Google search indicates possible bug in the OS or .NET regarding File IO.  Try waiting

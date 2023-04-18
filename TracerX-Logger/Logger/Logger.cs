@@ -32,7 +32,7 @@ namespace TracerX
     /// the name specified in the XML file to get references to those instances in your code.
     /// </para>
     /// <para>
-    /// Actual logging is done by calling instance methods such as <see cref="Info(object)"/> and <see cref="Debug(object)"/>,
+    /// Actual logging is done by calling instance methods such as <see cref="Info(object[])"/> and <see cref="Debug(object[])"/>,
     /// whose names imply the <see cref="TraceLevel"/> of the log message. "Higher" TraceLevels generally correspond to higher
     /// levels of detail/volume of output, and to less important messages.  
     /// </para>
@@ -536,7 +536,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder FatalCall(string methodName = null)
+        public IDisposable FatalCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName: null);
         }
@@ -547,7 +547,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder FatalCallThread(string threadName, string methodName = null)
+        public IDisposable FatalCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName);
         }
@@ -557,7 +557,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder FatalCall([CallerMemberName] string methodName = null)
+        public IDisposable FatalCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName: null);
         }
@@ -568,7 +568,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder FatalCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable FatalCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Fatal, methodName, threadName);
         }
@@ -619,7 +619,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder ErrorCall(string methodName = null)
+        public IDisposable ErrorCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Error, methodName, threadName: null);
         }
@@ -630,7 +630,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder ErrorCallThread(string threadName, string methodName = null)
+        public IDisposable ErrorCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Error, methodName, threadName);
         }
@@ -640,7 +640,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder ErrorCall([CallerMemberName] string methodName = null)
+        public IDisposable ErrorCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Error, methodName: methodName, threadName: null);
         }
@@ -651,7 +651,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder ErrorCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable ErrorCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Error, methodName, threadName);
         }
@@ -702,7 +702,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder WarnCall(string methodName = null)
+        public IDisposable WarnCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Warn, methodName, threadName: null);
         }
@@ -713,7 +713,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder WarnCallThread(string threadName, string methodName = null)
+        public IDisposable WarnCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Warn, methodName, threadName);
         }
@@ -723,7 +723,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder WarnCall([CallerMemberName] string methodName = null)
+        public IDisposable WarnCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Warn, methodName: methodName, threadName: null);
         }
@@ -734,7 +734,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder WarnCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable WarnCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Warn, methodName, threadName);
         }
@@ -785,7 +785,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder InfoCall(string methodName = null)
+        public IDisposable InfoCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName: null);
         }
@@ -796,7 +796,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder InfoCallThread(string threadName, string methodName = null)
+        public IDisposable InfoCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName);
         }
@@ -806,7 +806,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder InfoCall([CallerMemberName] string methodName = null)
+        public IDisposable InfoCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName: null);
         }
@@ -817,7 +817,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder InfoCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable InfoCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Info, methodName, threadName);
         }
@@ -869,7 +869,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder DebugCall(string methodName = null)
+        public IDisposable DebugCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName: null);
         }
@@ -880,7 +880,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder DebugCallThread(string threadName, string methodName = null)
+        public IDisposable DebugCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName);
         }
@@ -890,7 +890,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder DebugCall([CallerMemberName] string methodName = null)
+        public IDisposable DebugCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName: null);
         }
@@ -901,7 +901,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder DebugCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable DebugCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Debug, methodName, threadName);
         }
@@ -952,7 +952,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder VerboseCall(string methodName = null)
+        public IDisposable VerboseCall(string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName: null);
         }
@@ -963,7 +963,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder VerboseCallThread(string threadName, string methodName = null)
+        public IDisposable VerboseCallThread(string threadName, string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName);
         }
@@ -973,7 +973,7 @@ namespace TracerX
         /// Use with "using" so the returned object's Dispose
         /// method, which logs the method's exit, will be called automatically.
         /// </summary>
-        public CallEnder VerboseCall([CallerMemberName] string methodName = null)
+        public IDisposable VerboseCall([CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName: null);
         }
@@ -984,7 +984,7 @@ namespace TracerX
         /// When the returned object's Dispose() method is called, the calling thread's current name
         /// and method name are restored to their original values.
         /// </summary>
-        public CallEnder VerboseCallThread(string threadName, [CallerMemberName] string methodName = null)
+        public IDisposable VerboseCallThread(string threadName, [CallerMemberName] string methodName = null)
         {
             return MaybeLogCall(TraceLevel.Verbose, methodName, threadName);
         }
@@ -1054,7 +1054,7 @@ namespace TracerX
         /// changes it back to the original value when the returned object's Dispose()
         /// method is called.
         /// </summary>
-        public CallEnder ThreadNameForCall(string threadName)
+        public IDisposable ThreadNameForCall(string threadName)
         {
             return MaybeLogCall(TraceLevel.Off, null, threadName);
         }
@@ -1582,23 +1582,23 @@ namespace TracerX
         // parameter isn't null.  If either change occurs, the change must be reversed
         // by eventually calling the Dispose() method of the returned object.
         // This returns null if neither change occurs because there will be nothing to undo.
-        private ThreadData MaybeLogCall(TraceLevel level, string methodName, string threadName)
+        private IDisposable MaybeLogCall(TraceLevel level, string methodName, string threadName)
         {
-            ThreadData result = null;
             Destinations destinations = level == TraceLevel.Off ? Destinations.None : GetDestinations(level);
+            IDisposable result = null;
 
             if (destinations != Destinations.None || threadName != null)
-            {
-                result = ThreadData.CurrentThreadData;
-
+            {                
                 if (methodName == null && destinations != Destinations.None)
                 {
                     methodName = GetCaller();
                 }
+                
+                ThreadData threadData = ThreadData.CurrentThreadData;
 
-                if (!result.LogCallEntry(this, level, methodName, destinations, threadName))
+                if (threadData.LogCallEntry(this, level, methodName, destinations, threadName))
                 {
-                    result = null;
+                    result = threadData;
                 }
             }
 
@@ -1650,8 +1650,6 @@ namespace TracerX
             return "Unknown Method";
         }
 
-        // The only instance ever needed.
-        //private static readonly CallEnder MyCallEnder = new CallEnder();
 #endregion
 
 #region Logger hierarchy

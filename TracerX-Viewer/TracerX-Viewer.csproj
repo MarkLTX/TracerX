@@ -113,8 +113,8 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TracerX-Logger, Version=9.1.2023.4131, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TracerX-Logger.9.1.0\lib\net45\TracerX-Logger.dll</HintPath>
+    <Reference Include="TracerX-Logger, Version=9.2.2023.4181, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.9.2.0\lib\net45\TracerX-Logger.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>

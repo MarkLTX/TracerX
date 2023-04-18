@@ -479,7 +479,7 @@ namespace TracerX
                                         string fileFullVal = subElement.GetAttribute("value");
                                         Logger.DefaultBinaryFile.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
                                         string msg3 = "XML element '{0}' does not contain required attribute 'value' or the value could not be converted to FullFilePolicy.\n\n";
                                         _warnings += string.Format(msg3, element.Name);
@@ -555,7 +555,7 @@ namespace TracerX
                                         string fileFullVal = subElement.GetAttribute("value");
                                         Logger.DefaultTextFile.FullFilePolicy = (FullFilePolicy)Enum.Parse(typeof(FullFilePolicy), fileFullVal, true);
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
                                         string msg3 = "XML element '{0}' does not contain required attribute 'value' or the value could not be converted to FullFilePolicy.\n\n";
                                         _warnings += string.Format(msg3, element.Name);

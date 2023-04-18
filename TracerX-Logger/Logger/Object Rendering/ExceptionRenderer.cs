@@ -1,15 +1,13 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Reflection;
 
 namespace TracerX
 {
     /// <summary>
     /// Renders an Exception object and its inner exceptions recursively.  
-    /// Most public properties are rendered, including the execption's type,
+    /// Most public properties are rendered, including the exception's type,
     /// Message, Source, StackTrace, the key/value pairs of Exception.Data,
     /// and other properties discovered by reflection.
     /// </summary>

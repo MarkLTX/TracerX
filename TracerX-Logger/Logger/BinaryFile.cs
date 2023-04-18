@@ -568,7 +568,7 @@ namespace TracerX
                         // If the file is in use, this throws an exception.
                         File.Move(FullPath, newFilePath);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         if (attempts <= 1)
                         {

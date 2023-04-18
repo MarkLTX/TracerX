@@ -61,8 +61,12 @@ namespace TracerX
         /// </summary>
         public const string DataDirMUtexName = @"Global\TracerXDataDir";
 
+        /// <summary>True if the mutex had to be created, i.e. didn't already exist. </summary>
         public readonly bool DidCreate;
+
+        /// <summary>True if the mutex was successfully acquired. </summary>
         public readonly bool DidAcquire;
+        
         private Mutex _mutex;
 
         /// <summary>

@@ -136,7 +136,7 @@ namespace TracerX
                 {
                     evt.Set();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     ////MetaLog?.Info("Exception setting viewers event: ", ex.GetType(), ", ", ex.Message);
                 }

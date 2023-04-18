@@ -83,13 +83,9 @@ namespace TracerX
     /// <summary>
     /// An instance of this is created for each thread that uses TracerX.
     /// 
-    /// TracerX does not use the ManagedThreadId because the CLR
-    /// appears to recycle the IDs.  That is, a new thread will often be assigned the
-    /// same ManagedThreadId as another thread that recently terminated.  This means
-    /// ManagedThreadId isn't unique for the life of the process (and therefore the log).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)] // Hide this class from Intellisense.
-    internal class ThreadData : CallEnder
+    internal class ThreadData : IDisposable
     {
         private ThreadData() { }
 
@@ -119,9 +115,19 @@ namespace TracerX
         private static int _threadCounter = 0;
 
         // The thread's ID as determined by TracerX (as opposed to the CLR).
-        // A uint would be preferrable but Interlocked.Increment doesn't operate
-        // on uints.  The number of unique thread IDs is the same either way.
+        // TracerX does not use the ManagedThreadId because the CLR
+        // appears to recycle the IDs.  That is, a new thread will often be assigned the
+        // same ManagedThreadId as another thread that recently terminated.  This means
+        // ManagedThreadId isn't unique for the life of the process (and therefore the log).
         internal readonly int TracerXID = Interlocked.Increment(ref _threadCounter);
+
+        /// <summary>
+        /// If MaybeLogCall() logged entry into a call, Dispose() logs the exit.
+        /// </summary>
+        public void Dispose()
+        {
+            LogCallExit();
+        }
 
         // The overridden thread name or Thread.CurrentThread.Name if not overridden.
         internal string Name
@@ -395,7 +401,7 @@ namespace TracerX
         }
 
         // Log the exit of a method call to each destination indicated by TopStackEntry.
-        internal void LogCallExit()
+        private void LogCallExit()
         {
             if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
