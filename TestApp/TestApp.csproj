@@ -74,7 +74,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TracerX-Logger, Version=9.2.2023.4181, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TracerX-Logger, Version=9.2.2023.4251, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TracerX-Logger.9.2.0\lib\net45\TracerX-Logger.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -179,7 +179,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
