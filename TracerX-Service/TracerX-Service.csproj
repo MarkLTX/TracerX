@@ -85,15 +85,13 @@
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="TracerX-Logger, Version=9.2.2023.4251, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TracerX-Logger.9.2.0\lib\net35\TracerX-Logger.dll</HintPath>
+    <Reference Include="TracerX-Logger, Version=9.4.2023.5031, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.9.4.0\lib\net35\TracerX-Logger.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppArgs.cs" />
-    <Compile Include="ProjectInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ProjectInstaller.cs" />
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
@@ -102,9 +100,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Service1.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Service1.cs" />
     <Compile Include="Service1.Designer.cs">
       <DependentUpon>Service1.cs</DependentUpon>
     </Compile>

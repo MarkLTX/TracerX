@@ -85,7 +85,7 @@ namespace TracerX
     /// <para>
     /// The <see cref="EventHandlerTraceLevel"/> property specifies the maximum level of output that raises the static <see cref="Logger.MessageCreated"/> event. 
     /// The default value for this property is TraceLevel.Off (inherited from the Root Logger).
-    /// By handling this event, you can perform custom processing for each log message such as playing a sound, sending an email, writing to a database, or even cancelling the message.
+    /// By handling this event, you can perform custom processing for each log message such as playing a sound, sending an email, writing to a database, or even canceling the message.
     /// </para>
     /// <para>
     /// Setting any of the above TraceLevels to TraceLevel.Inherited causes the effective value to be inherited from the parent Logger (possibly
@@ -94,7 +94,7 @@ namespace TracerX
     /// Loggers like Logger.Root.
     /// </para>
     /// </remarks>    
-    public partial class Logger //: MarshalByRefObject
+    public partial class Logger : MarshalByRefObject // MarshalByRefObject allows Loggers to be passed to and used by other AppDomains.
     {
         #region Public
         #region Logger hierarchy (GetLogger)

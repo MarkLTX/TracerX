@@ -14,14 +14,14 @@ also have to set UseWindowsForms to true somewhere. -->
     <OutputType>Library</OutputType>
     <RootNamespace>TracerX</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>9.2</Version>
+    <Version>9.4</Version>
     <Copyright>Copyright © Mark A. Lauritsen 2007-2023</Copyright>
     <Description>Diagnostic trace logger for .NET Framework and Core.  Easy to get started but has advanced features. Sophisticated viewer allows filtering and coloring by thread, method, category, etc. Send output to multiple destinations including file, event log, and console.</Description>
     <PackageTags>.NET C# logger logging trace viewer filter thread-safe</PackageTags>
-    <AssemblyVersion>9.2.2023.04251</AssemblyVersion>
+    <AssemblyVersion>9.4.2023.05031</AssemblyVersion>
     <Product>TracerX</Product>
     <Authors>MarkLTX</Authors>
-    <FileVersion>9.2.2023.04251</FileVersion>
+    <FileVersion>9.4.2023.05031</FileVersion>
     <Company />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,7 +29,7 @@ also have to set UseWindowsForms to true somewhere. -->
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
     <PackageIcon>scroll_view_32x32_plain.png</PackageIcon>
-    <PackageReleaseNotes>This version changes the return type of InfoCall(), DebugCall(), etc. to IDisposable.</PackageReleaseNotes>
+    <PackageReleaseNotes>Logger and ThreadData now inherit MarshalByRefObject so Loggers can be passed to and used by other AppDomains (for compatibility with TaskRunner).</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>

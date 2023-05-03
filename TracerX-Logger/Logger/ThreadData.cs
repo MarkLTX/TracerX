@@ -81,11 +81,10 @@ namespace TracerX
     }
 
     /// <summary>
-    /// An instance of this is created for each thread that uses TracerX.
-    /// 
+    /// An instance of this is created for each thread that uses TracerX.   
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)] // Hide this class from Intellisense.
-    internal class ThreadData : IDisposable
+    internal class ThreadData : MarshalByRefObject, IDisposable  // MarshalByRefObject is needed because InfoCall() returns ThreadData, and this supports passing Loggers to other AppDomains.
     {
         private ThreadData() { }
 
