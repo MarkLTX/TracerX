@@ -113,8 +113,8 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TracerX-Logger, Version=9.4.2023.5031, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TracerX-Logger.9.4.0\lib\net45\TracerX-Logger.dll</HintPath>
+    <Reference Include="TracerX-Logger, Version=9.5.2023.5091, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.9.5.0\lib\net45\TracerX-Logger.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -124,76 +124,116 @@
     <Compile Include="ColorPair.cs" />
     <Compile Include="ColorUtil.cs" />
     <Compile Include="DeploymentDescription.cs" />
-    <Compile Include="Controls\FlatButton.cs" />
-    <Compile Include="Forms\CleanUpFilesDialog.cs" />
+    <Compile Include="Controls\FlatButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\CleanUpFilesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\CleanUpFilesDialog.Designer.cs">
       <DependentUpon>CleanUpFilesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormDataGridViewColumnSelector.cs" />
+    <Compile Include="Forms\FormDataGridViewColumnSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormDataGridViewColumnSelector.designer.cs">
       <DependentUpon>FormDataGridViewColumnSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\RelatedForm.cs" />
+    <Compile Include="Forms\RelatedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\RelatedForm.Designer.cs">
       <DependentUpon>RelatedForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ServerConnEditor.cs" />
+    <Compile Include="Forms\ServerConnEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ServerConnEditor.Designer.cs">
       <DependentUpon>ServerConnEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ListAndTreeOfFilterable.cs" />
+    <Compile Include="Controls\ListAndTreeOfFilterable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\ListAndTreeOfFilterable.Designer.cs">
       <DependentUpon>ListAndTreeOfFilterable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\NewStartPage.cs" />
+    <Compile Include="Controls\NewStartPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\NewStartPage.Designer.cs">
       <DependentUpon>NewStartPage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\NoDblClickTreeView.cs" />
-    <Compile Include="Controls\PathControl.cs" />
+    <Compile Include="Controls\NoDblClickTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PathControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\PathControl.Designer.cs">
       <DependentUpon>PathControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CategoryDialog.cs" />
+    <Compile Include="Forms\CategoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\CategoryDialog.Designer.cs">
       <DependentUpon>CategoryDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CredentialsDialog.cs" />
+    <Compile Include="Forms\CredentialsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\CredentialsDialog.Designer.cs">
       <DependentUpon>CredentialsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PathSelector.cs" />
+    <Compile Include="Forms\PathSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\PathSelector.Designer.cs">
       <DependentUpon>PathSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ServerListEditor.cs" />
+    <Compile Include="Forms\ServerListEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ServerListEditor.Designer.cs">
       <DependentUpon>ServerListEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GridPanel.cs" />
-    <Compile Include="Forms\StartServiceForm.cs" />
+    <Compile Include="Controls\GridPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\StartServiceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\StartServiceForm.Designer.cs">
       <DependentUpon>StartServiceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ListViewSorter.cs" />
-    <Compile Include="Controls\CrumbBar.cs" />
+    <Compile Include="Controls\CrumbBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\CrumbBar.Designer.cs">
       <DependentUpon>CrumbBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ColorRulesDialog.cs" />
+    <Compile Include="Forms\ColorRulesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ColorRulesDialog.Designer.cs">
       <DependentUpon>ColorRulesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ExportCSVForm.cs" />
+    <Compile Include="Forms\ExportCSVForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ExportCSVForm.Designer.cs">
       <DependentUpon>ExportCSVForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PaletteViewer.cs" />
+    <Compile Include="Forms\PaletteViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\PaletteViewer.Designer.cs">
       <DependentUpon>PaletteViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="IFilterable.cs" />
-    <Compile Include="Controls\ListViewTx.cs" />
+    <Compile Include="Controls\ListViewTx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\ListViewTx.Designer.cs">
       <DependentUpon>ListViewTx.cs</DependentUpon>
     </Compile>
@@ -205,51 +245,73 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Forms\About.cs" />
+    <Compile Include="Forms\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CallStack.cs" />
+    <Compile Include="Forms\CallStack.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\CallStack.Designer.cs">
       <DependentUpon>CallStack.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ColumnsDlg.cs" />
+    <Compile Include="Forms\ColumnsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ColumnsDlg.Designer.cs">
       <DependentUpon>ColumnsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FileProperties.cs" />
+    <Compile Include="Forms\FileProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FileProperties.Designer.cs">
       <DependentUpon>FileProperties.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FilterDialog.cs" />
+    <Compile Include="Forms\FilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FilterDialog.Designer.cs">
       <DependentUpon>FilterDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FindDialog.cs" />
+    <Compile Include="Forms\FindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FindDialog.Designer.cs">
       <DependentUpon>FindDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FullText.cs" />
+    <Compile Include="Forms\FullText.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FullText.Designer.cs">
       <DependentUpon>FullText.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\License.cs" />
+    <Compile Include="Forms\License.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\License.Designer.cs">
       <DependentUpon>License.cs</DependentUpon>
     </Compile>
     <Compile Include="LoggerObject.cs" />
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="Forms\OptionsDialog.cs" />
+    <Compile Include="Forms\OptionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\OptionsDialog.Designer.cs">
       <DependentUpon>OptionsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PasswordDialog.cs" />
+    <Compile Include="Forms\PasswordDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\PasswordDialog.Designer.cs">
       <DependentUpon>PasswordDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="RecentFilesAndFolders.cs" />
     <Compile Include="Record.cs" />
-    <Compile Include="Forms\MainForm.cs" />
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
@@ -266,22 +328,30 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SavedServer.cs" />
-    <Compile Include="Controls\ServerTree.cs" />
+    <Compile Include="Controls\ServerTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TestConnectionResult.cs" />
     <Compile Include="ThreadName.cs" />
     <Compile Include="ThreadObject.cs" />
     <Compile Include="TraceLevelObject.cs" />
-    <Compile Include="Controls\TracerXViewerControl.cs" />
+    <Compile Include="Controls\TracerXViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\TracerXViewerControl.Designer.cs">
       <DependentUpon>TracerXViewerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UICommand.cs" />
+    <Compile Include="UICommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UICommand.Designer.cs">
       <DependentUpon>UICommand.cs</DependentUpon>
     </Compile>
-    <Compile Include="UICommandProvider.cs" />
+    <Compile Include="UICommandProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UICommandProvider.designer.cs">
       <DependentUpon>UICommandProvider.cs</DependentUpon>
     </Compile>

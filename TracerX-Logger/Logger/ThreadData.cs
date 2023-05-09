@@ -84,9 +84,12 @@ namespace TracerX
     /// An instance of this is created for each thread that uses TracerX.   
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)] // Hide this class from Intellisense.
-    internal class ThreadData : MarshalByRefObject, IDisposable  // MarshalByRefObject is needed because InfoCall() returns ThreadData, and this supports passing Loggers to other AppDomains.
+    internal class ThreadData 
     {
-        private ThreadData() { }
+        private ThreadData() 
+        {
+            ThreadsCallEnder = new CallEnder(this);
+        }
 
         //~ThreadData() {
         //    // This proves that the ThreadData object is finalized after the thread terminates.
@@ -120,20 +123,14 @@ namespace TracerX
         // ManagedThreadId isn't unique for the life of the process (and therefore the log).
         internal readonly int TracerXID = Interlocked.Increment(ref _threadCounter);
 
-        /// <summary>
-        /// If MaybeLogCall() logged entry into a call, Dispose() logs the exit.
-        /// </summary>
-        public void Dispose()
-        {
-            LogCallExit();
-        }
-
         // The overridden thread name or Thread.CurrentThread.Name if not overridden.
         internal string Name
         {
             get { return _name ?? Thread.CurrentThread.Name; }
             set { _name = value; }
         }
+
+        internal readonly CallEnder ThreadsCallEnder;
 
         // The managed thread ID of the thread.  This is often the same as another thread that
         // terminated earlier (.NET recycles the managed IDs).  
@@ -400,7 +397,7 @@ namespace TracerX
         }
 
         // Log the exit of a method call to each destination indicated by TopStackEntry.
-        private void LogCallExit()
+        internal void LogCallExit()
         {
             if ((TopStackEntry.Destinations & Destinations.EventHandler) != 0)
             {
