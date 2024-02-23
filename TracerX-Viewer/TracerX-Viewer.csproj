@@ -27,7 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
@@ -113,8 +113,8 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TracerX-Logger, Version=9.5.2023.5091, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TracerX-Logger.9.5.0\lib\net45\TracerX-Logger.dll</HintPath>
+    <Reference Include="TracerX-Logger, Version=9.6.2024.2231, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TracerX-Logger.9.6.0\lib\net472\TracerX-Logger.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>

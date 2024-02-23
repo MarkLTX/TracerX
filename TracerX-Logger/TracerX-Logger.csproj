@@ -10,34 +10,44 @@ also have to set UseWindowsForms to true somewhere. -->
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net35;net45;net46</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0-windows;net8.0-windows</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>TracerX</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>9.5</Version>
-    <Copyright>Copyright © Mark A. Lauritsen 2007-2023</Copyright>
+    <Version>9.6</Version>
+    <Copyright>Copyright © Mark A. Lauritsen 2007-2024</Copyright>
     <Description>Diagnostic trace logger for .NET Framework and Core.  Easy to get started but has advanced features. Sophisticated viewer allows filtering and coloring by thread, method, category, etc. Send output to multiple destinations including file, event log, and console.</Description>
     <PackageTags>.NET C# logger logging trace viewer filter thread-safe</PackageTags>
-    <AssemblyVersion>9.5.2023.05091</AssemblyVersion>
+    <AssemblyVersion>9.6.2024.02231</AssemblyVersion>
     <Product>TracerX</Product>
     <Authors>MarkLTX</Authors>
-    <FileVersion>9.5.2023.05091</FileVersion>
+    <FileVersion>9.6.2024.02231</FileVersion>
     <Company />
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>TracerX-Logger</PackageId>
     <PackageProjectUrl>http://www.codeproject.com/Articles/23424/TracerX-Logger-and-Viewer-for-NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MarkLTX/TracerX</RepositoryUrl>
     <PackageIcon>scroll_view_32x32_plain.png</PackageIcon>
-    <PackageReleaseNotes>Revert to returning CallEnder from InfoCall().</PackageReleaseNotes>
+    <PackageReleaseNotes>Now a VS 2022 project.  Changed target frameworks.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
-  <!-- Conditionally obtain references for the .NET Framework 3.5, 4.5, and 4.6 targets -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' or  '$(TargetFramework)' == 'net45' or  '$(TargetFramework)' == 'net46' ">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+    <WarningLevel>6</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+    <WarningLevel>6</WarningLevel>
+  </PropertyGroup>
+
+  <!-- Conditionally obtain references for the .NET Framework 4.7.2 target -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.Configuration" />
   </ItemGroup>
   

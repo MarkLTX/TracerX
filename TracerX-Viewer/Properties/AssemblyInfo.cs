@@ -22,4 +22,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("23ac4e30-3b5b-4c9d-bef1-50b62b114736")]
 
 // The VersionChecker displays a notification if the latest release on GitHub is greater than the executable version specified here.
-[assembly: AssemblyVersion("9.5.*")]
+[assembly: AssemblyVersion("9.6.*")]

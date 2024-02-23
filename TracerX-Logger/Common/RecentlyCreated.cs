@@ -189,11 +189,11 @@ namespace TracerX
         {
             var sid = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
 
-#if NET35 || NET45 || NET46 
+#if NETFRAMEWORK
             FileSecurity fSecurity = File.GetAccessControl(filePath);
             fSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));
             File.SetAccessControl(filePath, fSecurity);
-#elif NETCOREAPP3_1
+#elif NETCOREAPP
             FileInfo fi = new FileInfo(filePath);
             FileSecurity fSecurity = fi.GetAccessControl();
             fSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.FullControl, AccessControlType.Allow));

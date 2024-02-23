@@ -361,9 +361,9 @@ namespace TracerX
             {
                 // OpenExisting() throws a WaitHandleCannotBeOpenedException if no event named eventName exists.
 
-#if NET35 || NET45 || NET46
+#if NETFRAMEWORK
                 EventWaitHandle eventHandle = EventWaitHandle.OpenExisting(eventName, EventWaitHandleRights.Modify);
-#elif NETCOREAPP3_1
+#elif NETCOREAPP
                 EventWaitHandle eventHandle = EventWaitHandle.OpenExisting(eventName);
 #endif
 
